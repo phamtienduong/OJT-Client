@@ -2,7 +2,8 @@ import { AiOutlineCamera } from "react-icons/ai";
 import { AiOutlineStar, AiFillEye, AiOutlineHeart, AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 import React, { useEffect, useState } from 'react';
 import Slider from "react-slick";
-
+import Header from "../../Components/Header"
+import Footer from "../../Components/Footer"
 export default function HomePage() {
     const [days, setDays] = useState(0);
     const [hours, setHours] = useState(0);
@@ -57,6 +58,7 @@ export default function HomePage() {
 
     return (
         <div className="w-full h-full bg-white">
+            <Header></Header>
             <div className='mt-3 flex justify-around'>
                 <div className='w-[217px] h-[344px] flex-col content-start leading-[40px] ml-20'>
                     <ul>
@@ -782,6 +784,7 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
+            <Footer></Footer>
         </div>
     );
 }
