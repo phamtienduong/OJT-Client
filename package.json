@@ -19,6 +19,7 @@
     "@headlessui/vue": "^1.7.16",
     "@heroicons/react": "^2.0.18",
     "@heroicons/vue": "^2.0.18",
+    "@material-tailwind/react": "^2.1.9",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.17",
     "@reduxjs/toolkit": "^1.9.7",
@@ -37,7 +38,8 @@
     "redux": "^4.2.1",
     "router-dom": "^2.2.11",
     "sass": "^1.69.5",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "tw-elements-react": "^1.0.0-alpha2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

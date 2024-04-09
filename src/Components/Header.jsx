@@ -19,6 +19,7 @@ import {
     PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import Translate from "./Translate";
+import { Link } from "react-router-dom";
 
 const products = [
     {
@@ -174,12 +175,12 @@ export default function Header() {
                     >
                         About
                     </a>
-                    <a
-                        href="#"
+                    <Link
+                        to="/register"
                         className="text-m font-bold leading-6 text-black-800 mb-1"
                     >
                         Sign up
-                    </a>
+                    </Link>
 
                     <div className="relative">
                         <input
