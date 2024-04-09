@@ -1,0 +1,40 @@
+.my-translate {
+  background-color: black;
+  height: 50px;
+  color: white;
+  font-size: 14px;
+  justify-content: space-evenly;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .my-translate {
+    font-size: 16px;
+  }
+  .my-translate__text{
+    margin-left: 20px;
+    margin-right: 100px;
+}
+}
+
+@media (max-width: 767px) {
+  .my-translate {
+   display: none;
+  }
+}
+
+.my-translate__button {
+  position: absolute;
+  right: 10%;
+  margin-left: 20%;
+  color: white;
+  
+}
+.my-translate__list{
+     display: flex;
+    justify-content: space-around;
+    list-style: none;
+}
+
+
