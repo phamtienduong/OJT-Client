@@ -39,6 +39,9 @@
     "router-dom": "^2.2.11",
     "sass": "^1.69.5",
     "slick-carousel": "^1.8.1",
+
+    "swiper": "^11.1.0",
+
     "tw-elements-react": "^1.0.0-alpha2"
   },
   "devDependencies": {
