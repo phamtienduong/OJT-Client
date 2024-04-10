@@ -58,7 +58,6 @@ export default function HomePage() {
 
     return (
         <div className="w-full h-full bg-white">
-            <Header></Header>
             <div className='mt-3 flex justify-around'>
                 <div className='w-[217px] h-[344px] flex-col content-start leading-[40px] ml-20'>
                     <ul>
@@ -784,7 +783,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            <Footer></Footer>
         </div>
     );
 }

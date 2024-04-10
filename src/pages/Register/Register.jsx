@@ -6,7 +6,7 @@ import image from "../../Images/111.png";
 export default function Register() {
     return (
         <section className="h-screen">
-            <Header></Header>
+            
             <div>
                 {/* <!-- Left column container with background--> */}
                 <div className="g-6 flex h-full flex-wrap items-center justify-center ">
@@ -120,7 +120,6 @@ export default function Register() {
                     </div>
                 </div>
             </div>
-            <Footer></Footer>
         </section>
     );
 }

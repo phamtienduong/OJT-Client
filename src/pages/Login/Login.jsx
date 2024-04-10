@@ -8,7 +8,6 @@ import image from "../../Images/111.png";
 export default function Login() {
     return (
         <section className="h-screen">
-            <Header></Header>
             <div className="">
                 {/* <!-- Left column container with background--> */}
                 <div className="g-6 flex h-full flex-wrap items-center justify-center ">
@@ -165,7 +164,6 @@ export default function Login() {
                     </div>
                 </div>
             </div>
-            <Footer></Footer>
         </section>
     );
 }

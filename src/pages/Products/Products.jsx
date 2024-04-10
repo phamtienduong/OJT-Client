@@ -137,7 +137,6 @@ export default function Products() {
 
     return (
         <>
-            <Header></Header>
             <div>
                 {/* Mobile filter dialog */}
                 <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -496,7 +495,6 @@ export default function Products() {
                     </section>
                 </main>
             </div>
-            <Footer></Footer>
         </>
     );
 }
