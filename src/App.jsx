@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage/HomePage'
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Error from './pages/Error/Error'
+
 import Contact from './pages/Contact/Contact'
 import About from './pages/About/About'
 import Cart from './pages/Cart/Cart'
