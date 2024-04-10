@@ -62,7 +62,7 @@ const SITEMAP = [
 
 const currentYear = new Date().getFullYear();
 
-export function Footer() {
+export default function Footer() {
     return (
         <footer className="relative w-full bg-black">
             <div className="mx-auto w-full max-w-7xl px-8 mr-5">
