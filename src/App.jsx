@@ -16,6 +16,7 @@ import Cart from './pages/Cart/Cart'
 import Header from './Components/Header'
 import Footer from './Components/Footer'
 import Account from './pages/User/Account'
+import Detail from './pages/ProductDetail/Detail'
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false)
@@ -28,13 +29,14 @@ export default function App() {
         <Route path="/error" element={<Error />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
-        <Route path="/favor" element={<Favorite />}></Route>
+        <Route path="/favor" element={<Favorite/>}></Route>
         <Route path="/checkout" element={<Checkout />}></Route>
         <Route path="/contact" element={< Contact />}></Route>
         <Route path="/about" element={< About />}></Route>
         <Route path="/products" element={< Products />}></Route>
         <Route path="/cart" element={< Cart />}></Route>
         <Route path="/account" element={< Account />}></Route>
+        <Route path="/product_detail" element={< Detail />}></Route>
       </Route>
     </Routes>
   )
