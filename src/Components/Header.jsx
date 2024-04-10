@@ -163,18 +163,18 @@ export default function Header() {
                         </Transition>
                     </Popover>
 
-                    <a
-                        href="#"
+                    <Link
+                        to="/contact"
                         className="text-m font-bold leading-6 text-black-800 mb-1"
                     >
                         Contact
-                    </a>
-                    <a
-                        href="#"
+                    </Link>
+                    <Link
+                        to="/about"
                         className="text-m font-bold leading-6 text-black-800 mb-1"
                     >
                         About
-                    </a>
+                    </Link>
                     <Link
                         to="/register"
                         className="text-m font-bold leading-6 text-black-800 mb-1"
@@ -205,13 +205,13 @@ export default function Header() {
                     >
                         <MdFavoriteBorder />
                     </a>
-                    <a
-                        href=""
+                    <Link
+                        to={"/cart"}
                         className="flex font-normal leading-6 text-black-800 mb-1"
                         style={{ fontSize: "25px" }}
                     >
                         <AiOutlineShoppingCart />
-                    </a>
+                    </Link>
                     <a
                         href=""
                         className="flex font-normal leading-6 text-black-800 mb-1"
