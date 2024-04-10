@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react'
 import HomePage from './pages/HomePage/HomePage'
 import Error from './pages/Error/Error'
@@ -15,12 +16,12 @@ import Cart from './pages/Cart/Cart'
 import Header from './Components/Header'
 import Footer from './Components/Footer'
 import Account from './pages/User/Account'
+
 export default function App() {
   const [isLogin, setIsLogin] = useState(false)
   const [isLoad, setIsLoad] = useState(false)
 
   return (
-
     <Routes>
       <Route path='/' element={<><Header setIsLoad={setIsLoad} isLogin={isLogin} setIsLogin={setIsLogin} /> <Outlet /> <Footer /></>}>
         <Route path="/" element={<HomePage />}></Route>

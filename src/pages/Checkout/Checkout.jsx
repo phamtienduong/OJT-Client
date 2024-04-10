@@ -9,7 +9,7 @@ export default function Checkout() {
                     <div className='flex flex-col gap-y-6'>
                         <div className='text-4xl'>Billing Details</div>
                         <div className='flex flex-col md:flex-row gap-20'>
-                            <div className='md:w-1/2 order-2 md:order-1'>
+                            <div className='md:w-1/2 md:order-1 order-2'>
                                 <div className='flex flex-col'>
                                     <div className='flex flex-col pb-4 gap-y-1'>
                                         <label htmlFor="">First Name</label>
@@ -45,7 +45,7 @@ export default function Checkout() {
                                     <p>Save this information for faster check-out next time</p>
                                 </div>
                             </div>
-                            <div className='md:w-1/2 order-1 md:order-2'>
+                            <div className='md:w-1/2 md:order-2 order-1'>
                                 <div className='flex flex-col gap-y-2 py-2'>
                                     <div className='md:w-11/12 flex flex-col gap-y-2'>
                                         <div>
