@@ -1,11 +1,107 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TEInput, TERipple } from "tw-elements-react";
-import Header from "../../Components/Header";
-import Footer from "../../Components/Footer";
 import "./Login.scss";
 import image from "../../Images/111.png";
+import { Link, useNavigate } from "react-router-dom";
+import publicAxios from "../../config/publicAxios";
+import { message, notification } from "antd";
+import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
+
 
 export default function Login() {
+    const [user, setUser] = useState({
+        email: "",
+        password: "",
+    })
+  const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setUser({ ...user, [name]: value })
+    }
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        if (!user.email || !user.password) {
+          notification.error({
+            message: "Vui lòng nhập đủ thông tin!",
+          })
+          return;
+        }
+        // xử lý đăng nhập
+        try {
+          const res = await publicAxios.post("/api/v1/auth/login", user)
+          console.log(res);
+          notification.success(res.data);
+          if (res.data.data) {
+            localStorage.setItem("token", res.data.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+            navigate("/home");
+          }
+        }
+        catch (error) {
+          notification.error(error.response.data)
+        }
+      }
+      const OnButtonClick = async()=>{
+        const auth = await GoogleAuth()
+        console.log(auth)
+        const user = auth.user
+        let data = {
+            user_name: user.displayName,
+            email: user.email,
+            password: "",
+            avatar: user.photoURL,
+            role: "user",
+            status:0,
+            phone:"0962989858"
+        }
+        console.log(data)
+        try {
+            const res = await publicAxios.post("/api/v1/auth/login-google", data)
+            console.log("ressss",res);
+            notification.success(res.data);
+            if (res.data.data) {
+              localStorage.setItem("token", res.data.data.token)
+              localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+            //   setIsLogin(true)
+              navigate("/home");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+      }
+      const FacebookAuthButtonClicked = async()=>{
+        const authFb = await FacebookAuth();
+        console.log(authFb)
+        const user = authFb.user
+        let data = {
+            user_name: user.displayName,
+            email: user.email,
+            password: "",
+            avatar: user.photoURL,
+            role: "user",
+            status:0,
+            phone:"0962989858"
+        }
+        console.log(data)
+        try {
+            const res = await publicAxios.post("/api/v1/auth/login-facebook", data)
+            console.log("ressss",res);
+            notification.success(res.data);
+            if (res.data.data) {
+                localStorage.setItem("token", res.data.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+              //   setIsLogin(true)
+                navigate("/home");
+              }
+        } catch (error) {
+            console.log(error);
+        }
+      }
+      useEffect(() => {
+         handleLogin() 
+      },[])
+
     return (
         <section className="h-screen">
             <div className="">
@@ -34,6 +130,7 @@ export default function Login() {
                                 {/* <!-- Facebook button--> */}
                                 <TERipple rippleColor="light">
                                     <button
+                                        onClick={FacebookAuthButtonClicked}
                                         type="button"
                                         className="mx-1 h-9 w-9 border-black-600 rounded-full bg-aqua uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
@@ -52,6 +149,7 @@ export default function Login() {
                                 {/* <!-- Linkedin button --> */}
                                 <TERipple rippleColor="light">
                                     <button
+                                        onClick={OnButtonClick}
                                         type="button"
                                         className="mx-1 h-9 w-9 border rounded-full bg-aqua uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
@@ -110,6 +208,8 @@ export default function Login() {
                                 </label>
                                 <input
                                     type="email"
+                                    onChange={handleChange}
+                                    value={user.email}
                                     name="email"
                                     id="email"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -126,6 +226,8 @@ export default function Login() {
                                 </label>
                                 <input
                                     type="password"
+                                    onChange={handleChange}
+                                    value={user.password}
                                     name="password"
                                     id="password"
                                     placeholder="••••••••"
@@ -142,6 +244,7 @@ export default function Login() {
                             <div className="text-center lg:text-left ">
                                 <TERipple rippleColor="light">
                                     <button
+                                        onClick={handleLogin}
                                         type="button"
                                         className="inline-block rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
@@ -152,12 +255,12 @@ export default function Login() {
                                 {/* <!-- Register link --> */}
                                 <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                                     Don't have an account?{" "}
-                                    <a
-                                        href="#!"
+                                    <Link
+                                        to="/register"
                                         className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                                     >
                                         Register
-                                    </a>
+                                    </Link>
                                 </p>
                             </div>
                         </form>
