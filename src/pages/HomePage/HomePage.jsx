@@ -14,7 +14,7 @@ export default function HomePage() {
         const timezoneOffset = 7; // Múi giờ của Việt Nam (GMT+7)
 
         // Set the end date and time for the flash sale (example date)
-        const endDate = new Date('2024-04-09T00:00:00');
+        const endDate = new Date('2024-04-12T00:00:00');
         endDate.setHours(endDate.getHours() + timezoneOffset); // Chuyển múi giờ sang GMT+7
 
         const interval = setInterval(() => {
