@@ -25,6 +25,7 @@ import {
 } from "@heroicons/react/20/solid";
 import Translate from "./Translate";
 import { Link } from "react-router-dom";
+import ScrollTop from "./ScrollTop";
 
 const products = [
     {
@@ -87,6 +88,7 @@ export default function Header() {
     return (
         <header className="bg-white backGroundCo sticky top-0 z-50">
             <Translate></Translate>
+            
             <nav
                 className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
                 aria-label="Global"
