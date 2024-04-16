@@ -313,7 +313,7 @@ export default function HomePage() {
 
                 {/*Category  */}
                 <div className="categories mb-[300px]">
-                    <div className=" ml-[120px] mt-8 w-[1285px] h-[103px] mt-[60px] ">
+                    <div className=" ml-[120px] mt-8 w-[1285px] h-[103px]">
                         <div className="flex items-center ">
                             <div className="w-[10px] h-[24px] bg-red-600 rounded-sm"></div>
                             <span className="text-red-600 ml-2">Categories</span>
