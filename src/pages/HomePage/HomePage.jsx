@@ -23,6 +23,7 @@ export default function HomePage() {
 
         // Set the end date and time for the flash sale (example date)
         const endDate = new Date("2025-04-15T00:00:00");
+       
         endDate.setHours(endDate.getHours() + timezoneOffset); // Chuyển múi giờ sang GMT+7
 
         const interval = setInterval(() => {

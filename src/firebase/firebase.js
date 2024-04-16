@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-
+import {
+  getAuth,
+  signInWithPopup,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+} from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyDGjOq5PPEwvIEEDiA4mIdwgLJVMO9cCiI",
   authDomain: "prj-md2.firebaseapp.com",
@@ -15,3 +20,20 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider(); // google authentication
+console.log("provider",provider);
+const fbAuthProvider = new FacebookAuthProvider(); // facebook authentication
+export const GoogleAuth = async () => {
+    const userAuth = await signInWithPopup(auth, provider)
+    return userAuth;
+  }
+
+export const FacebookAuth = async () => {
+    try {
+      const fbAuth =await signInWithPopup(auth, fbAuthProvider);
+      return fbAuth;
+    } catch (error) {
+      console.log(error);
+    }
+  }
