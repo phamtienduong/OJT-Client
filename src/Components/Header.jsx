@@ -17,6 +17,7 @@ import {
     ArrowLeftOnRectangleIcon
 } from "@heroicons/react/24/outline";
 import "./Header.scss";
+import { useNavigate } from "react-router-dom";
 
 import {
     ChevronDownIcon,
@@ -25,6 +26,7 @@ import {
 } from "@heroicons/react/20/solid";
 import Translate from "./Translate";
 import { Link } from "react-router-dom";
+import ScrollTop from "./ScrollTop";
 
 const products = [
     {
@@ -62,12 +64,6 @@ const callsToAction = [
     { name: "Watch demo", href: "#", icon: PlayCircleIcon },
     { name: "Contact sales", href: "#", icon: PhoneIcon },
 ];
-const products2 = [
-    { name: "My Account", href: "#", icon: UserIcon },
-    { name: "My Orders", href: "#", icon: ArchiveBoxIcon },
-    { name: "My Reviews", href: "#", icon: StarIcon },
-    { name: "Logout", href: "#", icon: ArrowLeftOnRectangleIcon },
-];
 
 const categories = [
     { name: "Mobile", href: "#", icon: UserIcon },
@@ -81,12 +77,30 @@ function classNames(...classes) {
 
 
 
-export default function Header() {
+export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const navigate = useNavigate();
+    const [userLogin, setUserLogin] = useState(
+        JSON.parse(localStorage.getItem("user_login")) || {}
+      )
+    const handleLogout = () => {
+        localStorage.clear();
+        setUserLogin({});
+        setIsLogin(false);
+        navigate("/login");  
+      };
+    const products2 = [
+        { name: "My Account", href: "/account", icon: UserIcon, },
+        { name: "My Orders", href: "/bill", icon: ArchiveBoxIcon },
+        { name: "My Reviews", href: "/review", icon: StarIcon },
+        { name: "Logout", href: "", icon: ArrowLeftOnRectangleIcon, onClick: handleLogout },
+    ];
+
 
     return (
         <header className="bg-white backGroundCo sticky top-0 z-50">
             <Translate></Translate>
+            
             <nav
                 className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
                 aria-label="Global"
@@ -118,7 +132,7 @@ export default function Header() {
                 </div>
                 <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center">
                     <Link
-                        to="/"
+                        to="/home"
                         className="text-m font-bold leading-6 text-black-800 mb-1"
                     >
                         Home
@@ -250,14 +264,16 @@ export default function Header() {
                                                         aria-hidden="true"
                                                     />
                                                 </div>
-                                                <div className="flex-auto">
-                                                    <a
-                                                        href={item.href}
+                                                <div 
+                                                onClick={item.onClick}
+                                                className="flex-auto">
+                                                    <Link
+                                                        to={item.href}
                                                         className="block font-semibold text-gray-900"
                                                     >
                                                         {item.name}
                                                         <span className="absolute inset-0" />
-                                                    </a>
+                                                    </Link>
                                                     <p className="mt-1 text-gray-600">
                                                         {item.description}
                                                     </p>

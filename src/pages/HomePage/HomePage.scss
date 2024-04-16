@@ -1,0 +1,46 @@
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .service img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 768px) {
+  .service {
+    text-align: left;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service {
+    text-align: center;
+  }
+}
+
+.container {
+  max-width: 1140px;
+}
+
+.grid {
+  gap: 4px;
+}
+
