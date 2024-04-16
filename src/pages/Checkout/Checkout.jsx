@@ -1,6 +1,45 @@
-import React from 'react'
-
+import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import { Select } from 'antd';
+const { Option } = Select;
 export default function Checkout() {
+    const [provinces, setProvinces] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [wards, setWards] = useState([]);
+
+    const [provinceCode, setProvinceCode] = useState()
+    const [districtCode, setDistrictCode] = useState()
+    const [wardCode, setWardCode] = useState()
+
+
+    const getProvinces = async () => {
+        let result = await axios.get("https://vapi.vnappmob.com/api/province/");
+        console.log(result.data.results);
+        setProvinces(result.data.results);
+    }
+
+    const handleSelectProvince = async (e) => {
+        const provinceCode = e.target.value;
+        let result = await axios.get(`https://vapi.vnappmob.com/api/province/district/${provinceCode}`);
+        console.log("district", result.data.results);
+        setProvinceCode(provinceCode)
+        setDistricts(result.data.results)
+        setDistrictCode(-1)
+        setWards([])
+        setWardCode(-1)
+    }
+
+    const handleSelectDistrict = async (e) => {
+        const districtCode = +(e.target.value);
+        let result = await axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`);
+        console.log("ward", result.data.results);
+        setDistrictCode(districtCode)
+        setWards(result.data.results)
+        setWardCode(-1)
+    }
+    useEffect(() => {
+        getProvinces();
+    }, [])
     return (
         <div>
             <div className='lg:px-28 lg:py-20 px-4 py-2'>
@@ -12,23 +51,7 @@ export default function Checkout() {
                             <div className='md:w-1/2 md:order-1 order-2'>
                                 <div className='flex flex-col'>
                                     <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">First Name</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
-                                    </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">Company Name</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
-                                    </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">Street Address</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
-                                    </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">Apartment, floor, etc.(optional)</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
-                                    </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">Town/City</label>
+                                        <label htmlFor="">Full Name</label>
                                         <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
                                     </div>
                                     <div className='flex flex-col pb-4 gap-y-1'>
@@ -39,6 +62,59 @@ export default function Checkout() {
                                         <label htmlFor="">Email Address</label>
                                         <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
                                     </div>
+
+                                    <div className='flex flex-row justify-between pb-4 gap-x-4'> {/* Adjust the gap-x-4 to a smaller value as needed */}
+                                        <div className='flex flex-col gap-y-2 w-full'>
+                                            <label htmlFor="province">Province/City</label>
+                                            <select
+                                                onChange={handleSelectProvince}
+                                                value={provinceCode}
+                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                id="province"
+                                            >
+                                                <option disabled selected value={-1}>Select province</option>
+                                                {provinces.map((item, index) => (
+                                                    <option key={index} value={item.province_id}>{item.province_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className='flex flex-col gap-y-2 w-full'>
+                                            <label htmlFor="district">District</label>
+                                            <select
+                                                onChange={handleSelectDistrict}
+                                                value={districtCode}
+                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                id="district"
+                                                disabled={!provinceCode || provinceCode === -1}
+                                            >
+                                                <option disabled selected value={-1}>Select district</option>
+                                                {districts.map((item, index) => (
+                                                    <option key={index} value={item.district_id}>{item.district_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className='flex flex-col gap-y-2 w-full'>
+                                            <label htmlFor="ward">Ward</label>
+                                            <select
+                                                onChange={(e) => setWardCode(e.target.value)}
+                                                value={wardCode}
+                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                id="ward"
+                                                disabled={!districtCode || districtCode === -1}
+                                            >
+                                                <option disabled selected value={-1}>Select ward</option>
+                                                {wards.map((item, index) => (
+                                                    <option key={index} value={item.ward_id}>{item.ward_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col pb-4 gap-y-1'>
+                                        <label htmlFor="">Note</label>
+                                        <textarea placeholder='Additional notes (Example: Delivery during office hours)' type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
+                                    </div>
+
+
                                 </div>
                                 <div className='flex gap-1'>
                                     <input type="checkbox" />
