@@ -23,7 +23,6 @@ export default function HomePage() {
 
         // Set the end date and time for the flash sale (example date)
         const endDate = new Date("2025-04-15T00:00:00");
-       
         endDate.setHours(endDate.getHours() + timezoneOffset); // Chuyển múi giờ sang GMT+7
 
         const interval = setInterval(() => {
@@ -296,6 +295,10 @@ export default function HomePage() {
                 <hr className="h-px my-8 bg-black"></hr>
 
                 {/*Category  */}
+
+                <div className="categories mb-[300px]">
+                    <div className=" ml-[120px] mt-8 w-[1285px] h-[103px]">
+
                 
                 {/* <div className="categories mb-[300px] hidden md:inline-block">
                     <div className=" ml-[120px] mt-8 w-[1285px] h-[103px] mt-[60px] ">
