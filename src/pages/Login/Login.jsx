@@ -34,7 +34,7 @@ export default function Login() {
           notification.success(res.data);
           if (res.data.data) {
             localStorage.setItem("token", res.data.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+            localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
             navigate("/home");
           }
         }
@@ -62,7 +62,7 @@ export default function Login() {
             notification.success(res.data);
             if (res.data.data) {
               localStorage.setItem("token", res.data.data.token)
-              localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+              localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
             //   setIsLogin(true)
               navigate("/home");
             }
@@ -90,7 +90,7 @@ export default function Login() {
             notification.success(res.data);
             if (res.data.data) {
                 localStorage.setItem("token", res.data.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.data.user.user_name));
+                localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
               //   setIsLogin(true)
                 navigate("/home");
               }

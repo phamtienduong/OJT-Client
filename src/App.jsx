@@ -18,6 +18,7 @@ import Footer from './Components/Footer'
 import Account from './pages/User/Account'
 import Detail from './pages/ProductDetail/Detail'
 import ScrollTop from './Components/ScrollTop'
+import { Payment } from './pages/Payment/Payment'
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false)
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="/products" element={<Products />}></Route>
               <Route path="/cart" element={<Cart />}></Route>
               <Route path="/account" element={<Account />}></Route>
+              <Route path="/payment" element={<Payment />}></Route>
               <Route path="/product_detail" element={<Detail />}></Route>
           </Route>
       </Routes>
