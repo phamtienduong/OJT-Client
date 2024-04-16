@@ -295,6 +295,10 @@ export default function HomePage() {
                 <hr className="h-px my-8 bg-black"></hr>
 
                 {/*Category  */}
+
+                <div className="categories mb-[300px]">
+                    <div className=" ml-[120px] mt-8 w-[1285px] h-[103px]">
+
                 
                 {/* <div className="categories mb-[300px] hidden md:inline-block">
                     <div className=" ml-[120px] mt-8 w-[1285px] h-[103px] mt-[60px] ">
