@@ -42,7 +42,7 @@ const Account = () => {
     };
 
     const beforeUpload = file => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/webp';
         if (!isJpgOrPng) {
             message.error('You can only upload JPG/PNG file!');
         }
@@ -106,7 +106,9 @@ const Account = () => {
         <Button key="back" onClick={handleCancel}>
             Cancel
         </Button>,
-        <Button key='submit' type="primary" onClick={handleUpdateUserInfo}>
+        <Button
+        className='bg-blue-700 hover:bg-blue-300'
+         key='submit' type="primary" onClick={handleUpdateUserInfo}>
             Save Changes
         </Button>,
     ];
@@ -120,7 +122,7 @@ const Account = () => {
                     )}
                     <h2 className="text-2xl font-semibold">{userInfo.user_name}</h2>
                     <p className="opacity-90">{userInfo.email}</p>
-                    <Button icon={<EditOutlined />} className="mt-4" type="primary" ghost onClick={showModal}>
+                    <Button icon={<EditOutlined />} className="mt-4 bg-slate-100" type="primary" ghost onClick={showModal}>
                         Edit Profile
                     </Button>
                 </div>
