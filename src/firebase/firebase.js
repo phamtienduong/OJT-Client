@@ -22,7 +22,7 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider(); // google authentication
-console.log("provider",provider);
+// console.log("provider",provider);
 const fbAuthProvider = new FacebookAuthProvider(); // facebook authentication
 export const GoogleAuth = async () => {
     const userAuth = await signInWithPopup(auth, provider)

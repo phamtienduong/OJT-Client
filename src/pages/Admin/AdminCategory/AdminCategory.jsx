@@ -54,19 +54,20 @@ export default function AdminCategory() {
         setCategoryUpdate()
     };
     const onFinish = async (values) => {
+        
         const check = category.find(item => item.category_name === values.category_name)
         if (check) {
-          message.error('Tên sản phẩm đã tồn tại')
+          message.error('Product name already exists!')
         } else {
           if (categoryUpdate) {
-           const result = await publicAxios.patch(`/api/v1/categories/update/${categoryUpdate.category_id}`, values)
+           const result = await publicAxios.patch(`/api/v1/category/update/${categoryUpdate.category_id}`, values)
            if (result.status == 200) {
             message.success(result.data.message)
            }
           } else {
-            const result = await publicAxios.post("/api/v1/categories/create", values)
-            console.log(result.data);
-            if (result.status == 200) {
+            const result = await publicAxios.post("/api/v1/category/create", values)
+            // console.log(result.data);
+            if (result.status == 201) {
               message.success(result.data.message)
              }
           }
@@ -81,12 +82,12 @@ export default function AdminCategory() {
 
     const getCategories = async () => {
         try {
-            const res = await publicAxios.get("/api/v1/categories/list");
-
-            setCategory(res.data.data);
+            const res = await publicAxios.get("/api/v1/category/get-list");
+            // console.log(res.data);
+            setCategory(res.data);
         } catch (error) {
             console.log(error);
-            message.error('Đã có lỗi xảy ra');
+            message.error('An error has occurred');
         }
     }
 
@@ -94,16 +95,17 @@ export default function AdminCategory() {
         getCategories();
     }, [])
     const handleOkeDelete = async (id) => {
-        const result = await publicAxios.delete(`/api/v1/categories/delete/${id}`)
+        const result = await publicAxios.delete(`/api/v1/category/delete/${id}`)
+        // console.log(result);
         if (result.status == 200) {
           message.success(result.data.message)
           getCategories()
         } else {
-          message.error("Xoá thất bại")
+          message.error("Delete failed")
         }
       }
       const handleClickEdit = (category) => {
-        console.log(category);
+        // console.log(category);
         form.setFieldsValue({
           ...category
         })
@@ -132,7 +134,7 @@ export default function AdminCategory() {
                     autoComplete="off"
                 >
                     <Form.Item
-                        label="Thêm Loại Sản Phẩm"
+                        label="Add category"
                         name="category_name"
                         rules={[{ required: true, message: 'Please input your category!' }]}
                     >

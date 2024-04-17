@@ -33,11 +33,11 @@ const columns = (handleChangeActive) => [
 
     },
     {
-        title: 'Active',
-        key: 'active',
-        dataIndex: 'active',
-        render: (active) => <Space style={{ marginLeft: "20px", fontSize: 20 }}>
-            {active == 0 ? <i class="fa-solid fa-unlock"></i> : <i class=" fa-solid fa-lock"></i>}
+        title: 'Status',
+        key: 'status',
+        dataIndex: 'status',
+        render: (status) => <Space style={{ marginLeft: "20px", fontSize: 20 }}>
+            {status == 0 ? <i class="fa-solid fa-unlock"></i> : <i class=" fa-solid fa-lock"></i>}
         </Space>
 
     },
@@ -46,7 +46,7 @@ const columns = (handleChangeActive) => [
         render: (_, user) => (
             <>
                 <Button onClick={() => handleChangeActive(user)}>
-                    {user.active == 0 ? "Ban" : "Active"}
+                    {user.status == 0 ? "Ban" : "Active"}
                 </Button>
             </>
         )
