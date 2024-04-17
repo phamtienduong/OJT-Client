@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {  Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm } from 'antd';
+import { Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm } from 'antd';
 import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from "../../../helper/formatMoney";
@@ -19,9 +19,9 @@ const columns = (handleOkeDelete, handleClickEdit) => [
     },
     {
         title: 'Image',
-        dataIndex: 'image',
-        key: 'image',
-        render: (image) => <Image src={image} width={100} />
+        dataIndex: 'default_image',
+        key: 'default_image',
+        render: (default_image) => <Image src={default_image} width={100} />
     },
     {
         title: 'NameProduct',
@@ -41,11 +41,6 @@ const columns = (handleOkeDelete, handleClickEdit) => [
         render: (price) => <>{formatCurrency(+price)} </>
     },
     {
-        title: 'Stock',
-        dataIndex: 'stock',
-        key: 'stock',
-    },
-    {
         title: 'Discount',
         dataIndex: 'discount',
         key: 'discount',
@@ -54,7 +49,7 @@ const columns = (handleOkeDelete, handleClickEdit) => [
         title: 'Action',
         key: 'action',
         render: (_, product) => (<>
-            <Button  onClick={() => handleClickEdit(product)}>Edit</Button>
+            <Button onClick={() => handleClickEdit(product)}>Edit</Button>
 
 
             <Popconfirm className='ml-2'
@@ -86,8 +81,9 @@ export default function AdminProducts() {
     const [categories, setCategories] = useState([]);
     const [fileImage, setFileImage] = useState()
     const [form] = Form.useForm()
-
+const [flag,setFlag]  = useState(true)
     const [search, setSearch] = useState("")
+    const [cateChange, setCateChange] = useState("")
 
 
     const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -110,29 +106,32 @@ export default function AdminProducts() {
         setProductUpdate()
     };
     const getAllProduct = async () => {
-        const res = await publicAxios.get("/api/v1/products/list")
-        setProducts(res.data.data.reverse())
+        const res = await publicAxios.get("/api/v1/products/get-list")
+        console.log(res.data);
+        setProducts(res.data)
 
     }
     const getCategories = async () => {
-        const result = await publicAxios.get("/api/v1/categories/list")
-        setCategories(result.data.data)
+        const result = await publicAxios.get("/api/v1/category/get-list")
+        console.log(result.data);
+        setCategories(result.data)
     }
     // console.log(products);
     useEffect(() => {
         getAllProduct();
         getCategories();
-    }, []);
+    }, [flag]);
     const handleChangeImage = (e) => {
         setFileImage(e.target.files[0])
     }
-
-    const handleChangeCategory = (value) => {
-
+    const handleChangeCategory = (e) => {
+        
     };
+    // console.log(cateChange);
     // hàm thêm hoặc sửa sp
     const onFinish = async (values) => {
         // console.log(values);
+console.log(values);
 
         // nếu có thông tin về sản phẩm cần sửa thì sẽ sửa
         if (productUpdate) {
@@ -154,9 +153,8 @@ export default function AdminProducts() {
                         price: values.price,
                         description: values.description,
                         category: values.category_id,
-                        stock: values.stock,
                         discount: values.discount,
-                        image: url
+                        default_image: url
                     }
                 } else {
                     message.error('Upload Image Failed!')
@@ -166,18 +164,15 @@ export default function AdminProducts() {
                 // lấy thông tin mới và giữ lại ảnh cũ
                 newProduct = {
                     product_name: values.product_name,
-                    price: values.price,
+                    price: parseInt(values.price),
                     description: values.description,
-                    category: values.category_id,
-                    stock: values.stock,
-                    discount: values.discount
-                    ,
-                    image: productUpdate.image
+                    category_id: values.category_id,
+                    discount: values.discount,
+                    default_image: productUpdate.default_image
                 }
             }
             // gửi dữ liệu lên db
             const result = await publicAxios.patch(`/api/v1/products/update/${productUpdate.product_id}`, newProduct)
-            console.log(result);
             if (result.status == 200) {
                 message.success("Sửa thành công")
                 form.resetFields() // xoá thông tin nhập nơi form
@@ -205,9 +200,8 @@ export default function AdminProducts() {
                     price: values.price,
                     description: values.description,
                     category: values.category_id,
-                    stock: values.stock,
                     discount: values.discount,
-                    image: url
+                    default_image: url
                 }
                 // gửi thông tin lên db
                 const result = await publicAxios.post("/api/v1/products/create", newProduct)
@@ -242,17 +236,20 @@ export default function AdminProducts() {
     }
 
     // khi click nút edit
-const handleClickEdit = (product) => {
-    console.log(product);
-    // Set field values using form.setFieldsValue()
-    form.setFieldsValue({
-        ...product
-    });
-    // Save product update information
-    setProductUpdate(product)
-    // Open the modal
-    setIsModalOpen(true)
-}
+    const handleClickEdit = (product) => {
+        let findProd = products.find(item => item.product_id == product.product_id)
+        
+        setCateChange(findProd.category_id.category_name)
+        // console.log(categories);
+        // Set field values using form.setFieldsValue()
+        form.setFieldsValue({
+            ...product
+        });
+        // Save product update information
+        setProductUpdate(product)
+        // Open the modal
+        setIsModalOpen(true)
+    }
 
 
     const handleClickSearch = async (value) => {
@@ -263,7 +260,7 @@ const handleClickEdit = (product) => {
     }
 
 
-
+console.log(cateChange);
     return (
         <div>
             {
@@ -276,7 +273,7 @@ const handleClickEdit = (product) => {
                         onCancel={handleCancel}
                         footer={<></>}>
                         <Form
-                        form={form}
+                            form={form}
                             labelCol={{ span: 4 }}
                             wrapperCol={{ span: 20 }}
                             style={{ maxWidth: 800 }}
@@ -291,6 +288,7 @@ const handleClickEdit = (product) => {
                             >
                                 <Select
                                     defaultValue={"Chọn Category"}
+                                    // value={cateChange}
                                     style={{ width: 220 }}
                                     onChange={handleChangeCategory}
                                     options={categories.map((item) => {
@@ -304,7 +302,7 @@ const handleClickEdit = (product) => {
                             </Form.Item>
                             <Form.Item
                                 label="product_name"
-                                name="product_name"                     
+                                name="product_name"
                                 rules={[{ required: true, message: 'Please input product name!' }]}
                             >
                                 <Input />
@@ -317,15 +315,8 @@ const handleClickEdit = (product) => {
                                 <Input type='number' />
                             </Form.Item>
                             <Form.Item
-                                label="stock"
-                                name="stock"
-                                rules={[{ required: true, message: 'Please input product stock!' }]}
-                            >
-                                <Input type='number' />
-                            </Form.Item>
-                            <Form.Item
                                 label="discount"
-                                name="discount"                          
+                                name="discount"
                                 rules={[{ required: true, message: 'Please input product discount!' }]}
                             >
                                 <Input type='number' />
@@ -337,9 +328,9 @@ const handleClickEdit = (product) => {
                             >
                                 <Input />
                             </Form.Item>
-                            <Form.Item label="image" name="image" htmlFor='file-image'>
+                            <Form.Item label="default_image" name="default_image" htmlFor='file-image'>
                                 <Input id='file-image' type='file' style={{ display: "none" }} onChange={handleChangeImage} />
-                                <Image src={productUpdate?.product_id ? productUpdate.image : fileImage ? URL.createObjectURL(fileImage) : ""} alt='image' width={100} />
+                                <Image src={productUpdate?.product_id ? productUpdate.default_image : fileImage ? URL.createObjectURL(fileImage) : ""} alt='default_image' width={100} />
                             </Form.Item>
                             <Form.Item wrapperCol={{ offset: 12, span: 12 }}>
                                 <Button className='bg-blue-600' type="primary" htmlType="submit">Add</Button>
@@ -370,7 +361,7 @@ const handleClickEdit = (product) => {
                             </Space>
                         </div>
                     </div>
-                    <Table pagination={{ pageSize: 5 }} dataSource={products} style={{ marginBottom: "20px" }} columns={columns(handleOkeDelete,handleClickEdit )} />
+                    <Table pagination={{ pageSize: 5 }} dataSource={products} style={{ marginBottom: "20px" }} columns={columns(handleOkeDelete, handleClickEdit)} />
                 </div>
             </div>
         </div>

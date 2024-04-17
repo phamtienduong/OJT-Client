@@ -40,7 +40,7 @@ export default function LayoutAdmin() {
        if(confirm1){
         localStorage.removeItem("user_login");
         localStorage.removeItem("admin_token");
-        navigate("/auth/admin");
+        navigate("/login");
        }
    };
    const handleAvatar = () => {
@@ -89,6 +89,11 @@ export default function LayoutAdmin() {
                           key: "/ad_products",
                           icon: <FolderAddOutlined />,
                           label: "Products",
+                      },
+                      {
+                          key: "/ad_product_info",
+                          icon: <FolderAddOutlined />,
+                          label: "Product_InFo",
                       },
                       {
                           key: "/ad_bill",

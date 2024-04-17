@@ -8,6 +8,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import DashBoard from "../Dashboard/DashBoard";
 import LoginAdmin from "../Login/LoginAdmin";
 import AdminReview from "../AdminReview/AdminReview";
+import AdminProductInfo from "../AdminProductInfo/AdminProductInfo";
 // import PrivateRouter from "../privateRouter/PrivateRouter";
 
 export default function AppRouters() {
@@ -41,6 +42,7 @@ export default function AppRouters() {
                         />
                         <Route path="/ad_bill" element={<AdminBill />} />
                         <Route path="/ad_review" element={<AdminReview />} />
+                        <Route path="/ad_product_info" element={<AdminProductInfo />} />
                     </Route>
                 {/* </Route> */}
             </Routes>
