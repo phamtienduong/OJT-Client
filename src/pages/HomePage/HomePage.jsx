@@ -22,7 +22,11 @@ export default function HomePage() {
         const timezoneOffset = 7; // Múi giờ của Việt Nam (GMT+7)
 
         // Set the end date and time for the flash sale (example date)
-        const endDate = new Date("2025-04-15T00:00:00");
+
+        const endDate = new Date('2025-04-16T00:00:00');
+
+
+
         endDate.setHours(endDate.getHours() + timezoneOffset); // Chuyển múi giờ sang GMT+7
 
         const interval = setInterval(() => {
@@ -75,55 +79,62 @@ export default function HomePage() {
             id: 1,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 35,
             color: "Black",
+            discount: 0.2,
         },
         {
-            id: 1,
+            id: 2,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 30,
             color: "Black",
+            discount: 0.4,
         },
         {
-            id: 1,
+            id: 3,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 39,
             color: "Black",
+            discount: 0,
         },
         {
-            id: 1,
+            id: 4,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 35,
             color: "Black",
+            discount: 0.12,
         },
         {
-            id: 1,
+            id: 5,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 35,
             color: "Black",
+            discount: 0.3,
         },
         {
-            id: 1,
+            id: 6,
             name: "Basic Tee",
             href: "#",
-            imageSrc: "../../../src/assets/img/g92-2-500x500 1.png",
+            imageSrc: "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-13_2_.png",
             imageAlt: "Front of men's Basic Tee in black.",
-            price: "$35",
+            price: 3567,
             color: "Black",
+            discount: 0,
+
         },
     ];
 
@@ -222,77 +233,59 @@ export default function HomePage() {
                     </div>
                 </div>
                 {/* Products List */}
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-8">
-                    {flashProducts.map((item) => (
-                        <div className="ml-0 md:ml-1">
-                            <div className="w-full h-[350px]">
-                                <div className="w-full h-[250px] border flex items-center justify-center content-center bg-neutral-100">
-                                    <div className="w-[50%] h-[80%] flex items-center">
-                                        <img
-                                            src={item.imageSrc}
-                                            className="max-w-full max-h-full"
-                                            alt="Product Image"
-                                        />
-                                    </div>
+                <div className="ml-6 mr-6 lg:col-span-3">
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
+                        {flashProducts.map((product) => (
+                            <a
+                                key={product.id}
+                                href={product.href}
+                                className="group border p-0 w-2/3 m-auto"
+                            >
+                                <div className="relative">
+                                    {product.discount !== 0 && (
+                                        <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center">
+                                            <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex">
-                                    <div className="w-[30%] h-[26px] bg-red-600 rounded-sm flex justify-center content-center mt-[-240px] ml-3">
-                                        <p className="text-[14px] text-white">
-                                            -40%
-                                        </p>
-                                    </div>
-                                    <div className="w-[10%] h-[76px] mt-[-240px] ml-[50%]">
-                                        <button className="w-[34px] h-[34px] bg-white border flex justify-center content-center items-center mb-2 rounded-full">
-                                            <AiOutlineHeart />
-                                        </button>
-                                        <button className="w-[34px] h-[34px] bg-white border flex justify-center content-center items-center rounded-full">
-                                            <AiFillEye />
-                                        </button>
-                                    </div>
+                                <div className="aspect-h-1 border aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+                                    <img
+                                        src={product.imageSrc}
+                                        alt={product.imageAlt}
+                                        className="h-full w-full object-cover object-center group-hover:opacity-75"
+                                    />
                                 </div>
-                                <div className="w-full h-[41px] bg-black flex items-center justify-center mt-[-40px]">
-                                    <button className="text-white">
-                                        Add to cart
-                                    </button>
-                                </div>
-                            </div>
-                            {/* Product Info */}
-                            <div className="w-full h-[84px] mt-[-85px] flex-col content-evenly">
-                                <h1 className="text-[16px] font-bold">
-                                    HAVIT HV-G92 Gamepad
-                                </h1>
-                                <div className="flex items-center">
-                                    <p className="text-[16px] text-red-600">
-                                        {item.price}
-                                    </p>
-                                    <p className="text-[16px] ml-2 line-through">
-                                        $160
+                                <h3 className="mt-4 text-sm text-gray-700 text-center">
+                                    {product.name}
+                                </h3>
+                                <div className=" flex justify-center mt-1 text-lg font-medium text-gray-900 text-center">
+                                    <p className="text-lg  font-medium text-gray-900 line-through ">{product.price} </p>
+                                    <p className="text-lg ml-2 font-medium text-red-600">
+                                        {(product.price * (1 - product.discount)).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                     </p>
                                 </div>
-                                <div className="w-[140px] h-[20px] flex">
-                                    <div className="flex">
-                                        {/* Rendering Stars */}
-                                        {[...Array(5)].map((_, index) => (
-                                            <button
-                                                key={index}
-                                                className="bg-white hover:bg-yellow-400"
-                                            >
-                                                <AiOutlineStar />
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                                <p className="mt-1 text-lg font-medium text-gray-900 text-center">
+                                    {[...Array(5)].map((_, index) => (
+                                        <button
+                                            key={index}
+                                            className="bg-white hover:bg-yellow-400"
+                                        >
+                                            <AiOutlineStar />
+                                        </button>
+                                    ))}
+                                </p>
+                            </a>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="flex justify-center content-center items-center">
+                <div className="flex mt-7 justify-center content-center items-center">
                     <button className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
                         View All Products
                     </button>
                 </div>
                 <hr className="h-px my-8 bg-black"></hr>
+
 
                 {/* Seller */}
                 <div className="products_sale">
@@ -309,6 +302,7 @@ export default function HomePage() {
                                     Best Selling Products
                                 </h1>
                             </div>
+
                         </div>
                     </div>
                     {/* Products List */}
@@ -554,6 +548,8 @@ export default function HomePage() {
                                         />
                                     </div>
 
+
+ 
                                     <div>
                                         <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
                                             MONEY BACK GUARANTEE
@@ -569,5 +565,6 @@ export default function HomePage() {
                 </div>
             </div>
         </div>
+
     );
 }
