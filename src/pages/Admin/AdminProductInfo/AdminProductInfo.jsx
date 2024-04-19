@@ -12,11 +12,12 @@ import {
     Popconfirm,
 } from "antd";
 import publicAxios from "../../../config/publicAxios";
-import { uploadImage } from "../../../common/upload/index";
+// import { uploadImage } from "../../../common/upload/index";
 import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
-import { uploadImage } from '../../../common/upload';
+// import { uploadImage } from '../../../common/upload';
+import { uploadImage } from "../../../common/upload";
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: "STT",
