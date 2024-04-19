@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm } from 'antd';
+import React, { useEffect, useState } from "react";
+import {
+    Image,
+    Table,
+    Modal,
+    Form,
+    Input,
+    Select,
+    message,
+    Space,
+    Button,
+    Popconfirm,
+} from "antd";
 import publicAxios from "../../../config/publicAxios";
-
+import { uploadImage } from "../../../common/upload/index";
 import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
@@ -20,9 +31,11 @@ const columns = (handleOkeDelete, handleClickEdit) => [
     },
     {
         title: "Images",
+
         dataIndex: "image",
         key: "image",
         render: (image) => <Image src={image} width={100} />,
+
     },
     {
         title: "NameProduct",
@@ -57,7 +70,9 @@ const columns = (handleOkeDelete, handleClickEdit) => [
                     title="Delete product"
                     description="Are you sure to delete this task?"
                     onConfirm={() => handleOkeDelete(product)}
+
                     onCancel={() => { }}
+
                     okText="Yes"
                     cancelText="No"
                 >
@@ -84,6 +99,8 @@ export default function AdminProductInfo() {
     const [form] = Form.useForm();
     const [flag, setFlag] = useState(true);
     const [search, setSearch] = useState("");
+    const [cateChange, setCateChange] = useState("");
+
     const [onAdd, setOnAdd] = useState("");
     const onSearch = (value, _e, info) => console.log(info?.source, value);
     const [product_info_id, setProduct_info_id] = useState();
@@ -116,7 +133,7 @@ export default function AdminProductInfo() {
     };
     const getCategories = async () => {
         const result = await publicAxios.get("/api/v1/category/get-list");
-        // console.log(result.data);
+
         setCategories(result.data);
     };
     // console.log(products);
@@ -127,6 +144,7 @@ export default function AdminProductInfo() {
     }, [flag]);
     const [fileImages, setFileImages] = useState({});
 
+
    
       
         const handleChangeImages = async (e) => {
@@ -134,6 +152,7 @@ export default function AdminProductInfo() {
             setFileImages(url)
         }
     // console.log(setFileImages)
+
     // hàm thêm hoặc sửa sp
     const onFinish = async (values) => {
         // console.log(values);
@@ -151,7 +170,9 @@ export default function AdminProductInfo() {
                     color: values.color,
                     ram: values.ram,
                     stock: values.stock,
+
                     image: fileImages,
+
                 };
             } else {
                 // sửa sản phẩm và không cập nhật ảnh
@@ -160,7 +181,9 @@ export default function AdminProductInfo() {
                     color: values.color,
                     ram: values.ram,
                     stock: values.stock,
+
                    image:fileImages
+
                 };
             }
             // gửi dữ liệu lên db
@@ -192,7 +215,9 @@ export default function AdminProductInfo() {
                 color: values.color,
                 ram: values.ram,
                 stock: values.stock,
+
                 image: fileImages,
+
             };
             // gửi thông tin lên db
             const result = await publicAxios.post(
@@ -215,6 +240,7 @@ export default function AdminProductInfo() {
     // console.log(onAdd);
     // xoá sp
     const handleOkeDelete = async (id) => {
+
         // console.log(id);
         const product_id = id.product_id.product_id;
         const product_info_id = id.product_info_id
@@ -223,6 +249,7 @@ export default function AdminProductInfo() {
             `api/v1/product-info/delete/${product_id}/${product_info_id}`
         );
         // console.log(result);
+
         if (result.status == 200) {
             message.success(result.data.message);
             getAllProduct();
@@ -248,11 +275,14 @@ export default function AdminProductInfo() {
     };
 
     const handleClickSearch = async (value) => {
+
         // console.log(value);
         const result = await publicAxios.get(
             `api/v1/products/search?key=${value}`
         );
         // console.log(result);
+
+
         setProducts(result.data);
     };
 
@@ -264,6 +294,7 @@ export default function AdminProductInfo() {
         setListRender(res.data);
     };
     // console.log(linkedProduct)
+
     const takeImage = () => {
         const listImg = listRender?.map((item) => {
             item.impds.map((item2) => {
@@ -277,6 +308,7 @@ export default function AdminProductInfo() {
         // console.log(listImg)
     }
     takeImage()
+
     return (
         <div>
             {isModalOpen && (
@@ -299,6 +331,7 @@ export default function AdminProductInfo() {
                         autoComplete="off"
                     >
                         {onAdd == "Adding" && (
+
                             <Form.Item
                                 label="product_name"
                                 name="product_name"
@@ -384,13 +417,12 @@ export default function AdminProductInfo() {
                                 <Image
                                     src={
                                         fileImages
+
                                     }
                                     alt="default_image"
                                     width={100}
                                 />
                             </Form.Item>
-
-
 
                         </div>
                         <Form.Item wrapperCol={{ offset: 12, span: 12 }}>
