@@ -6,7 +6,7 @@ const withAuthProtection = (Component) => {
   
     // return (props) => {
     //     if (!isAuthenticated) {
-    //         return <Navigate to="/auth/admin" />;
+    //         return <Navigate to="/" />;
     //     } else {
     //         return <Component {...props} />;
     //     }

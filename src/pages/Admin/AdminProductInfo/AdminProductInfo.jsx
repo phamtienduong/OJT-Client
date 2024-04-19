@@ -16,6 +16,7 @@ import { uploadImage } from "../../../common/upload/index";
 import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
+import { uploadImage } from '../../../common/upload';
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: "STT",
@@ -30,28 +31,11 @@ const columns = (handleOkeDelete, handleClickEdit) => [
     },
     {
         title: "Images",
-        dataIndex: "images",
-        key: "images",
-        render: (images) => (
-            <>
-                {images.map((item) => {
-                    // Tách các URL riêng biệt nếu image_path chứa nhiều URL cách nhau bởi dấu phẩy
-                    const paths = item.image_path.split(",");
-                    // Render mỗi URL dưới dạng ảnh riêng biệt
-                    return paths.map((path, index) =>
-                        path ? (
-                            <img
-                                key={index}
-                                src={path}
-                                alt={`product-${item.image_id}`}
-                                width={50}
-                                style={{ padding: "5px" }}
-                            />
-                        ) : null
-                    );
-                })}
-            </>
-        ),
+
+        dataIndex: "image",
+        key: "image",
+        render: (image) => <Image src={image} width={100} />,
+
     },
     {
         title: "NameProduct",
@@ -86,7 +70,9 @@ const columns = (handleOkeDelete, handleClickEdit) => [
                     title="Delete product"
                     description="Are you sure to delete this task?"
                     onConfirm={() => handleOkeDelete(product)}
-                    onCancel={() => {}}
+
+                    onCancel={() => { }}
+
                     okText="Yes"
                     cancelText="No"
                 >
@@ -114,6 +100,7 @@ export default function AdminProductInfo() {
     const [flag, setFlag] = useState(true);
     const [search, setSearch] = useState("");
     const [cateChange, setCateChange] = useState("");
+
     const [onAdd, setOnAdd] = useState("");
     const onSearch = (value, _e, info) => console.log(info?.source, value);
     const [product_info_id, setProduct_info_id] = useState();
@@ -146,7 +133,7 @@ export default function AdminProductInfo() {
     };
     const getCategories = async () => {
         const result = await publicAxios.get("/api/v1/category/get-list");
-        console.log(result.data);
+
         setCategories(result.data);
     };
     // console.log(products);
@@ -157,21 +144,15 @@ export default function AdminProductInfo() {
     }, [flag]);
     const [fileImages, setFileImages] = useState({});
 
-    const handleChangeImage = async (e, index) => {
-        // console.log(index)
-        const file = e.target.files[0];
-        if (file) {
-            const url = await uploadImage(file);
-            console.log(url);
-            // Cập nhật trạng thái với URL mới bằng cách thêm vào đối tượng fileImages
-            setFileImages((prevImages) => ({
-                ...prevImages,
-                [index]: url, // Sử dụng index làm key
-            }));
-            // setFileImages(Object.values(fileImages));
+
+   
+      
+        const handleChangeImages = async (e) => {
+            const url = await uploadImage(e.target.files[0])
+            setFileImages(url)
         }
-    };
-    console.log(fileImages)
+    // console.log(setFileImages)
+
     // hàm thêm hoặc sửa sp
     const onFinish = async (values) => {
         // console.log(values);
@@ -189,9 +170,9 @@ export default function AdminProductInfo() {
                     color: values.color,
                     ram: values.ram,
                     stock: values.stock,
-                    category: values.category_id,
-                    discount: values.discount,
-                    image_path: fileImages,
+
+                    image: fileImages,
+
                 };
             } else {
                 // sửa sản phẩm và không cập nhật ảnh
@@ -200,9 +181,9 @@ export default function AdminProductInfo() {
                     color: values.color,
                     ram: values.ram,
                     stock: values.stock,
-                    category: values.category_id,
-                    discount: values.discount,
-                    // image_path: productUpdate.default_image,
+
+                   image:fileImages
+
                 };
             }
             // gửi dữ liệu lên db
@@ -234,7 +215,9 @@ export default function AdminProductInfo() {
                 color: values.color,
                 ram: values.ram,
                 stock: values.stock,
-                image_path: fileImages,
+
+                image: fileImages,
+
             };
             // gửi thông tin lên db
             const result = await publicAxios.post(
@@ -257,14 +240,16 @@ export default function AdminProductInfo() {
     // console.log(onAdd);
     // xoá sp
     const handleOkeDelete = async (id) => {
-        console.log(id);
+
+        // console.log(id);
         const product_id = id.product_id.product_id;
         const product_info_id = id.product_info_id
-        console.log(product_id, product_info_id);
+        // console.log(product_id, product_info_id);
         const result = await publicAxios.delete(
             `api/v1/product-info/delete/${product_id}/${product_info_id}`
         );
-        console.log(result);
+        // console.log(result);
+
         if (result.status == 200) {
             message.success(result.data.message);
             getAllProduct();
@@ -290,11 +275,14 @@ export default function AdminProductInfo() {
     };
 
     const handleClickSearch = async (value) => {
-        console.log(value);
+
+        // console.log(value);
         const result = await publicAxios.get(
             `api/v1/products/search?key=${value}`
         );
-        console.log(result);
+        // console.log(result);
+
+
         setProducts(result.data);
     };
 
@@ -306,19 +294,21 @@ export default function AdminProductInfo() {
         setListRender(res.data);
     };
     // console.log(linkedProduct)
-   const takeImage = ()=>{
-    const listImg = products.map((item)=>{
-         item.images.map((item2)=>{
-            const paths = item2.image_path.split(",");
-            return paths
-         })
-    })
-    const listImg2 = listImg.map((item)=>{
-        return item
-    })
-    // console.log(listImg)
-   }
-   takeImage()
+
+    const takeImage = () => {
+        const listImg = listRender?.map((item) => {
+            item.impds.map((item2) => {
+                
+                return item2.url
+            })
+        })
+        // const listImg2 = listImg.map((item) => {
+        //     return item
+        // })
+        // console.log(listImg)
+    }
+    takeImage()
+
     return (
         <div>
             {isModalOpen && (
@@ -341,6 +331,7 @@ export default function AdminProductInfo() {
                         autoComplete="off"
                     >
                         {onAdd == "Adding" && (
+
                             <Form.Item
                                 label="product_name"
                                 name="product_name"
@@ -363,9 +354,9 @@ export default function AdminProductInfo() {
                                         };
                                     })}
                                 />
-                                
+
                             </Form.Item>
-                            
+
                         )}
                         <Form.Item
                             label="color"
@@ -406,82 +397,33 @@ export default function AdminProductInfo() {
 
                         <div
                             className="flex
-                           justify-end
+                           justify-center
                            items-center
                            gap-4
                            "
                         >
                             <Form.Item
-                                label="default_image"
-                                name="default_image"
-                                htmlFor="file-image-1"
+                                label="image"
+                                name="image"
+                                htmlFor="file-image"
                             >
                                 <Input
-                                    id="file-image-1"
+                                    id="file-image"
                                     type="file"
                                     style={{ display: "none" }}
-                                    onChange={(e) => handleChangeImage(e, 0)}
+                                    accept="image/*"
+                                    onChange={handleChangeImages}
                                 />
                                 <Image
                                     src={
-                                        productUpdate?.product_id
-                                            ? productUpdate.image
-                                            : fileImage
-                                            ? URL.createObjectURL(fileImage)
-                                            : ""
+                                        fileImages
+
                                     }
                                     alt="default_image"
                                     width={100}
                                 />
                             </Form.Item>
 
-                            <Form.Item
-                                label="default_image"
-                                name="default_image"
-                                htmlFor="file-image-2"
-                            >
-                                <Input
-                                    id="file-image-2"
-                                    type="file"
-                                    style={{ display: "none" }}
-                                    onChange={(e) => handleChangeImage(e, 1)}
-                                />
-                                <Image
-                                    src={
-                                        productUpdate?.product_id
-                                            ? productUpdate.image
-                                            : fileImage
-                                            ? URL.createObjectURL(fileImage)
-                                            : ""
-                                    }
-                                    alt="default_image"
-                                    width={100}
-                                />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="default_image"
-                                name="default_image"
-                                htmlFor="file-image-3"
-                            >
-                                <Input
-                                    id="file-image-3"
-                                    type="file"
-                                    style={{ display: "none" }}
-                                    onChange={(e) => handleChangeImage(e, 2)}
-                                />
-                                <Image
-                                    src={
-                                        productUpdate?.product_id
-                                            ? productUpdate.image
-                                            : fileImage
-                                            ? URL.createObjectURL(fileImage)
-                                            : ""
-                                    }
-                                    alt="default_image"
-                                    width={100}
-                                />
-                            </Form.Item>
                         </div>
                         <Form.Item wrapperCol={{ offset: 12, span: 12 }}>
                             <Button

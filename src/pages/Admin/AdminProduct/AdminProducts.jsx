@@ -5,6 +5,7 @@ import publicAxios from "../../../config/publicAxios";
 import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
+import {uploadImage} from "../../../common/upload"
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'STT',
@@ -81,13 +82,31 @@ export default function AdminProducts() {
     const [categories, setCategories] = useState([]);
     const [fileImage, setFileImage] = useState()
     const [form] = Form.useForm()
-const [flag,setFlag]  = useState(true)
+    const [flag,setFlag]  = useState(true)
     const [search, setSearch] = useState("")
     const [cateChange, setCateChange] = useState("")
+    const [images, setImages] = useState(["", "", ""])
 
+    
+    // const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-    const onSearch = (value, _e, info) => console.log(info?.source, value);
+    // console.log(productUpdate);
+    const handleChangeImages = async (e, index) => {
+        const url = await uploadImage(e.target.files[0])
 
+        if(productUpdate?.product_id) {
+            console.log("change images", {id: productUpdate.impds[index].id, url });
+            await publicAxios.put(`/api/v1/products/update-impds`, {id: productUpdate.impds[index].id, url })
+            const newImages = [...images]
+            newImages[index] = url
+            setImages(newImages)
+            return
+        } 
+        console.log("add images");
+        const newImages = [...images]
+        newImages[index] = url
+        setImages(newImages)
+    }
     // hien thi modal 
     const showModal = () => {
         setIsModalOpen(true);
@@ -97,13 +116,16 @@ const [flag,setFlag]  = useState(true)
         setIsModalOpen(false);
     };
     // tat modal
-    const handleCancel = () => {
+    const handleCancel = async () => {
         // xoá các trường đã nhập
         form.resetFields()
         // tắt modal
         setIsModalOpen(false);
         // set lại thông tin cần update
         setProductUpdate()
+
+        setImages(["", "", ""])
+        await getAllProduct()
     };
     const getAllProduct = async () => {
         const res = await publicAxios.get("/api/v1/products/get-list")
@@ -113,7 +135,7 @@ const [flag,setFlag]  = useState(true)
     }
     const getCategories = async () => {
         const result = await publicAxios.get("/api/v1/category/get-list")
-        console.log(result.data);
+        // console.log(result.data);
         setCategories(result.data)
     }
     // console.log(products);
@@ -154,7 +176,7 @@ console.log(values);
                         description: values.description,
                         category: values.category_id,
                         discount: values.discount,
-                        default_image: url
+                        default_image: url,
                     }
                 } else {
                     message.error('Upload Image Failed!')
@@ -168,7 +190,7 @@ console.log(values);
                     description: values.description,
                     category_id: values.category_id,
                     discount: values.discount,
-                    default_image: productUpdate.default_image
+                    default_image: productUpdate.default_image,
                 }
             }
             // gửi dữ liệu lên db
@@ -199,17 +221,20 @@ console.log(values);
                     product_name: values.product_name,
                     price: values.price,
                     description: values.description,
-                    category: values.category_id,
+                    category_id: values.category_id,
                     discount: values.discount,
-                    default_image: url
+                    default_image: url,
+                    images
                 }
+                // console.log("===>>> :: ", newProduct);
                 // gửi thông tin lên db
                 const result = await publicAxios.post("/api/v1/products/create", newProduct)
-                console.log(result);
+                // console.log(" === >>> :: result :::",result);
                 if (result.status == 201) {
                     message.success("Thêm mới thành công")
                     form.resetFields()
                     setFileImage()
+                    setImages(["", "", ""])
                     await getAllProduct()
                 } else {
                     message.error('Thêm mới thất bại')
@@ -224,9 +249,9 @@ console.log(values);
 
     // xoá sp
     const handleOkeDelete = async (id) => {
-        console.log(id);
+        // console.log(id);
         const result = await publicAxios.delete(`/api/v1/products/delete/${id}`)
-        console.log(result);
+        // console.log(result);
         if (result.status == 200) {
             message.success(result.data.message)
             getAllProduct()
@@ -237,30 +262,31 @@ console.log(values);
 
     // khi click nút edit
     const handleClickEdit = (product) => {
-        let findProd = products.find(item => item.product_id == product.product_id)
+        // let findProd = products.find(item => item.product_id == product.product_id)
         
-        setCateChange(findProd.category_id.category_name)
+        // setCateChange(findProd.category_id.category_name)
         // console.log(categories);
         // Set field values using form.setFieldsValue()
         form.setFieldsValue({
             ...product
         });
+        form.setFieldValue("category_id", product.category_id.category_id)
         // Save product update information
         setProductUpdate(product)
         // Open the modal
         setIsModalOpen(true)
+        // setImages(product.impds)
     }
 
 
     const handleClickSearch = async (value) => {
-        console.log(value);
+        // console.log(value);
         const result = await publicAxios.get(`api/v1/products/search?key=${value}`)
-        console.log(result);
+        // console.log(result);
         setProducts(result.data)
     }
 
-
-console.log(cateChange);
+// console.log(cateChange);
     return (
         <div>
             {
@@ -287,7 +313,7 @@ console.log(cateChange);
                                 rules={[{ required: true, message: 'Please select a category!' }]}
                             >
                                 <Select
-                                    defaultValue={"Chọn Category"}
+                                    defaultValue={productUpdate?.category_id?.category_id || "--Select Category--"}
                                     // value={cateChange}
                                     style={{ width: 220 }}
                                     onChange={handleChangeCategory}
@@ -332,6 +358,39 @@ console.log(cateChange);
                                 <Input id='file-image' type='file' style={{ display: "none" }} onChange={handleChangeImage} />
                                 <Image src={productUpdate?.product_id ? productUpdate.default_image : fileImage ? URL.createObjectURL(fileImage) : ""} alt='default_image' width={100} />
                             </Form.Item>
+                            
+                            <div className='flex justify-between mb-4' style={{padding: "0 100px"}}>
+                                <div>
+                                    <label htmlFor='images0'
+                                        style={{cursor: 'pointer', border: "1px solid black", padding: "5px 10px",
+                                        borderRadius: 4}}
+                                    >Image 1</label>
+                                    <input id='images0' type="file" accept='image/*' hidden 
+                                        onChange={(e) => handleChangeImages(e, 0)}
+                                    />
+                                    <img width={150} src={images[0] || productUpdate?.impds[0].url} alt='item1' />
+                                </div>
+                                <div>
+                                    <label htmlFor='images1'
+                                        style={{cursor: 'pointer', border: "1px solid black",padding: "5px 10px",
+                                        borderRadius: 4}}
+                                    >Image 2</label>
+                                    <input id='images1' type="file" accept='image/*' hidden 
+                                        onChange={(e) => handleChangeImages(e, 1)}
+                                    />
+                                    <img width={150} src={images[1] || productUpdate?.impds[1].url} alt='item1' />
+                                </div>
+                                <div>
+                                    <label htmlFor='images2'
+                                        style={{cursor: 'pointer', border: "1px solid black",padding: "5px 10px",
+                                        borderRadius: 4}}
+                                    >Image 3</label>
+                                    <input id='images2' type="file" accept='image/*' hidden 
+                                        onChange={(e) => handleChangeImages(e, 2)}
+                                    />
+                                    <img width={150} src={images[2]|| productUpdate?.impds[2].url} alt='item1' />
+                                </div>
+                            </div>
                             <Form.Item wrapperCol={{ offset: 12, span: 12 }}>
                                 <Button className='bg-blue-600' type="primary" htmlType="submit">Add</Button>
                             </Form.Item>

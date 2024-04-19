@@ -94,7 +94,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
   };
   const getCategories = async () => {
       const res = await publicAxios.get("/api/v1/category/get-list");
-      console.log(res.data);
+    //   console.log(res.data);
       setCategory(res.data);
   }
   useEffect(() => {

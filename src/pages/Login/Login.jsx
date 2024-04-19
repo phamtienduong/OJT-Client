@@ -8,7 +8,7 @@ import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
 
 
-export default function Login() {
+export default function Login({ setIsLogin }) {
     const [user, setUser] = useState({
         email: "",
         password: "",
@@ -37,6 +37,7 @@ export default function Login() {
           if (res.data.data) {
             localStorage.setItem("token", res.data.data.token)
             localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
+            setIsLogin(true)
             navigate("/home");
           }
         }
@@ -65,7 +66,7 @@ export default function Login() {
             if (res.data.data) {
               localStorage.setItem("token", res.data.data.token)
               localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
-            //   setIsLogin(true)
+              setIsLogin(true)
               navigate("/home");
             }
         } catch (error) {
@@ -93,7 +94,7 @@ export default function Login() {
             if (res.data.data) {
                 localStorage.setItem("token", res.data.data.token)
                 localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
-              //   setIsLogin(true)
+                setIsLogin(true)
                 navigate("/home");
               }
         } catch (error) {
