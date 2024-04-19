@@ -11,11 +11,13 @@ export default function DashBoard() {
     const [users, setUsers] = useState([])
 
     const getInfoDasboard = async () => {
-        const res = await publicAxios.get("/api/v1/orders")
+        // const res = await publicAxios.get("/api/v1/orders")
         const ressult = await publicAxios.get("/api/v1/users/list")
+        console.log(ressult.data.data);
         setOrders(res.data.data)
         setUsers(ressult.data.data)
     }
+    console.log(users.length);
 
     let money = orders.reduce((acc, item) => {
             if (item.status == "đã xác nhận") {

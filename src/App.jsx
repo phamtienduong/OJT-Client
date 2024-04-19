@@ -42,7 +42,7 @@ export default function App() {
               {/* Add ScrollTop component here */}
               <Route path="/home" element={<HomePage />}></Route>
               <Route path="/error" element={<Error />}></Route>
-              <Route path="/login" element={<Login />}></Route>
+              <Route path="/login" element={<Login setIsLogin={setIsLogin} />}></Route>
               <Route path="/register" element={<Register />}></Route>
               <Route path="/favor" element={<Favorite />}></Route>
               <Route path="/checkout" element={<Checkout />}></Route>
