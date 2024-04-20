@@ -52,7 +52,7 @@ export default function App() {
               <Route path="/cart" element={<Cart />}></Route>
               <Route path="/account" element={<Account />}></Route>
               <Route path="/payment" element={<Payment />}></Route>
-              <Route path="/product_detail" element={<Detail />}></Route>
+              <Route path="/product_detail/:id" element={<Detail />}></Route>
           </Route>
       </Routes>
   );
