@@ -34,6 +34,7 @@ import Translate from "./Translate";
 import { Link } from "react-router-dom";
 import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
+import { useDispatch, useSelector } from "react-redux";
 
 const products = [
   {
@@ -81,6 +82,11 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => {
+    return state.cartReducer.cart
+  })
+  console.log(cart);
 
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
@@ -90,27 +96,28 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     setUserLogin({});
     setIsLogin(false);
     window.location.href = "/login";
-    
+
   };
   const getCategories = async () => {
-      const res = await publicAxios.get("/api/v1/category/get-list");
+    const res = await publicAxios.get("/api/v1/category/get-list");
     //   console.log(res.data);
-      setCategory(res.data);
+    setCategory(res.data);
   }
   useEffect(() => {
     // dispatch(action("setUserLogin"));
     setUserLogin(JSON.parse(localStorage.getItem("user_login")));
     getCategories();
   }, [isLogin]);
-  
-  const categories = category.map((item)=>(
-    { name: item.category_name, href: "#",  }
+
+  const categories = category.map((item) => (
+    { name: item.category_name, href: "#", id: item.category_id }
   ))
-//   { name: "Mobile", href: "#", icon: UserIcon },
-//   { name: "Computer", href: "#", icon: ArchiveBoxIcon },
-//   { name: "Laptop", href: "#", icon: StarIcon },
-//   { name: "Clothes", href: "#", icon: ArrowLeftOnRectangleIcon },
-// ];
+  const handleClickCategory = (id) => {
+    console.log(id);
+    // localStorage.setItem("categoryId", JSON.stringify(id));
+    setIsLoad((prev) => !prev);
+    navigate(`category/${id}`);
+  };
   const theLastName = (name) => {
     var arr = name.split("");
     if (arr.includes(" ")) {
@@ -197,8 +204,10 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
                         key={item.name}
                         className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-1 hover:bg-gray-50"
                       >
-                       
-                        <div className="flex-auto">
+
+                        <div className="flex-auto"
+                          onClick={() => handleClickCategory(item.id)}
+                        >
                           <a
                             href={item.href}
                             className="block font-semibold text-gray-900"
@@ -246,10 +255,15 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
             className="flex font-normal leading-6 text-black-800 mb-1"
             style={{ fontSize: "25px" }}
           >
-            <AiOutlineShoppingCart />
+            <div className="flex">
+              <div><AiOutlineShoppingCart /></div>
+              <div className="text-lg font-semibold leading-6 text-gray-900">
+                {cart?.length}
+              </div>
+            </div>
           </Link>
           <Link
-             href="#"
+            href="#"
             className=" text-lg font-semibold leading-6 text-gray-900"
           >
             <Menu as="div" className=" ">
@@ -264,8 +278,8 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
                   </Menu.Button>
                 ) : (
                   <span
-                  className="text-2xl 
-                  " 
+                    className="text-2xl 
+                  "
                     style={{ backgroundColor: "white" }}
                     onClick={() => handleLogout()}
                   >
