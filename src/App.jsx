@@ -19,41 +19,43 @@ import Account from './pages/User/Account'
 import Detail from './pages/ProductDetail/Detail'
 import ScrollTop from './Components/ScrollTop'
 import { Payment } from './pages/Payment/Payment'
+import ProductCatergory from './pages/ProductCatergory/ProductCatergory'
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(false)
-  const [isLoad, setIsLoad] = useState(false)
+    const [isLogin, setIsLogin] = useState(false)
+    const [isLoad, setIsLoad] = useState(false)
 
-  return (
-      <Routes>
-          <Route
-              element={
-                  <>
-                      <Header
-                          setIsLoad={setIsLoad}
-                          isLogin={isLogin}
-                          setIsLogin={setIsLogin}
-                      />
-                      <Outlet /> <Footer />
-                      <ScrollTop />{" "}
-                  </>
-              }
-          >
-              {/* Add ScrollTop component here */}
-              <Route path="/home" element={<HomePage />}></Route>
-              <Route path="/error" element={<Error />}></Route>
-              <Route path="/login" element={<Login setIsLogin={setIsLogin} />}></Route>
-              <Route path="/register" element={<Register />}></Route>
-              <Route path="/favor" element={<Favorite />}></Route>
-              <Route path="/checkout" element={<Checkout />}></Route>
-              <Route path="/contact" element={<Contact />}></Route>
-              <Route path="/about" element={<About />}></Route>
-              <Route path="/products" element={<Products />}></Route>
-              <Route path="/cart" element={<Cart />}></Route>
-              <Route path="/account" element={<Account />}></Route>
-              <Route path="/payment" element={<Payment />}></Route>
-              <Route path="/product_detail" element={<Detail />}></Route>
-          </Route>
-      </Routes>
-  );
+    return (
+        <Routes>
+            <Route
+                element={
+                    <>
+                        <Header
+                            setIsLoad={setIsLoad}
+                            isLogin={isLogin}
+                            setIsLogin={setIsLogin}
+                        />
+                        <Outlet /> <Footer />
+                        <ScrollTop />{" "}
+                    </>
+                }
+            >
+                {/* Add ScrollTop component here */}
+                <Route path="/home" element={<HomePage />}></Route>
+                <Route path="/error" element={<Error />}></Route>
+                <Route path="/login" element={<Login setIsLogin={setIsLogin} />}></Route>
+                <Route path="/register" element={<Register />}></Route>
+                <Route path="/favor" element={<Favorite />}></Route>
+                <Route path="/checkout" element={<Checkout />}></Route>
+                <Route path="/contact" element={<Contact />}></Route>
+                <Route path="/about" element={<About />}></Route>
+                <Route path="/products" element={<Products />}></Route>
+                <Route path="/cart" element={<Cart />}></Route>
+                <Route path="/account" element={<Account />}></Route>
+                <Route path="/payment" element={<Payment />}></Route>
+                <Route path="/category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
+                <Route path="/product_detail/:id" element={<Detail />}></Route>
+            </Route>
+        </Routes>
+    );
 }

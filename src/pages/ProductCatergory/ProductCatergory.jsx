@@ -25,7 +25,7 @@ import {
 
 import publicAxios from "../../config/publicAxios";
 import { AiOutlineStar } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
 
 const sortOptions = [
@@ -35,13 +35,7 @@ const sortOptions = [
     { name: "Price: Low to High", href: "#", current: false },
     { name: "Price: High to Low", href: "#", current: false },
 ];
-const subCategories = [
-    { name: "Totes", href: "#" },
-    { name: "Backpacks", href: "#" },
-    { name: "Travel Bags", href: "#" },
-    { name: "Hip Bags", href: "#" },
-    { name: "Laptop Sleeves", href: "#" },
-];
+
 const filters = [
     {
         id: "color",
@@ -84,86 +78,101 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function Products() {
+export default function ProductCatergory({ isLoad }) {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+    const { id } = useParams()
+    console.log("idCate", id);
     const [products, setProducts] = useState([])
-    // dùng để chuyển trang
-  const navigate = useNavigate()
-  // số trang
-  const [productTotal, setProductTotal] = useState(0)
-   // trang hiện tại
-   const [currentPage, setCurrentPage] = useState(1)
-   // số sp trong một trang
-   const [pageSize, setPageSize] = useState(6)
+    const [category, setCategory] = useState([]);
 
-   // vẽ danh sách các trang
-  const renderPage = () => {
-    // mảng lưu kết quả giao diện dùng để vẽ
-    const page = []
-    // lặp qua số trang để vẽ
-    for (let i = 0; i < productTotal; i++) {
-      page.push(
-        <a
-          key={i}
-          href="#"
-          aria-current="page"
-          className={`relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+    // dùng để chuyển trang
+    const navigate = useNavigate()
+    // số trang
+    const [productTotal, setProductTotal] = useState(0)
+    // trang hiện tại
+    const [currentPage, setCurrentPage] = useState(1)
+    // số sp trong một trang
+    const [pageSize, setPageSize] = useState(6)
+
+    // vẽ danh sách các trang
+    const renderPage = () => {
+        // mảng lưu kết quả giao diện dùng để vẽ
+        const page = []
+        // lặp qua số trang để vẽ
+        for (let i = 0; i < productTotal; i++) {
+            page.push(
+                <a
+                    key={i}
+                    href="#"
+                    aria-current="page"
+                    className={`relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
               ${(i + 1) == currentPage ? "bg-indigo-600" : "white"}
               ${(i + 1) == currentPage ? "text-white" : "text-black"}
               `}
-          onClick={() => setCurrentPage(i + 1)}
-        >
-          {i + 1}
-        </a>
-      )
-    }
-    return page
-  }
-   // đánh dấu trang hiện tại
-   const handleUpDownPage = (status) => {
-    // status quyết định lên trang hay lùi trang
-    switch (status) {
-      // 0 là lùi
-      case 0:
-        if (currentPage == 1) {
-          setCurrentPage(productTotal)
-        } else {
-          setCurrentPage(currentPage - 1)
+                    onClick={() => setCurrentPage(i + 1)}
+                >
+                    {i + 1}
+                </a>
+            )
         }
-        break
-      // 1 là tăng
-      case 1:
-        if (currentPage == productTotal) {
-          setCurrentPage(1)
-        } else {
-          setCurrentPage(currentPage + 1)
-        }
-        break
+        return page
     }
-  }
+    // đánh dấu trang hiện tại
+    const handleUpDownPage = (status) => {
+        // status quyết định lên trang hay lùi trang
+        switch (status) {
+            // 0 là lùi
+            case 0:
+                if (currentPage == 1) {
+                    setCurrentPage(productTotal)
+                } else {
+                    setCurrentPage(currentPage - 1)
+                }
+                break
+            // 1 là tăng
+            case 1:
+                if (currentPage == productTotal) {
+                    setCurrentPage(1)
+                } else {
+                    setCurrentPage(currentPage + 1)
+                }
+                break
+        }
+    }
+    const getCategories = async () => {
+        const res = await publicAxios.get("/api/v1/category/get-list");
+        //   console.log(res.data);
+        setCategory(res.data);
+    }
+    const subCategories = category.map((item) => (
+        { name: item.category_name, href: `/category/${item.category_id}` }
+    ))
 
 
-   
+
+
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
-        const getAllProducts = async () => {
-            const res = await publicAxios.get("/api/v1/products/get-list")
+        const getProducts = async () => {
+            const res = await publicAxios.get(`/api/v1/products/category/${id}`)
 
             console.log(res.data);
-            const data =  res.data
-            if(end>data.length){
+            const data = res.data
+            if (end > data.length) {
                 end = data.length
             }
             const newProduct = data.slice(start, end)
             setProductTotal(Math.ceil(data.length / pageSize))
             setProducts(newProduct)
-       
-    }
-    getAllProducts()
-        
-    }, [currentPage, pageSize])
+
+        }
+        getProducts()
+        getCategories();
+
+    }, [currentPage, pageSize, isLoad])
     console.log(products);
+    console.log(category);
     const handleClickProduct = (id) => {
         // console.log(id);
         // localStorage.setItem("idProductDetail", id)
