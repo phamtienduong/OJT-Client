@@ -20,6 +20,7 @@ import Detail from './pages/ProductDetail/Detail'
 import ScrollTop from './Components/ScrollTop'
 import { Payment } from './pages/Payment/Payment'
 import ProductCatergory from './pages/ProductCatergory/ProductCatergory'
+import Bills from './pages/Bills/Bills'
 
 export default function App() {
     const [isLogin, setIsLogin] = useState(false)
@@ -53,6 +54,7 @@ export default function App() {
                 <Route path="/cart" element={<Cart />}></Route>
                 <Route path="/account" element={<Account />}></Route>
                 <Route path="/payment" element={<Payment />}></Route>
+                <Route path="/bills" element={<Bills />}></Route>
                 <Route path="/category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
                 <Route path="/product_detail/:id" element={<Detail />}></Route>
             </Route>

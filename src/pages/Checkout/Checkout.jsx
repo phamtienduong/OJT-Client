@@ -1,180 +1,391 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios';
-import { Select } from 'antd';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Select } from "antd";
+import publicAxios from "../../config/publicAxios";
+import { formatCurrency } from "../../helper/formatMoney";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 const { Option } = Select;
 export default function Checkout() {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-
-    const [provinceCode, setProvinceCode] = useState()
-    const [districtCode, setDistrictCode] = useState()
-    const [wardCode, setWardCode] = useState()
-
-
+    const [cartUser, setCartUser] = useState([]);
+    const [provinceCode, setProvinceCode] = useState();
+    const [districtCode, setDistrictCode] = useState();
+    const [wardCode, setWardCode] = useState();
+    const user_id = JSON.parse(localStorage.getItem("user_login")).user_id;
+    const [funcPrice, setFuncPrice] = useState(0);
+    // console.log(user_id)
+    const [handleChange, setHandleChange] = useState("");
+    //
+    const [address, setAddress] = useState({
+        provinceCode: -1,
+        districtCode: -1,
+        wardCode: -1,
+    });
+    //
     const getProvinces = async () => {
         let result = await axios.get("https://vapi.vnappmob.com/api/province/");
-        console.log(result.data.results);
+        // console.log(result.data.results);
         setProvinces(result.data.results);
-    }
-
+    };
+const navigate = useNavigate();
     const handleSelectProvince = async (e) => {
-        const provinceCode = e.target.value;
-        let result = await axios.get(`https://vapi.vnappmob.com/api/province/district/${provinceCode}`);
+        const selectedProvinceCode = e.target.value;
+        const selectedProvince = provinces.find(
+            (item) => item.province_id === selectedProvinceCode
+        );
+        let result = await axios.get(
+            `https://vapi.vnappmob.com/api/province/district/${selectedProvinceCode}`
+        );
         console.log("district", result.data.results);
-        setProvinceCode(provinceCode)
-        setDistricts(result.data.results)
-        setDistrictCode(-1)
-        setWards([])
-        setWardCode(-1)
-    }
+        setProvinceCode(selectedProvinceCode);
+        // console.log(provinceCode)
+        setDistricts(result.data.results);
+        setDistrictCode(-1);
+        setWards([]);
+        setWardCode(-1);
+        setAddress((prevAddress) => ({
+            ...prevAddress,
+            provinceCode: selectedProvinceCode,
+            provinceName: selectedProvince.province_name, // Lưu trữ tên tỉnh/thành phố
+        }));
+    };
 
-    const handleSelectDistrict = async (e) => {
-        const districtCode = +(e.target.value);
-        let result = await axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`);
-        console.log("ward", result.data.results);
-        setDistrictCode(districtCode)
-        setWards(result.data.results)
-        setWardCode(-1)
-    }
+   const handleSelectDistrict = async (e) => {
+       const selectedDistrictCode = +e.target.value;
+       const selectedDistrict = districts.find(
+           (item) => item.district_id == selectedDistrictCode
+       );
+
+       let result = await axios.get(
+           `https://vapi.vnappmob.com/api/province/ward/${selectedDistrictCode}`
+       );
+
+       setDistrictCode(selectedDistrictCode);
+       setWards(result.data.results);
+       setWardCode(-1);
+
+       setAddress((prevAddress) => ({
+           ...prevAddress,
+           districtCode: selectedDistrictCode,
+           districtName: selectedDistrict.district_name  // Lưu trữ tên quận/huyện (nếu có)
+       }));
+   };
+
+    const handleSelectWard = (e) => {
+        const selectedWardCode = e.target.value;
+        const selectedWard = wards.find(
+            (item) => item.ward_id === selectedWardCode
+        );
+        setAddress((prevAddress) => ({
+            ...prevAddress,
+            wardCode: selectedWardCode,
+            wardName: selectedWard.ward_name, // Lưu trữ tên phường/xã
+        }));
+    };
+    console.log(address);
     useEffect(() => {
         getProvinces();
-    }, [])
+        handleGetCartUser();
+        total_price();
+    }, []);
+
+    const handleGetCartUser = async () => {
+        const res = await publicAxios.get(`/api/v1/cart/list/${user_id}`);
+        setCartUser(res.data);
+        console.log(res.data);
+    };
+    const handleClearCart = async () => {
+        try {
+            const res = await publicAxios.delete(`/api/v1/cart/${user_id}`);
+            console.log(res);
+            setCartUser([]);
+            message.success(res.data.message);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const changeInput = (e) => {
+        setHandleChange({
+            ...handleChange,
+            [e.target.name]: e.target.value,
+        });
+        // console.log(handleChange)
+    };
+    const total_price = () => {
+        const result = cartUser.reduce((total, item) => {
+            const itemPrice = item.product_id.price * item.quantity;
+            return total + parseInt(itemPrice);
+        }, 0);
+        // console.log(result)
+        setFuncPrice(result);
+    };
+    console.log(handleChange?.fullname);
+    const handleCheckout = async () => {
+        const data = {
+            address: `${address.wardName}, ${address.districtName}, ${address.provinceName}  `,
+            total_price: funcPrice,
+            phone: handleChange.phone,
+            receiver_email: handleChange.email,
+            fullname: handleChange.fullname,
+        };
+        try {
+            const res = await publicAxios.post(
+                `api/v1/bills/check-out/${user_id}`,
+                data
+            );
+            console.log(res)
+            if (res.status === 201) {
+                message.success("Checkout successful");
+                navigate("/bills");
+                handleClearCart()
+            } else {
+                message.error("Checkout failed");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div>
-            <div className='lg:px-28 lg:py-20 px-4 py-2'>
-                <div className='md:flex flex-col gap-y-20'>
-                    <div className='hidden md:inline-block'>Account / My Account / Product / View Cart / CheckOut</div>
-                    <div className='flex flex-col gap-y-6'>
-                        <div className='text-4xl'>Billing Details</div>
-                        <div className='flex flex-col md:flex-row gap-20'>
-                            <div className='md:w-1/2 md:order-1 order-2'>
-                                <div className='flex flex-col'>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
+            <div className="lg:px-28 lg:py-20 px-4 py-2">
+                <div className="md:flex flex-col gap-y-20">
+                    <div className="flex flex-col gap-y-6">
+                        <div className="text-4xl">Billing Details</div>
+                        <div className="flex flex-col md:flex-row gap-20">
+                            <div className="md:w-1/2 md:order-1 order-2">
+                                <div className="flex flex-col">
+                                    <div className="flex flex-col pb-4 gap-y-1">
                                         <label htmlFor="">Full Name</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
+                                        <input
+                                            type="text"
+                                            className="px-2.5 py-2 bg-slate-100 rounded"
+                                            onChange={changeInput}
+                                            name="fullname"
+                                        />
                                     </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
+                                    <div className="flex flex-col pb-4 gap-y-1">
                                         <label htmlFor="">Phone Number</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
+                                        <input
+                                            type="text"
+                                            className="px-2.5 py-2 bg-slate-100 rounded"
+                                            name="phone"
+                                            onChange={changeInput}
+                                        />
                                     </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
+                                    <div className="flex flex-col pb-4 gap-y-1">
                                         <label htmlFor="">Email Address</label>
-                                        <input type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
+                                        <input
+                                            type="text"
+                                            className="px-2.5 py-2 bg-slate-100 rounded"
+                                            name="email"
+                                            onChange={changeInput}
+                                        />
                                     </div>
 
-                                    <div className='flex flex-row justify-between pb-4 gap-x-4'> {/* Adjust the gap-x-4 to a smaller value as needed */}
-                                        <div className='flex flex-col gap-y-2 w-full'>
-                                            <label htmlFor="province">Province/City</label>
+                                    <div className="flex flex-row justify-between pb-4 gap-x-4">
+                                        {" "}
+                                        {/* Adjust the gap-x-4 to a smaller value as needed */}
+                                        <div className="flex flex-col gap-y-2 w-full">
+                                            <label htmlFor="province">
+                                                Province/City
+                                            </label>
                                             <select
                                                 onChange={handleSelectProvince}
                                                 value={provinceCode}
-                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                className="px-2.5 py-2 bg-slate-100 rounded w-full"
                                                 id="province"
                                             >
-                                                <option disabled selected value={-1}>Select province</option>
-                                                {provinces.map((item, index) => (
-                                                    <option key={index} value={item.province_id}>{item.province_name}</option>
-                                                ))}
+                                                <option
+                                                    disabled
+                                                    selected
+                                                    value={-1}
+                                                >
+                                                    Select province
+                                                </option>
+                                                {provinces.map(
+                                                    (item, index) => (
+                                                        <option
+                                                            key={index}
+                                                            value={
+                                                                item.province_id
+                                                            }
+                                                        >
+                                                            {item.province_name}
+                                                        </option>
+                                                    )
+                                                )}
                                             </select>
                                         </div>
-                                        <div className='flex flex-col gap-y-2 w-full'>
-                                            <label htmlFor="district">District</label>
+                                        <div className="flex flex-col gap-y-2 w-full">
+                                            <label htmlFor="district">
+                                                District
+                                            </label>
                                             <select
                                                 onChange={handleSelectDistrict}
-                                                value={districtCode}
-                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                value={address.districtCode}
+                                                className="px-2.5 py-2 bg-slate-100 rounded w-full"
                                                 id="district"
-                                                disabled={!provinceCode || provinceCode === -1}
+                                                disabled={!address.provinceCode}
                                             >
-                                                <option disabled selected value={-1}>Select district</option>
-                                                {districts.map((item, index) => (
-                                                    <option key={index} value={item.district_id}>{item.district_name}</option>
-                                                ))}
+                                                <option disabled value={-1}>
+                                                    Select district
+                                                </option>
+                                                {districts.map(
+                                                    (item, index) => (
+                                                        <option
+                                                            key={index}
+                                                            value={
+                                                                item.district_id
+                                                            }
+                                                        >
+                                                            {item.district_name}
+                                                        </option>
+                                                    )
+                                                )}
                                             </select>
                                         </div>
-                                        <div className='flex flex-col gap-y-2 w-full'>
+                                        <div className="flex flex-col gap-y-2 w-full">
                                             <label htmlFor="ward">Ward</label>
                                             <select
-                                                onChange={(e) => setWardCode(e.target.value)}
-                                                value={wardCode}
-                                                className='px-2.5 py-2 bg-slate-100 rounded w-full'
+                                                onChange={handleSelectWard}
+                                                value={address.wardCode}
+                                                className="px-2.5 py-2 bg-slate-100 rounded w-full"
                                                 id="ward"
-                                                disabled={!districtCode || districtCode === -1}
+                                                disabled={
+                                                    !address.districtCode ||
+                                                    address.districtCode === -1
+                                                }
                                             >
-                                                <option disabled selected value={-1}>Select ward</option>
+                                                <option disabled value={-1}>
+                                                    Select ward
+                                                </option>
                                                 {wards.map((item, index) => (
-                                                    <option key={index} value={item.ward_id}>{item.ward_name}</option>
+                                                    <option
+                                                        key={index}
+                                                        value={item.ward_id}
+                                                    >
+                                                        {item.ward_name}
+                                                    </option>
                                                 ))}
                                             </select>
                                         </div>
                                     </div>
-                                    <div className='flex flex-col pb-4 gap-y-1'>
-                                        <label htmlFor="">Note</label>
-                                        <textarea placeholder='Additional notes (Example: Delivery during office hours)' type="text" className='px-2.5 py-2 bg-slate-100 rounded' />
-                                    </div>
-
-
-                                </div>
-                                <div className='flex gap-1'>
-                                    <input type="checkbox" />
-                                    <p>Save this information for faster check-out next time</p>
                                 </div>
                             </div>
-                            <div className='md:w-1/2 md:order-2 order-1'>
-                                <div className='flex flex-col gap-y-2 py-2'>
-                                    <div className='md:w-11/12 flex flex-col gap-y-2'>
-                                        <div>
-                                            <div className='flex justify-between items-center'>
-                                                <div className='flex gap-2 items-center'>
-                                                    <img src="https://thegioigames.vn/wp-content/uploads/2023/07/sony-dualsense-edge-wireless-controller-2.jpg" alt="" className='w-10 h-10' />
-                                                    <div>LCD Monitor</div>
+                            <div className="md:w-1/2 md:order-2 order-1">
+                                <div className="flex flex-col gap-y-2 py-2">
+                                    <div className="md:w-11/12 flex flex-col gap-y-2">
+                                        <div className="cartUser">
+                                            {cartUser.map((item, index) => (
+                                                <div key={index + 1}>
+                                                    <div className="flex justify-between items-center">
+                                                        <div className="flex gap-2 items-center mb-10">
+                                                            <img
+                                                                src={
+                                                                    item
+                                                                        .product_id
+                                                                        .default_image
+                                                                }
+                                                                alt=""
+                                                                className="w-1/6 h-full "
+                                                            />
+                                                            <div>
+                                                                {
+                                                                    item
+                                                                        .product_id
+                                                                        .product_name
+                                                                }{" "}
+                                                                x{" "}
+                                                                {item.quantity}
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            {formatCurrency(
+                                                                item.product_id
+                                                                    .price
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div>$1100</div>
+                                            ))}
+
+                                            <div>
+                                                <div className="flex justify-between py-2 border-b border-black">
+                                                    <div>Subtotal:</div>
+                                                    <div>
+                                                        {formatCurrency(1)}
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between py-2 border-b border-black">
+                                                    <div>Shipping:</div>
+                                                    <div>Free</div>
+                                                </div>
+                                                <div className="flex justify-between py-2">
+                                                    <div>Total:</div>
+                                                    <div>
+                                                        {formatCurrency(
+                                                            funcPrice
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div>
-                                            <div className='flex justify-between py-2 border-b border-black'>
-                                                <div>Subtotal:</div>
-                                                <div>$1750</div>
-                                            </div>
-                                            <div className='flex justify-between py-2 border-b border-black'>
-                                                <div>Shipping:</div>
-                                                <div>Free</div>
-                                            </div>
-                                            <div className='flex justify-between py-2'>
-                                                <div>Total:</div>
-                                                <div>$1750</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div className='flex justify-between items-center'>
-                                                <div className='flex gap-2 items-center'>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex gap-2 items-center">
                                                     <input type="radio" />
-                                                    <label htmlFor="">Bank</label>
+                                                    <label htmlFor="">
+                                                        Bank
+                                                    </label>
                                                 </div>
-                                                <div className='flex gap-2'>
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" alt="" className='w-8 h-8' />
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="" className='w-8 h-8' />
+                                                <div className="flex gap-2">
+                                                    <img
+                                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png"
+                                                        alt=""
+                                                        className="w-8 h-8"
+                                                    />
+                                                    <img
+                                                        src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                                                        alt=""
+                                                        className="w-8 h-8"
+                                                    />
                                                 </div>
                                             </div>
-                                            <div className='flex gap-2'>
+                                            <div className="flex gap-2">
                                                 <input type="radio" />
-                                                <label htmlFor="">Cash on delivery</label>
+                                                <label htmlFor="">
+                                                    Cash on delivery
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='flex gap-2'>
-                                        <input type="text" placeholder='Coupon Code' className='w-3/5 border border-black px-2' />
-                                        <button className='bg-red-600 text-white py-2.5 px-8 text-sm rounded w-2/5'>Apply Coupon</button>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Coupon Code"
+                                            className="w-3/5 border border-black px-2"
+                                        />
+                                        <button className="bg-red-600 text-white py-2.5 px-8 text-sm rounded w-2/5">
+                                            Apply Coupon
+                                        </button>
                                     </div>
                                 </div>
-                                <button className='bg-red-600 text-white py-2.5 px-10 text-sm rounded'>Place Order</button>
+                                <button
+                                    onClick={handleCheckout}
+                                    className="bg-red-600 text-white py-2.5 px-10 text-sm rounded"
+                                >
+                                    Place Order
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
