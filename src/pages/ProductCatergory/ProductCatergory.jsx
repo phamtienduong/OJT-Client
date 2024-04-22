@@ -27,6 +27,7 @@ import publicAxios from "../../config/publicAxios";
 import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
+import { Rate } from "antd";
 
 const sortOptions = [
     { name: "Most Popular", href: "#", current: true },
@@ -84,6 +85,8 @@ export default function ProductCatergory({ isLoad }) {
     console.log("idCate", id);
     const [products, setProducts] = useState([])
     const [category, setCategory] = useState([]);
+    const [avgStar, setAvgStar] = useState(1);
+
 
     // dùng để chuyển trang
     const navigate = useNavigate()
@@ -156,7 +159,6 @@ export default function ProductCatergory({ isLoad }) {
         let end = (start) + pageSize
         const getProducts = async () => {
             const res = await publicAxios.get(`/api/v1/products/category/${id}`)
-
             console.log(res.data);
             const data = res.data
             if (end > data.length) {
@@ -169,10 +171,20 @@ export default function ProductCatergory({ isLoad }) {
         }
         getProducts()
         getCategories();
+        getAvgStar();
 
     }, [currentPage, pageSize, isLoad])
     console.log(products);
     console.log(category);
+    const getAvgStar = async () => {
+        const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
+        const data = result.data.data['AVG(rating)']
+        // console.log("==> ::: ", Math.round(data));
+        setAvgStar(Math.round(data));
+    }
+    console.log(products.product_id);
+    console.log(avgStar);
+
     const handleClickProduct = (id) => {
         // console.log(id);
         // localStorage.setItem("idProductDetail", id)
@@ -520,7 +532,7 @@ export default function ProductCatergory({ isLoad }) {
                                             className="group border p-0 w-full m-auto"
                                         >
                                             <div className="relative">
-                                                {product.discount !== 0 && (
+                                                {product.discount == 0 ? <></> : (
                                                     <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center">
                                                         <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
                                                     </div>
@@ -536,21 +548,25 @@ export default function ProductCatergory({ isLoad }) {
                                             <h3 className="mt-4 text-sm text-gray-700 text-center">
                                                 {product.product_name}
                                             </h3>
-                                            <div className=" flex justify-center mt-1 text-lg font-medium text-gray-900 text-center">
-                                                <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.price)} </p>
-                                                <p className="text-lg ml-2 font-medium text-red-600">
-                                                    {formatCurrency((product.price * (1 - product.discount)))}
-                                                </p>
+                                            <div className="flex justify-center mt-1 text-lg font-medium text-gray-900 text-center">
+                                                {product.discount > 0 ? (
+                                                    <>
+                                                        <p className="text-lg font-medium text-gray-900 line-through">
+                                                            {formatCurrency(+product.price)}
+                                                        </p>
+                                                        <p className="text-lg ml-2 font-medium text-red-600">
+                                                            {formatCurrency(product.price * (1 - product.discount))}
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <p className="text-lg font-medium text-gray-900">
+                                                        {formatCurrency(+product.price)}
+                                                    </p>
+                                                )}
                                             </div>
+
                                             <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                {[...Array(5)].map((_, index) => (
-                                                    <button
-                                                        key={index}
-                                                        className="bg-white hover:bg-yellow-400"
-                                                    >
-                                                        <AiOutlineStar />
-                                                    </button>
-                                                ))}
+                                                <Rate disabled value={avgStar} className='text-sm' />
                                             </p>
                                         </a>
                                     ))}

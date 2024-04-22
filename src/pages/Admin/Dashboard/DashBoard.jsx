@@ -14,23 +14,24 @@ export default function DashBoard() {
         // const res = await publicAxios.get("/api/v1/orders")
         const ressult = await publicAxios.get("/api/v1/users/list")
         console.log(ressult.data.data);
-        setOrders(res.data.data)
         setUsers(ressult.data.data)
+        setOrders(res.data.data)
     }
-    console.log(users.length);
+
 
     let money = orders.reduce((acc, item) => {
-            if (item.status == "đã xác nhận") {
-                acc += item.total_price
-            }
-            return acc;
-        }, 0)
-   
+        if (item.status == "đã xác nhận") {
+            acc += item.total_price
+        }
+        return acc;
+    }, 0)
+
 
     useEffect(() => {
         getInfoDasboard()
     }, [])
-    
+    console.log(users);
+
     return (
         <div>
             <Typography.Title level={4}>DashBoard</Typography.Title>
