@@ -27,14 +27,12 @@ import publicAxios from "../../config/publicAxios";
 import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
-import { Rate } from "antd";
+import { Rate, Select } from "antd";
 
 const sortOptions = [
-    { name: "Most Popular", href: "#", current: true },
-    { name: "Best Rating", href: "#", current: false },
-    { name: "Newest", href: "#", current: false },
-    { name: "Price: Low to High", href: "#", current: false },
-    { name: "Price: High to Low", href: "#", current: false },
+    { label: "Best Rating", value: 1 },
+    { label: "Price: Low to High", value: 2 },
+    { label: "Price: High to Low", value: 3 },
 ];
 
 const filters = [
@@ -82,7 +80,7 @@ function classNames(...classes) {
 export default function ProductCatergory({ isLoad }) {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const { id } = useParams()
-    console.log("idCate", id);
+    // console.log("idCate", id);
     const [products, setProducts] = useState([])
     const [category, setCategory] = useState([]);
     const [avgStar, setAvgStar] = useState(1);
@@ -152,19 +150,26 @@ export default function ProductCatergory({ isLoad }) {
     ))
 
 
-
-
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
         const getProducts = async () => {
             const res = await publicAxios.get(`/api/v1/products/category/${id}`)
-            console.log(res.data);
+            // console.log(res.data);
             const data = res.data
             if (end > data.length) {
                 end = data.length
             }
             const newProduct = data.slice(start, end)
+
+            for (let i = 0; i < newProduct.length; i++) {
+                const res = await publicAxios.get(`/api/v1/review/avg-start/${newProduct[i].product_id}`)
+                const data = res.data.data['AVG(rating)']
+                newProduct[i]['avgStar'] = Math.round(data);
+            }
+            console.log(newProduct);
+
+
             setProductTotal(Math.ceil(data.length / pageSize))
             setProducts(newProduct)
 
@@ -174,22 +179,38 @@ export default function ProductCatergory({ isLoad }) {
         getAvgStar();
 
     }, [currentPage, pageSize, isLoad])
-    console.log(products);
-    console.log(category);
     const getAvgStar = async () => {
         const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
         const data = result.data.data['AVG(rating)']
         // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
-    console.log(products.product_id);
-    console.log(avgStar);
+
 
     const handleClickProduct = (id) => {
         // console.log(id);
         // localStorage.setItem("idProductDetail", id)
         navigate(`/product_detail/${id}`)
     }
+
+    const handleChangeSort = (value) => {
+        console.log(value);
+        switch (value) {
+            case 1:
+                const newProductsC = [...products.sort((a, b) => b.avgStar - a.avgStar)]
+                setProducts(newProductsC)
+                break;
+            case 2:
+                const newProductsA = [...products.sort((a, b) => +a.price - +b.price)]
+                setProducts(newProductsA)
+                break;
+            case 3:
+                const newProductsB = [...products.sort((a, b) => +b.price - +a.price)]
+                setProducts(newProductsB)
+                break;
+        }
+    }
+
 
     return (
         <>
@@ -350,55 +371,18 @@ export default function ProductCatergory({ isLoad }) {
                         </h1>
 
                         <div className="flex items-center">
-                            <Menu
-                                as="div"
-                                className="relative inline-block text-left"
-                            >
-                                <div>
-                                    <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                                        Sort
-                                        <ChevronDownIcon
-                                            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                                            aria-hidden="true"
-                                        />
-                                    </Menu.Button>
-                                </div>
 
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="py-1">
-                                            {sortOptions.map((option) => (
-                                                <Menu.Item key={option.name}>
-                                                    {({ active }) => (
-                                                        <a
-                                                            href={option.href}
-                                                            className={classNames(
-                                                                option.current
-                                                                    ? "font-medium text-gray-900"
-                                                                    : "text-gray-500",
-                                                                active
-                                                                    ? "bg-gray-100"
-                                                                    : "",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            {option.name}
-                                                        </a>
-                                                    )}
-                                                </Menu.Item>
-                                            ))}
-                                        </div>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
+                            <Select
+                                defaultValue={sortOptions[0].value}
+                                style={{
+                                    width: 120,
+                                }}
+                                onChange={handleChangeSort}
+                                options={sortOptions.map((item) => ({
+                                    label: item.label,
+                                    value: item.value,
+                                }))}
+                            />
 
                             <button
                                 type="button"
@@ -566,7 +550,7 @@ export default function ProductCatergory({ isLoad }) {
                                             </div>
 
                                             <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                <Rate disabled value={avgStar} className='text-sm' />
+                                                <Rate disabled value={product.avgStar} className='text-sm' />
                                             </p>
                                         </a>
                                     ))}

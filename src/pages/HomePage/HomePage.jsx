@@ -12,24 +12,36 @@ import Slider from "react-slick";
 import publicAxios from "../../config/publicAxios";
 import { formatCurrency } from "../../helper/formatMoney";
 import { useNavigate } from "react-router-dom";
+import { Rate } from "antd";
 // import "./HomePage.scss"
 export default function HomePage() {
     const [products, setProducts] = useState([]);
     const [productSales, setProductSales] = useState([]);
+    const [avgStar, setAvgStar] = useState(1);
+
     const navigate = useNavigate();
 
     const getAllProducts = async () => {
         const res = await publicAxios.get("/api/v1/products/get-list");
         // console.log(res.data);
         const data = res.data;
-        setProducts(data);
-    }
 
-    const productSale = () => {
-        console.log(products);
-        const result = products.filter((item) => item.discount > 0).slice(0, 6)
-        console.log(result);
+        const result = data.filter((item) => parseFloat(item.discount) > 0).slice(0, 6)
+        for (let i = 0; i < result.length; i++) {
+            const res = await publicAxios.get(`/api/v1/review/avg-start/${result[i].product_id}`)
+            const data = res.data.data['AVG(rating)']
+            result[i]['avgStar'] = Math.round(data);
+        }
+
+
+        setProducts(data);
         setProductSales(result);
+    }
+    const getAvgStar = async () => {
+        const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
+        const data = result.data.data['AVG(rating)']
+        // console.log("==> ::: ", Math.round(data));
+        setAvgStar(Math.round(data));
     }
     const handleClickProduct = (id) => {
         // console.log(id);
@@ -40,7 +52,7 @@ export default function HomePage() {
     // console.log(bestSeller);
     useEffect(() => {
         getAllProducts();
-        productSale()
+        getAvgStar()
     }, [])
 
 
@@ -158,14 +170,7 @@ export default function HomePage() {
                                         )}
                                     </div>
                                     <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                        {[...Array(5)].map((_, index) => (
-                                            <button
-                                                key={index}
-                                                className="bg-white hover:bg-yellow-400"
-                                            >
-                                                <AiOutlineStar />
-                                            </button>
-                                        ))}
+                                        <Rate disabled value={product.avgStar} className='text-sm' />
                                     </p>
                                 </a>
                             ))}
@@ -256,14 +261,8 @@ export default function HomePage() {
                                             )}
                                         </div>
                                         <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                            {[...Array(5)].map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className="bg-white hover:bg-yellow-400"
-                                                >
-                                                    <AiOutlineStar />
-                                                </button>
-                                            ))}
+                                            <Rate disabled value={product.avgStar} className='text-sm' />
+
                                         </p>
                                     </a>
                                 ))}
