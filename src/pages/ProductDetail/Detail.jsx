@@ -21,10 +21,11 @@ export default function Detail() {
     const user = JSON.parse(localStorage.getItem('user_login'));
     const dispatch = useDispatch();
 
-
+    const [allowCmt, setAllowCmt] = useState(true)
     const [mainImage, setMainImage] = useState("")
     // console.log(user);
     const { id } = useParams()
+    const user_id = JSON.parse(localStorage.getItem('user_login')).user_id
     const getProduct = async () => {
         const res = await publicAxios.get(`/api/v1/products/get-product/${id}`)
         // console.log(res);
@@ -63,6 +64,7 @@ export default function Detail() {
     }
 
     const getAvgStar = async () => {
+        console.log(id);
         const result = await publicAxios.get(`/api/v1/review/avg-start/${id}`)
         const data = result.data.data['AVG(rating)']
         // console.log("==> ::: ", Math.round(data));
@@ -71,8 +73,16 @@ export default function Detail() {
 
     const getListComment = async () => {
         const res = await publicAxios.get(`/api/v1/review/listReview/${id}`)
-        // console.log(res.data);
+        console.log(res.data);
         setListComment(res.data)
+        const mappedArr = res.data.map((item) => {
+            if (item.user_id.user_id == user_id) {
+                setAllowCmt(false)
+            }
+        })
+    }
+    //
+    const getListCommentByUser = async () => {
 
     }
     // console.log(user.user_id);
@@ -265,9 +275,21 @@ export default function Detail() {
                                     <div className='px-4 border-l-2 border-green-500 text-green-400'>In Stock</div>
                                 </div>
                                 <div className='flex flex-col sm:flex-row gap-2 sm:gap-4'>
-                                    <div className='text-lg sm:text-2xl text-red-500'>{formatCurrency((productDetail.price * (1 - productDetail.discount)))}</div>
-                                    <div className='text-lg sm:text-2xl line-through'>{formatCurrency(+productDetail.price)}</div>
-                                    <div className='text-xs sm:text-sm bg-red-500 text-center text-white px-1 sm:px-2 py-0.5 sm:py-1 border rounded'> -{(productDetail.discount) * 100}%</div>
+                                    {
+                                        productDetail.discount > 0 ? (
+                                            <>
+                                                <div className='text-lg sm:text-2xl text-red-500'>{formatCurrency((productDetail.price * (1 - productDetail.discount)))}</div>
+                                                <div className='text-lg sm:text-2xl line-through'>{formatCurrency(+productDetail.price)}</div>
+                                                <div className='text-xs sm:text-sm bg-red-500 text-center text-white px-1 sm:px-2 py-0.5 sm:py-1 border rounded'> -{(productDetail.discount) * 100}%</div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className='text-lg sm:text-2xl'>
+                                                    {formatCurrency(+productDetail.price)}
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                 </div>
                                 <div className='text-sm font-semibold py-2'>
                                     {productDetail.description}
@@ -353,23 +375,25 @@ export default function Detail() {
                                 </div>
                                 <div className='text-xs text-slate-500'>a few seconds ago</div>
                             </div>
-                            <textarea
-                                style={{ outline: "none" }}
-                                className='form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm'
-                                rows='4'
-                                placeholder=' Write your review...'
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                            />
-                            <div className='flex justify-between items-center'>
-                                <button
-                                    onClick={addComment}
-                                    className='text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'
-                                >
-                                    Submit Review
-                                </button>
-                                <div>
-                                    <Rate value={rating} onChange={value => setRating(value)} />
+                            <div>
+                                <textarea
+                                    style={{ outline: "none" }}
+                                    className='form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm'
+                                    rows='4'
+                                    placeholder='Write your review...'
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                />
+                                <div className='flex justify-between items-center'>
+                                    <button
+                                        onClick={addComment}
+                                        className='text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'
+                                    >
+                                        Submit Review
+                                    </button>
+                                    {allowCmt ? <div>
+                                        <Rate value={rating} onChange={value => setRating(value)} />
+                                    </div> : null}
                                 </div>
                             </div>
                         </div>

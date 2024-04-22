@@ -27,6 +27,7 @@ import publicAxios from "../../config/publicAxios";
 import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
+import { Rate } from "antd";
 
 const sortOptions = [
     { name: "Most Popular", href: "#", current: true },
@@ -88,62 +89,65 @@ export default function Products() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [products, setProducts] = useState([])
     // dùng để chuyển trang
-  const navigate = useNavigate()
-  // số trang
-  const [productTotal, setProductTotal] = useState(0)
-   // trang hiện tại
-   const [currentPage, setCurrentPage] = useState(1)
-   // số sp trong một trang
-   const [pageSize, setPageSize] = useState(6)
+    const navigate = useNavigate()
+    // số trang
+    const [productTotal, setProductTotal] = useState(0)
+    // trang hiện tại
+    const [currentPage, setCurrentPage] = useState(1)
+    // số sp trong một trang
+    const [pageSize, setPageSize] = useState(6)
 
-   // vẽ danh sách các trang
-  const renderPage = () => {
-    // mảng lưu kết quả giao diện dùng để vẽ
-    const page = []
-    // lặp qua số trang để vẽ
-    for (let i = 0; i < productTotal; i++) {
-      page.push(
-        <a
-          key={i}
-          href="#"
-          aria-current="page"
-          className={`relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+    const [avgStar, setAvgStar] = useState(1);
+
+
+    // vẽ danh sách các trang
+    const renderPage = () => {
+        // mảng lưu kết quả giao diện dùng để vẽ
+        const page = []
+        // lặp qua số trang để vẽ
+        for (let i = 0; i < productTotal; i++) {
+            page.push(
+                <a
+                    key={i}
+                    href="#"
+                    aria-current="page"
+                    className={`relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold  focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
               ${(i + 1) == currentPage ? "bg-indigo-600" : "white"}
               ${(i + 1) == currentPage ? "text-white" : "text-black"}
               `}
-          onClick={() => setCurrentPage(i + 1)}
-        >
-          {i + 1}
-        </a>
-      )
-    }
-    return page
-  }
-   // đánh dấu trang hiện tại
-   const handleUpDownPage = (status) => {
-    // status quyết định lên trang hay lùi trang
-    switch (status) {
-      // 0 là lùi
-      case 0:
-        if (currentPage == 1) {
-          setCurrentPage(productTotal)
-        } else {
-          setCurrentPage(currentPage - 1)
+                    onClick={() => setCurrentPage(i + 1)}
+                >
+                    {i + 1}
+                </a>
+            )
         }
-        break
-      // 1 là tăng
-      case 1:
-        if (currentPage == productTotal) {
-          setCurrentPage(1)
-        } else {
-          setCurrentPage(currentPage + 1)
-        }
-        break
+        return page
     }
-  }
+    // đánh dấu trang hiện tại
+    const handleUpDownPage = (status) => {
+        // status quyết định lên trang hay lùi trang
+        switch (status) {
+            // 0 là lùi
+            case 0:
+                if (currentPage == 1) {
+                    setCurrentPage(productTotal)
+                } else {
+                    setCurrentPage(currentPage - 1)
+                }
+                break
+            // 1 là tăng
+            case 1:
+                if (currentPage == productTotal) {
+                    setCurrentPage(1)
+                } else {
+                    setCurrentPage(currentPage + 1)
+                }
+                break
+        }
+    }
 
 
-   
+
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
@@ -151,18 +155,32 @@ export default function Products() {
             const res = await publicAxios.get("/api/v1/products/get-list")
 
             console.log(res.data);
-            const data =  res.data
-            if(end>data.length){
+            const data = res.data
+            if (end > data.length) {
                 end = data.length
             }
             const newProduct = data.slice(start, end)
             setProductTotal(Math.ceil(data.length / pageSize))
             setProducts(newProduct)
-       
-    }
-    getAllProducts()
-        
+
+        }
+        getAllProducts()
+        getAvgStar()
+
     }, [currentPage, pageSize])
+
+    const productId = products.map((product) => product.product_id)
+    console.log(productId);
+    console.log(products.product_id);
+    const getAvgStar = async () => {
+        const result = await publicAxios.get(`/api/v1/review/avg-start/${productId}`)
+        const data = result.data.data['AVG(rating)']
+        // console.log("==> ::: ", Math.round(data));
+        setAvgStar(Math.round(data));
+    }
+
+    console.log(avgStar);
+
     console.log(products);
     const handleClickProduct = (id) => {
         // console.log(id);
@@ -511,7 +529,7 @@ export default function Products() {
                                             className="group border p-0 w-full m-auto"
                                         >
                                             <div className="relative">
-                                                {product.discount !== 0 && (
+                                                {product.discount == 0 ? <></> : (
                                                     <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center">
                                                         <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
                                                     </div>
@@ -528,20 +546,23 @@ export default function Products() {
                                                 {product.product_name}
                                             </h3>
                                             <div className=" flex justify-center mt-1 text-lg font-medium text-gray-900 text-center">
-                                                <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.price)} </p>
-                                                <p className="text-lg ml-2 font-medium text-red-600">
-                                                    {formatCurrency((product.price * (1 - product.discount)))}
-                                                </p>
+                                                {
+                                                    product.discount > 0 ? (
+                                                        <>
+                                                            <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.price)} </p>
+                                                            <p className="text-lg ml-2 font-medium text-red-600">
+                                                                {formatCurrency((product.price * (1 - product.discount)))}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-lg  font-medium text-gray-900 ">{formatCurrency(+product.price)} </p>
+
+                                                    )
+                                                }
                                             </div>
                                             <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                {[...Array(5)].map((_, index) => (
-                                                    <button
-                                                        key={index}
-                                                        className="bg-white hover:bg-yellow-400"
-                                                    >
-                                                        <AiOutlineStar />
-                                                    </button>
-                                                ))}
+                                                <Rate disabled value={avgStar} className='text-sm' />
+
                                             </p>
                                         </a>
                                     ))}
