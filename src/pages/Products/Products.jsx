@@ -1,17 +1,3 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -28,13 +14,15 @@ import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
 import { Rate } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { setReload } from "../../redux/reducer/productReducer";
 
 const sortOptions = [
-    { name: "Most Popular", href: "#", current: true },
-    { name: "Best Rating", href: "#", current: false },
-    { name: "Newest", href: "#", current: false },
-    { name: "Price: Low to High", href: "#", current: false },
-    { name: "Price: High to Low", href: "#", current: false },
+    { name: "Most Popular", current: true, },
+    { name: "Best Rating", current: false },
+    { name: "Newest", current: false },
+    { name: "Price: Low to High", current: false },
+    { name: "Price: High to Low ", current: false },
 ];
 const subCategories = [
     { name: "Totes", href: "#" },
@@ -86,6 +74,12 @@ function classNames(...classes) {
 }
 
 export default function Products() {
+
+    const key = useSelector((state) => state.productReducer.keyword);
+    const reLoad = useSelector((state) => state.productReducer.reLoad);
+
+    const dispatch = useDispatch()
+
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [products, setProducts] = useState([])
     // dùng để chuyển trang
@@ -99,6 +93,7 @@ export default function Products() {
 
     const [avgStar, setAvgStar] = useState(1);
 
+    const productId = products.map((product) => product.product_id)
 
     // vẽ danh sách các trang
     const renderPage = () => {
@@ -146,32 +141,44 @@ export default function Products() {
         }
     }
 
-
-
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
         const getAllProducts = async () => {
-            const res = await publicAxios.get("/api/v1/products/get-list")
+            const res = await publicAxios.get(`/api/v1/products/get-list?search=${key}`)
 
-            console.log(res.data);
+            // console.log(res.data);
             const data = res.data
             if (end > data.length) {
                 end = data.length
             }
             const newProduct = data.slice(start, end)
+            for (let i = 0; i < newProduct.length; i++) {
+                const res = await publicAxios.get(`/api/v1/review/avg-start/${newProduct[i].product_id}`)
+                const data = res.data.data['AVG(rating)']
+                newProduct[i]['avgStar'] = Math.round(data)
+            }
+
             setProductTotal(Math.ceil(data.length / pageSize))
             setProducts(newProduct)
-
+            dispatch(setReload(false))
         }
         getAllProducts()
         getAvgStar()
 
-    }, [currentPage, pageSize])
+    }, [currentPage, pageSize, reLoad])
 
-    const productId = products.map((product) => product.product_id)
-    console.log(productId);
-    console.log(products.product_id);
+    // const sortPrice = (status) => {
+    //     switch (status) {
+    //         case 0:
+    //             setProducts(products.sort((a, b) => a.price - b.price))
+    //             break
+    //         case 1:
+    //             setProducts(products.sort((a, b) => b.price - a.price))
+    //             break
+    //     }
+    // }
+
     const getAvgStar = async () => {
         const result = await publicAxios.get(`/api/v1/review/avg-start/${productId}`)
         const data = result.data.data['AVG(rating)']
@@ -179,13 +186,12 @@ export default function Products() {
         setAvgStar(Math.round(data));
     }
 
-    console.log(avgStar);
-
-    console.log(products);
     const handleClickProduct = (id) => {
-        // console.log(id);
-        // localStorage.setItem("idProductDetail", id)
         navigate(`/product_detail/${id}`)
+    }
+    const handleChange = () => {
+
+
     }
 
     return (
@@ -369,11 +375,12 @@ export default function Products() {
                                     leave="transition ease-in duration-75"
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
+                                    onClick={(e => console.log(e.target.value))}
                                 >
                                     <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <div className="py-1">
                                             {sortOptions.map((option) => (
-                                                <Menu.Item key={option.name}>
+                                                <Menu.Item key={option.name} value={option.name}>
                                                     {({ active }) => (
                                                         <a
                                                             href={option.href}
@@ -561,7 +568,7 @@ export default function Products() {
                                                 }
                                             </div>
                                             <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                <Rate disabled value={avgStar} className='text-sm' />
+                                                <Rate disabled value={product.avgStar} className='text-sm' />
 
                                             </p>
                                         </a>
@@ -614,8 +621,8 @@ export default function Products() {
                             </div>
                         </div>
                     </section>
-                </main>
-            </div>
+                </main >
+            </div >
         </>
     );
 }

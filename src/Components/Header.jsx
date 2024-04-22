@@ -23,7 +23,7 @@ import {
   ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import "./Header.scss";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   ChevronDownIcon,
@@ -35,6 +35,8 @@ import { Link } from "react-router-dom";
 import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
 import { useDispatch, useSelector } from "react-redux";
+import { setReload, setSearchKey } from "../redux/reducer/productReducer.js"
+
 
 const products = [
   {
@@ -79,14 +81,19 @@ function classNames(...classes) {
 }
 
 export default function Header({ isLogin, setIsLogin, setIsLoad }) {
+
+  const path = useLocation();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const dispatch = useDispatch();
+  const [keyword, setKeyword] = useState("");
+
   const cart = useSelector((state) => {
     return state.cartReducer.cart
   })
-  console.log(cart);
+
 
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
@@ -96,7 +103,6 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     setUserLogin({});
     setIsLogin(false);
     window.location.href = "/login";
-
   };
   const getCategories = async () => {
     const res = await publicAxios.get("/api/v1/category/get-list");
@@ -126,6 +132,20 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     }
     return name;
   };
+
+
+  const handleChangeKeyword = (word) => {
+    setKeyword(word);
+  }
+
+  const handleSearch = () => {
+    if (path.pathname == "/products") {
+      dispatch(setReload(true));
+    }
+    dispatch(setSearchKey(keyword));
+    navigate(`/products`);
+  }
+
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
       <Translate></Translate>
@@ -231,17 +251,19 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
             <input
               type="text"
               placeholder="Search here"
-              className="pl-8 pr-3 py-1 rounded-lg border border-gray-300 text-s focus:outline-none focus:border-blue-500 "
+              className="pl-8 pr-3 py-1 rounded-lg border border-gray-300 text-s focus:outline-none focus:border-blue-500"
+              onChange={e => handleChangeKeyword(e.target.value)}
+              value={keyword}
             />
             <a
-              href="#"
               className="absolute inset-y-0 right-0 flex pr-3 items-center"
               style={{ fontSize: "22px" }}
             >
-              <MdSearch />
+              <MdSearch onClick={() => handleSearch()} />
             </a>
           </div>
         </Popover.Group>
+
         <div className="hidden lg:flex lg:gap-x-12 items-center ml-5">
           <Link
             to="/favor"
