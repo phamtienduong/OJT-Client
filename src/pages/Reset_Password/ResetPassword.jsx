@@ -3,6 +3,7 @@ import { TEInput } from "tw-elements-react";
 import { notification } from "antd";
 import publicAxios from '../../config/publicAxios';
 import { useNavigate } from 'react-router-dom';
+import { resetPassword } from '../../apis/auth/auth';
 
 export default function ResetPassword() {
     const navigate = useNavigate();
@@ -27,11 +28,10 @@ export default function ResetPassword() {
             })
         }
         try {
-            let res = await publicAxios.post("api/v1/auth/reset-password", {
-                id, password
-            })
+            let res = await resetPassword({ id, password })
+            console.log(res);
             notification.success({
-                message: res.data.message + ". Go back to login"
+                message: res.message + ". Go back to login"
             })
             setCfPassword("")
             setPassword("")
