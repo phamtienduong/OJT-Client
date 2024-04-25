@@ -29,7 +29,6 @@ export default function ResetPassword() {
         }
         try {
             let res = await resetPassword({ id, password })
-            console.log(res);
             notification.success({
                 message: res.message + ". Go back to login"
             })
