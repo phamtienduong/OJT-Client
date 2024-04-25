@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { TERipple } from "tw-elements-react";
 import image from "../../Images/111.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { notification } from "antd";
 import { registerApi } from "../../apis/auth/auth";
-
+import { RouterLink } from "../../components/custom/RouterLink";
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -213,12 +213,12 @@ export default function Register() {
 
                 <p className="mb-0 mt-4 pt-1 text-sm font-semibold">
                   Have an account?{" "}
-                  <Link
+                  <RouterLink
                     to="/login"
                     className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                   >
                     Login
-                  </Link>
+                  </RouterLink>
                 </p>
               </div>
             </form>

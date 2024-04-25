@@ -30,13 +30,12 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import Translate from "./Translate.jsx";
-import { Link } from "react-router-dom";
 import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { setReload, setSearchKey } from "../redux/reducer/productReducer.js"
 import { useTranslation } from "react-i18next";
-
+import { RouterLink } from "./custom/RouterLink.jsx";
 const products = [
   {
     name: "Analytics",
@@ -146,7 +145,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
         <div className="flex items-center">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only"></span>
-            <Link to="/home">
+            <RouterLink to="/home">
               {" "}
               <img
                 className="h-15 w-auto"
@@ -154,7 +153,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 alt=""
                 style={{ width: 70, height: 50 }}
               />
-            </Link>
+            </RouterLink>
           </a>
         </div>
         <div className="flex lg:hidden">
@@ -168,25 +167,25 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center truncate">
-          <Link
+          <RouterLink
             to="/home"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("HOME")}
-          </Link>
+          </RouterLink>
 
-          <Link
+          <RouterLink
             to="/contact"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("CONTACT")}
-          </Link>
-          <Link
+          </RouterLink>
+          <RouterLink
             to="/about"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("ABOUT")}
-          </Link>
+          </RouterLink>
           <Popover.Group className="hidden lg:flex lg:gap-x-12  items-center">
             <Popover className="relative">
               <Popover.Button className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1">
@@ -254,14 +253,14 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
         </Popover.Group>
 
         <div className="hidden lg:flex lg:gap-x-12 items-center ml-5">
-          <Link
+          <RouterLink
             to="/favor"
             className="flex font-normal leading-6 text-black-800 mb-1"
             style={{ fontSize: "25px" }}
           >
             <MdFavoriteBorder />
-          </Link>
-          <Link
+          </RouterLink>
+          <RouterLink
             to="/cart"
             className="flex font-normal leading-6 text-black-800 mb-1"
             style={{ fontSize: "25px" }}
@@ -272,8 +271,8 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 {cart?.length}
               </div>
             </div>
-          </Link>
-          <Link
+          </RouterLink>
+          <RouterLink
             href="#"
             className=" text-lg font-semibold leading-6 text-gray-900"
           >
@@ -310,7 +309,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
-                      <Link
+                      <RouterLink
                         to="/account"
                         className={classNames(
                           active ? "bg-gray-100" : "",
@@ -318,12 +317,12 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                         )}
                       >
                         Your Profile
-                      </Link>
+                      </RouterLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <Link
+                      <RouterLink
                         to="#"
                         className={classNames(
                           active ? "bg-gray-100" : "",
@@ -331,7 +330,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                         )}
                       >
                         Settings
-                      </Link>
+                      </RouterLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -351,7 +350,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 </Menu.Items>
               </Transition>
             </Menu>{" "}
-          </Link>
+          </RouterLink>
         </div>
         {/* <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     <a
@@ -416,45 +415,45 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                     </>
                   )}
                 </Disclosure>
-                <Link
+                <RouterLink
                   to="/contact"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Contact
-                </Link>
-                <Link
+                </RouterLink>
+                <RouterLink
                   to="/about"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   About
-                </Link>
+                </RouterLink>
 
-                <Link
+                <RouterLink
                   to="/favor"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Wishlist
-                </Link>
-                <Link
+                </RouterLink>
+                <RouterLink
                   to="/cart"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Cart
-                </Link>
-                <Link
+                </RouterLink>
+                <RouterLink
                   to="/account"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Account
-                </Link>
+                </RouterLink>
               </div>
               <div className="py-6">
-                <Link
+                <RouterLink
                   to="/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
-                </Link>
+                </RouterLink>
               </div>
             </div>
           </div>
