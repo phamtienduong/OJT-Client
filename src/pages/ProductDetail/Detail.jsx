@@ -409,7 +409,7 @@ export default function Detail() {
                                                     className="w-10 h-10 rounded-full"
                                                 />
                                             </div>
-                                            <div className='text-lg'>{review.user_name}</div>
+                                            <div className='text-lg'>{review.user_id.user_name}</div>
                                         </div>
                                         <div className='text-xs text-slate-500'>{new Date(review.review_date).toLocaleString()}</div>
                                     </div>

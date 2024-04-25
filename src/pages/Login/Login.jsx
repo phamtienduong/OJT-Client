@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
+import { loginApi } from "../../apis/auth/auth";
 
 
 export default function Login({ setIsLogin }) {
@@ -31,17 +32,23 @@ export default function Login({ setIsLogin }) {
         }
         // xử lý đăng nhập
         try {
-          const res = await publicAxios.post("/api/v1/auth/login", user)
-          console.log(res);
-          notification.success(res.data);
-        
-          
-          if (res.data.data) {
-            localStorage.setItem("token", res.data.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
-            setIsLogin(true)
-            navigate("/home");
-          }
+            let data = {
+                email: user.email,
+                password: user.password
+            }
+            const res = await loginApi(data)
+            // console.log(res.data);
+            notification.success({
+                message: res.message,
+            });
+
+
+            if (res.data) {
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
+                setIsLogin(true)
+                navigate("/home");
+            }
         }
         catch (error) {
             notification.error(error.response.data)
@@ -54,7 +61,7 @@ export default function Login({ setIsLogin }) {
         let data = {
             user_name: user.displayName,
             email: user.email,
-            password: "",
+            password: user.uid,
             avatar: user.photoURL,
             role: "user",
             status: 0,
@@ -66,10 +73,10 @@ export default function Login({ setIsLogin }) {
             console.log("ressss", res);
             notification.success(res.data);
             if (res.data.data) {
-              localStorage.setItem("token", res.data.data.token)
-              localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
-              setIsLogin(true)
-              navigate("/home");
+                localStorage.setItem("token", res.data.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
+                setIsLogin(true)
+                navigate("/home");
             }
         } catch (error) {
             console.log(error);
@@ -82,7 +89,7 @@ export default function Login({ setIsLogin }) {
         let data = {
             user_name: user.displayName,
             email: user.email,
-            password: "",
+            password: user.uid,
             avatar: user.photoURL,
             role: "user",
             status: 0,
@@ -105,9 +112,9 @@ export default function Login({ setIsLogin }) {
     useEffect(() => {
         handleLogin()
     }, [])
-    const handleReset = async () => {
+    const handleSendMail = async () => {
         try {
-            let res = await publicAxios.post("/api/v1/auth/reset", { email: emailForget });
+            let res = await publicAxios.post("/api/v1/auth/send-mail", { email: emailForget });
             notification.success({
                 message: res.data.message
             })
@@ -336,7 +343,7 @@ export default function Login({ setIsLogin }) {
                                 <button
                                     type="button"
                                     className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                                    onClick={handleReset}
+                                    onClick={handleSendMail}
                                 >
                                     Submit
                                 </button>

@@ -2,6 +2,7 @@ import { Button, Form, Input, Modal, Popconfirm, Table, message } from "antd";
 
 import { useEffect, useState } from "react";
 import publicAxios from "../../config/publicAxios";
+import { formatCurrency } from "../../helper/formatMoney";
 //
 
 const columns = (handleChangeStatus) => [
@@ -20,6 +21,8 @@ const columns = (handleChangeStatus) => [
         title: "Total Price",
         dataIndex: "total_price",
         key: "price",
+        render: (total_price) => formatCurrency(total_price),
+
     },
     {
         title: "Phone Number",
@@ -56,9 +59,8 @@ const columns = (handleChangeStatus) => [
         key: "date",
         render: (_, record) => {
             const date = new Date(record.bill_date);
-            const formattedDate = `${date.getDate()}/${
-                date.getMonth() + 1
-            }/${date.getFullYear()}`;
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1
+                }/${date.getFullYear()}`;
             return formattedDate;
         },
     },
@@ -78,7 +80,7 @@ const columns = (handleChangeStatus) => [
                         title="Cancel"
                         description="Are you sure to cancel this bill?"
                         onConfirm={() => handleChangeStatus(record)}
-                        onCancel={() => {}}
+                        onCancel={() => { }}
                         okText="Yes"
                         cancelText="No"
                     >
@@ -93,7 +95,7 @@ const columns = (handleChangeStatus) => [
 ];
 export default function Bills() {
     const [listBills, setListBills] = useState([]);
-const user_name = JSON.parse(localStorage.getItem("user_login")).user_name;
+    const user_name = JSON.parse(localStorage.getItem("user_login")).user_name;
 
     const user_id = JSON.parse(localStorage.getItem("user_login")).user_id;
     const getAllBills = async () => {

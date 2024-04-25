@@ -12,7 +12,7 @@ import Slider from "react-slick";
 import publicAxios from "../../config/publicAxios";
 import { formatCurrency } from "../../helper/formatMoney";
 import { useNavigate } from "react-router-dom";
-import { Rate } from "antd";
+import { Card, Col, Rate, Row } from "antd";
 // import "./HomePage.scss"
 export default function HomePage() {
     const [products, setProducts] = useState([]);
@@ -56,6 +56,7 @@ export default function HomePage() {
     }, [])
 
 
+
     const settings = {
         dots: true,
         infinite: true,
@@ -78,7 +79,16 @@ export default function HomePage() {
                         <div>
                             <h3>
                                 <img
-                                    src="../../../src/assets/img/Frame 560.png"
+                                    src="../../../src/assets/img/18s23fe-.webp"
+                                    alt="Slider Image"
+                                />
+                            </h3>
+                        </div>
+
+                        <div>
+                            <h3>
+                                <img
+                                    src="../../../src/assets/img/12-3-4s24.webp"
                                     alt="Slider Image"
                                 />
                             </h3>
@@ -86,15 +96,7 @@ export default function HomePage() {
                         <div>
                             <h3>
                                 <img
-                                    src="../../../src/assets/img/Frame 560.png"
-                                    alt="Slider Image"
-                                />
-                            </h3>
-                        </div>
-                        <div>
-                            <h3>
-                                <img
-                                    src="../../../src/assets/img/Frame 560.png"
+                                    src="../../../src/assets/img/12des-full-ipxsmax.webp"
                                     alt="Slider Image"
                                 />
                             </h3>
@@ -128,53 +130,50 @@ export default function HomePage() {
                     </div>
                     {/* Products List */}
                     <div className="ml-6 mr-6 lg:col-span-3">
-                        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
-                            {productSales.map((product) => (
-                                <a
-                                    key={product.product_id}
-                                    onClick={() => handleClickProduct(product.product_id)}
-                                    href={product.href}
-                                    className="group border p-0 w-2/3 m-auto"
-                                >
-                                    <div className="relative">
+                        <Row className=' flex justify-center ' gutter={[20, 20]}>
+                            {productSales.map((product, index) => (
+                                <Col onClick={() => handleClickProduct(product.product_id)} key={index} className='text-center m-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 '>
+                                    <div className="relative z-10">
                                         {product.discount == 0 ? <></> : (
-                                            <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center">
+                                            <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
                                                 <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
                                             </div>
                                         )}
                                     </div>
-                                    <div className="aspect-h-1 border aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-                                        <img
-                                            src={product.default_image}
-                                            alt={product.imageAlt}
-                                            className="h-full w-full object-cover object-center group-hover:opacity-75"
+                                    <Card
+                                        hoverable
+                                        className='border-3'
+                                        cover={<img alt={product.product_name} src={product.default_image} />}
+                                    >
+                                        <Card.Meta
+                                            title={product.product_name}
+                                            description={
+                                                <div>
+                                                    {
+                                                        product.discount > 0 ? (
+                                                            <div className='flex'>
+                                                                <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.price)} </p>
+                                                                <p className="text-lg ml-2 font-medium text-red-600">
+                                                                    {formatCurrency((product.price * (1 - product.discount)))}
+                                                                </p>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-lg  font-medium text-gray-900 ">{formatCurrency(+product.price)} </p>
+
+                                                        )
+                                                    }
+                                                    <p className="mt-1 text-lg font-medium text-gray-900 text-center">
+                                                        <Rate disabled value={product.avgStar} className='text-sm' />
+
+                                                    </p>
+                                                </div>
+
+                                            }
                                         />
-                                    </div>
-                                    <h3 className="mt-4 text-sm text-gray-700 text-center">
-                                        {product.product_name}
-                                    </h3>
-                                    <div className="flex justify-center mt-1 text-sm sm:text-md md:text-lg font-medium text-gray-900 text-center">
-                                        {product.discount > 0 ? (
-                                            <>
-                                                <p className="text-sm sm:text-md md:text-lg font-medium text-gray-900 line-through">
-                                                    {formatCurrency(+product.price)}
-                                                </p>
-                                                <p className="text-sm sm:text-md md:text-lg ml-2 font-medium text-red-600">
-                                                    {formatCurrency(product.price * (1 - product.discount))}
-                                                </p>
-                                            </>
-                                        ) : (
-                                            <p className="text-sm sm:text-md md:text-lg font-medium text-gray-900">
-                                                {formatCurrency(+product.price)}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                        <Rate disabled value={product.avgStar} className='text-sm' />
-                                    </p>
-                                </a>
+                                    </Card>
+                                </Col>
                             ))}
-                        </div>
+                        </Row>
                     </div>
                     <div className="mt-7 flex justify-center content-center items-center">
                         <button className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
@@ -218,55 +217,52 @@ export default function HomePage() {
                             </div>
                         </div>
                         {/* Products List */}
+
                         <div className="ml-6 mr-6 lg:col-span-3">
-                            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
-                                {products.slice(0, 6).map((product) => (
-                                    <a
-                                        key={product.id}
-                                        onClick={() => handleClickProduct(product.product_id)}
-                                        href={product.href}
-                                        className="group border p-0 w-2/3 m-auto"
-                                    >
-                                        <div className="relative">
+                            <Row className=' flex justify-center ' gutter={[20, 20]}>
+                                {products.splice(0, 8).map((product, index) => (
+                                    <Col onClick={() => handleClickProduct(product.product_id)} key={index} className='text-center m-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 '>
+                                        <div className="relative z-10">
                                             {product.discount == 0 ? <></> : (
-                                                <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center">
+                                                <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
                                                     <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="aspect-h-1 border aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-                                            <img
-                                                src={product.default_image}
-                                                alt={product.imageAlt}
-                                                className="h-full w-full object-cover object-center group-hover:opacity-75"
-                                            />
-                                        </div>
-                                        <h3 className="mt-4 text-sm text-gray-700 text-center">
-                                            {product.product_name}
-                                        </h3>
-                                        <div className="flex justify-center mt-1 text-sm sm:text-md md:text-lg font-medium text-gray-900 text-center">
-                                            {product.discount > 0 ? (
-                                                <>
-                                                    <p className="text-sm sm:text-md md:text-lg font-medium text-gray-900 line-through">
-                                                        {formatCurrency(+product.price)}
-                                                    </p>
-                                                    <p className="text-sm sm:text-md md:text-lg ml-2 font-medium text-red-600">
-                                                        {formatCurrency(product.price * (1 - product.discount))}
-                                                    </p>
-                                                </>
-                                            ) : (
-                                                <p className="text-sm sm:text-md md:text-lg font-medium text-gray-900">
-                                                    {formatCurrency(+product.price)}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                            <Rate disabled value={product.avgStar} className='text-sm' />
+                                        <Card
+                                            hoverable
+                                            className='border-3'
+                                            cover={<img alt={product.product_name} src={product.default_image} />}
+                                        >
+                                            <Card.Meta
+                                                title={product.product_name}
+                                                description={
+                                                    <div>
+                                                        {
+                                                            product.discount > 0 ? (
+                                                                <div className='flex'>
+                                                                    <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.price)} </p>
+                                                                    <p className="text-lg ml-2 font-medium text-red-600">
+                                                                        {formatCurrency((product.price * (1 - product.discount)))}
+                                                                    </p>
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-lg  font-medium text-gray-900 ">{formatCurrency(+product.price)} </p>
 
-                                        </p>
-                                    </a>
+                                                            )
+                                                        }
+                                                        <p className="mt-1 text-lg font-medium text-gray-900 text-center">
+                                                            <Rate disabled value={product.avgStar} className='text-sm' />
+
+                                                        </p>
+                                                    </div>
+
+                                                }
+                                            />
+                                        </Card>
+                                    </Col>
                                 ))}
-                            </div>
+                            </Row>
                         </div>
                         <div className="mt-7 flex justify-center content-center items-center">
                             <button

@@ -31,7 +31,7 @@ export default function Checkout() {
         // console.log(result.data.results);
         setProvinces(result.data.results);
     };
-const navigate = useNavigate();
+    const navigate = useNavigate();
     const handleSelectProvince = async (e) => {
         const selectedProvinceCode = e.target.value;
         const selectedProvince = provinces.find(
@@ -54,26 +54,26 @@ const navigate = useNavigate();
         }));
     };
 
-   const handleSelectDistrict = async (e) => {
-       const selectedDistrictCode = +e.target.value;
-       const selectedDistrict = districts.find(
-           (item) => item.district_id == selectedDistrictCode
-       );
+    const handleSelectDistrict = async (e) => {
+        const selectedDistrictCode = +e.target.value;
+        const selectedDistrict = districts.find(
+            (item) => item.district_id == selectedDistrictCode
+        );
 
-       let result = await axios.get(
-           `https://vapi.vnappmob.com/api/province/ward/${selectedDistrictCode}`
-       );
+        let result = await axios.get(
+            `https://vapi.vnappmob.com/api/province/ward/${selectedDistrictCode}`
+        );
 
-       setDistrictCode(selectedDistrictCode);
-       setWards(result.data.results);
-       setWardCode(-1);
+        setDistrictCode(selectedDistrictCode);
+        setWards(result.data.results);
+        setWardCode(-1);
 
-       setAddress((prevAddress) => ({
-           ...prevAddress,
-           districtCode: selectedDistrictCode,
-           districtName: selectedDistrict.district_name  // Lưu trữ tên quận/huyện (nếu có)
-       }));
-   };
+        setAddress((prevAddress) => ({
+            ...prevAddress,
+            districtCode: selectedDistrictCode,
+            districtName: selectedDistrict.district_name  // Lưu trữ tên quận/huyện (nếu có)
+        }));
+    };
 
     const handleSelectWard = (e) => {
         const selectedWardCode = e.target.value;
@@ -86,18 +86,30 @@ const navigate = useNavigate();
             wardName: selectedWard.ward_name, // Lưu trữ tên phường/xã
         }));
     };
+    // const total_price = () => {
+
+    //     // console.log(result)
+    //     setFuncPrice(result);
+    // };
+
     console.log(address);
-    useEffect(() => {
-        getProvinces();
-        handleGetCartUser();
-        total_price();
-    }, []);
 
     const handleGetCartUser = async () => {
         const res = await publicAxios.get(`/api/v1/cart/list/${user_id}`);
+        const result = cartUser.reduce((total, current) => {
+            const discountedPrice = current.product_id.price * (1 - parseFloat(current.product_id.discount));
+            const totalPrice = discountedPrice * current.quantity;
+            return total + totalPrice;
+        }, 0);
         setCartUser(res.data);
+        setFuncPrice(result);
         console.log(res.data);
     };
+    useEffect(() => {
+        getProvinces();
+        handleGetCartUser();
+    }, []);
+
     const handleClearCart = async () => {
         try {
             const res = await publicAxios.delete(`/api/v1/cart/${user_id}`);
@@ -115,15 +127,11 @@ const navigate = useNavigate();
         });
         // console.log(handleChange)
     };
-    const total_price = () => {
-        const result = cartUser.reduce((total, item) => {
-            const itemPrice = item.product_id.price * item.quantity;
-            return total + parseInt(itemPrice);
-        }, 0);
-        // console.log(result)
-        setFuncPrice(result);
-    };
-    console.log(handleChange?.fullname);
+
+    console.log(funcPrice);
+
+    console.log(cartUser);
+    // console.log(handleChange?.fullname);
     const handleCheckout = async () => {
         const data = {
             address: `${address.wardName}, ${address.districtName}, ${address.provinceName}  `,
@@ -304,10 +312,7 @@ const navigate = useNavigate();
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            {formatCurrency(
-                                                                item.product_id
-                                                                    .price
-                                                            )}
+                                                            {formatCurrency(+(item.product_id.price) * (1 - parseFloat(item.product_id.discount)))}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -317,7 +322,7 @@ const navigate = useNavigate();
                                                 <div className="flex justify-between py-2 border-b border-black">
                                                     <div>Subtotal:</div>
                                                     <div>
-                                                        {formatCurrency(1)}
+                                                        {formatCurrency(funcPrice)}
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-between py-2 border-b border-black">

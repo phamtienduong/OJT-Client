@@ -11,26 +11,29 @@ export default function DashBoard() {
     const [users, setUsers] = useState([])
 
     const getInfoDasboard = async () => {
-        // const res = await publicAxios.get("/api/v1/orders")
+        const res = await publicAxios.get("/api/v1/bill-detail")
         const ressult = await publicAxios.get("/api/v1/users/list")
         console.log(ressult.data.data);
+        console.log(res.data);
         setUsers(ressult.data.data)
-        setOrders(res.data.data)
+        setOrders(res.data)
     }
 
 
     let money = orders.reduce((acc, item) => {
-        if (item.status == "đã xác nhận") {
+        if (item.status == "accept") {
             acc += item.total_price
         }
         return acc;
     }, 0)
+    console.log(money);
 
 
     useEffect(() => {
         getInfoDasboard()
     }, [])
     console.log(users);
+    console.log(orders);
 
     return (
         <div>

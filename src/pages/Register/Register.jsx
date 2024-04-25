@@ -4,6 +4,7 @@ import image from "../../Images/111.png";
 import { Link, useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { notification } from "antd";
+import { registerApi } from "../../apis/auth/auth";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -78,9 +79,11 @@ export default function Register() {
     const isValid = validateInput();
     if (isValid) {
       try {
-        const res = await publicAxios.post("/api/v1/auth/register", formData);
+        const res = await registerApi(formData);
         console.log(res);
-        notification.success(res.data);
+        notification.success({
+          message: res.message,
+        });
         navigate("/login");
       } catch (error) {
         notification.error({ message: "Đã xảy ra lỗi!" });

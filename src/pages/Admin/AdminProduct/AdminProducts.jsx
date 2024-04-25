@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm } from 'antd';
+import { Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm, Upload } from 'antd';
 import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
-import {uploadImage} from "../../../common/upload"
+import { uploadImage } from "../../../common/upload"
+import { PlusOutlined } from '@ant-design/icons';
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'STT',
@@ -82,26 +83,26 @@ export default function AdminProducts() {
     const [categories, setCategories] = useState([]);
     const [fileImage, setFileImage] = useState()
     const [form] = Form.useForm()
-    const [flag,setFlag]  = useState(true)
+    const [flag, setFlag] = useState(true)
     const [search, setSearch] = useState("")
     const [cateChange, setCateChange] = useState("")
     const [images, setImages] = useState(["", "", ""])
 
-    
+
     // const onSearch = (value, _e, info) => console.log(info?.source, value);
 
     // console.log(productUpdate);
     const handleChangeImages = async (e, index) => {
         const url = await uploadImage(e.target.files[0])
 
-        if(productUpdate?.product_id) {
-            console.log("change images", {id: productUpdate.impds[index].id, url });
-            await publicAxios.put(`/api/v1/products/update-impds`, {id: productUpdate.impds[index].id, url })
+        if (productUpdate?.product_id) {
+            console.log("change images", { id: productUpdate.impds[index].id, url });
+            await publicAxios.put(`/api/v1/products/update-impds`, { id: productUpdate.impds[index].id, url })
             const newImages = [...images]
             newImages[index] = url
             setImages(newImages)
             return
-        } 
+        }
         console.log("add images");
         const newImages = [...images]
         newImages[index] = url
@@ -147,13 +148,13 @@ export default function AdminProducts() {
         setFileImage(e.target.files[0])
     }
     const handleChangeCategory = (e) => {
-        
+
     };
     // console.log(cateChange);
     // hàm thêm hoặc sửa sp
     const onFinish = async (values) => {
         // console.log(values);
-console.log(values);
+        console.log(values);
 
         // nếu có thông tin về sản phẩm cần sửa thì sẽ sửa
         if (productUpdate) {
@@ -263,7 +264,7 @@ console.log(values);
     // khi click nút edit
     const handleClickEdit = (product) => {
         // let findProd = products.find(item => item.product_id == product.product_id)
-        
+
         // setCateChange(findProd.category_id.category_name)
         // console.log(categories);
         // Set field values using form.setFieldsValue()
@@ -286,7 +287,7 @@ console.log(values);
         setProducts(result.data)
     }
 
-// console.log(cateChange);
+    // console.log(cateChange);
     return (
         <div>
             {
@@ -358,37 +359,43 @@ console.log(values);
                                 <Input id='file-image' type='file' style={{ display: "none" }} onChange={handleChangeImage} />
                                 <Image src={productUpdate?.product_id ? productUpdate.default_image : fileImage ? URL.createObjectURL(fileImage) : ""} alt='default_image' width={100} />
                             </Form.Item>
-                            
-                            <div className='flex justify-between mb-4' style={{padding: "0 100px"}}>
+
+                            <div className='flex justify-between mb-4' style={{ padding: "0 100px" }}>
                                 <div>
                                     <label htmlFor='images0'
-                                        style={{cursor: 'pointer', border: "1px solid black", padding: "5px 10px",
-                                        borderRadius: 4}}
+                                        style={{
+                                            cursor: 'pointer', border: "1px solid black", padding: "5px 10px",
+                                            borderRadius: 4
+                                        }}
                                     >Image 1</label>
-                                    <input id='images0' type="file" accept='image/*' hidden 
+                                    <input id='images0' type="file" accept='image/*' hidden
                                         onChange={(e) => handleChangeImages(e, 0)}
                                     />
                                     <img width={150} src={images[0] || productUpdate?.impds[0].url} alt='item1' />
                                 </div>
                                 <div>
                                     <label htmlFor='images1'
-                                        style={{cursor: 'pointer', border: "1px solid black",padding: "5px 10px",
-                                        borderRadius: 4}}
+                                        style={{
+                                            cursor: 'pointer', border: "1px solid black", padding: "5px 10px",
+                                            borderRadius: 4
+                                        }}
                                     >Image 2</label>
-                                    <input id='images1' type="file" accept='image/*' hidden 
+                                    <input id='images1' type="file" accept='image/*' hidden
                                         onChange={(e) => handleChangeImages(e, 1)}
                                     />
                                     <img width={150} src={images[1] || productUpdate?.impds[1].url} alt='item1' />
                                 </div>
                                 <div>
                                     <label htmlFor='images2'
-                                        style={{cursor: 'pointer', border: "1px solid black",padding: "5px 10px",
-                                        borderRadius: 4}}
+                                        style={{
+                                            cursor: 'pointer', border: "1px solid black", padding: "5px 10px",
+                                            borderRadius: 4
+                                        }}
                                     >Image 3</label>
-                                    <input id='images2' type="file" accept='image/*' hidden 
+                                    <input id='images2' type="file" accept='image/*' hidden
                                         onChange={(e) => handleChangeImages(e, 2)}
                                     />
-                                    <img width={150} src={images[2]|| productUpdate?.impds[2].url} alt='item1' />
+                                    <img width={150} src={images[2] || productUpdate?.impds[2].url} alt='item1' />
                                 </div>
                             </div>
                             <Form.Item wrapperCol={{ offset: 12, span: 12 }}>

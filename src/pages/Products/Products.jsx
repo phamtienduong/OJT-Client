@@ -527,13 +527,13 @@ export default function Products() {
 
                             {/* Product grid */}
                             <div className="lg:col-span-3">
-                                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
+                                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8  ">
                                     {products.map((product) => (
                                         <a
                                             key={product.product_id}
                                             onClick={() => handleClickProduct(product.product_id)}
                                             href={product.href}
-                                            className="group border p-0 w-full m-auto"
+                                            className="group border p-0 w-full m-auto rounded-md"
                                         >
                                             <div className="relative">
                                                 {product.discount == 0 ? <></> : (
@@ -542,7 +542,7 @@ export default function Products() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="aspect-h-1 border aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+                                            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden  bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                                                 <img
                                                     src={product.default_image}
                                                     alt={product.imageAlt}
