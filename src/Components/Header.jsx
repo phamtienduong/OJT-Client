@@ -23,20 +23,19 @@ import {
   ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import "./Header.scss";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDownIcon,
   PhoneIcon,
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
-import Translate from "./Translate";
+import Translate from "./Translate.jsx";
 import { Link } from "react-router-dom";
 import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { setReload, setSearchKey } from "../redux/reducer/productReducer.js"
-
+import { useTranslation } from "react-i18next";
 
 const products = [
   {
@@ -75,29 +74,24 @@ const callsToAction = [
   { name: "Contact sales", href: "#", icon: PhoneIcon },
 ];
 
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ isLogin, setIsLogin, setIsLoad }) {
-
+export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLanguage, language }) {
   const path = useLocation();
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const dispatch = useDispatch();
   const [keyword, setKeyword] = useState("");
-
   const cart = useSelector((state) => {
     return state.cartReducer.cart
   })
-
-
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
   );
+  const { t } = useTranslation();
   const handleLogout = () => {
     localStorage.clear();
     setUserLogin({});
@@ -106,7 +100,6 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
   };
   const getCategories = async () => {
     const res = await publicAxios.get("/api/v1/category/get-list");
-    //   console.log(res.data);
     setCategory(res.data);
   }
   useEffect(() => {
@@ -119,7 +112,6 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     { name: item.category_name, href: "#", id: item.category_id }
   ))
   const handleClickCategory = (id) => {
-    console.log(id);
     // localStorage.setItem("categoryId", JSON.stringify(id));
     setIsLoad((prev) => !prev);
     navigate(`category/${id}`);
@@ -133,7 +125,6 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     return name;
   };
 
-
   const handleChangeKeyword = (word) => {
     setKeyword(word);
   }
@@ -145,11 +136,9 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
     dispatch(setSearchKey(keyword));
     navigate(`/products`);
   }
-
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
-      <Translate></Translate>
-
+      <Translate handleChangeLanguage={handleChangeLanguage} language={language}></Translate>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -178,30 +167,30 @@ export default function Header({ isLogin, setIsLogin, setIsLoad }) {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center">
+        <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center truncate">
           <Link
             to="/home"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
-            Home
+            {t("HOME")}
           </Link>
 
           <Link
             to="/contact"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
-            Contact
+            {t("CONTACT")}
           </Link>
           <Link
             to="/about"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
-            About
+            {t("ABOUT")}
           </Link>
           <Popover.Group className="hidden lg:flex lg:gap-x-12  items-center">
             <Popover className="relative">
               <Popover.Button className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1">
-                Products
+                {t("PRODUCT")}
                 <ChevronDownIcon
                   className="h-5 w-5 flex-none text-gray-400"
                   aria-hidden="true"
