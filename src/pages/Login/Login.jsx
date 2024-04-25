@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
-import { loginApi } from "../../apis/auth/auth";
+import { loginApi, loginFacebook, loginGoogle, mailerApi } from "../../apis/auth/auth";
 
 
 export default function Login({ setIsLogin }) {
@@ -37,7 +37,6 @@ export default function Login({ setIsLogin }) {
                 password: user.password
             }
             const res = await loginApi(data)
-            // console.log(res.data);
             notification.success({
                 message: res.message,
             });
@@ -56,7 +55,6 @@ export default function Login({ setIsLogin }) {
     }
     const OnButtonClick = async () => {
         const auth = await GoogleAuth()
-        console.log(auth)
         const user = auth.user
         let data = {
             user_name: user.displayName,
@@ -67,14 +65,15 @@ export default function Login({ setIsLogin }) {
             status: 0,
             phone: "0962989858"
         }
-        console.log(data)
+
         try {
-            const res = await publicAxios.post("/api/v1/auth/login-google", data)
-            console.log("ressss", res);
-            notification.success(res.data);
-            if (res.data.data) {
-                localStorage.setItem("token", res.data.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
+            const res = await loginGoogle(data)
+            notification.success({
+                message: res.message,
+            });
+            if (res.data) {
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
                 setIsLogin(true)
                 navigate("/home");
             }
@@ -84,7 +83,6 @@ export default function Login({ setIsLogin }) {
     }
     const FacebookAuthButtonClicked = async () => {
         const authFb = await FacebookAuth();
-        console.log(authFb)
         const user = authFb.user
         let data = {
             user_name: user.displayName,
@@ -95,13 +93,14 @@ export default function Login({ setIsLogin }) {
             status: 0,
             phone: "0962989858"
         }
-        console.log(data)
         try {
-            const res = await publicAxios.post("/api/v1/auth/login-facebook", data)
-            notification.success(res.data);
-            if (res.data.data) {
-                localStorage.setItem("token", res.data.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.data.user));
+            const res = await loginFacebook(data)
+            notification.success({
+                message: res.message,
+            });
+            if (res.data) {
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
                 setIsLogin(true)
                 navigate("/home");
             }
@@ -114,11 +113,12 @@ export default function Login({ setIsLogin }) {
     }, [])
     const handleSendMail = async () => {
         try {
-            let res = await publicAxios.post("/api/v1/auth/send-mail", { email: emailForget });
+            let res = await mailerApi({ email: emailForget });
+            console.log(res.id)
             notification.success({
-                message: res.data.message
+                message: res.message
             })
-            localStorage.setItem("reset_id", res.data.id);
+            localStorage.setItem("reset_id", res.id);
             setShowModal(false);
             setEmailForget("");
         } catch (err) {
