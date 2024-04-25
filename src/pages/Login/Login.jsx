@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { TEInput, TERipple, TEModal, TEModalDialog, TEModalContent, TEModalHeader, TEModalBody, TEModalFooter } from "tw-elements-react";
 import "./Login.scss";
 import image from "../../Images/111.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
+import { RouterLink } from "../../components/custom/RouterLink";
 import { loginApi, loginFacebook, loginGoogle, mailerApi } from "../../apis/auth/auth";
-
 
 export default function Login({ setIsLogin }) {
     const [showModal, setShowModal] = useState(false);
@@ -40,14 +40,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-
-
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                navigate("/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         }
         catch (error) {
             notification.error(error.response.data)
@@ -71,12 +67,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                navigate("/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         } catch (error) {
             console.log(error);
         }
@@ -98,12 +92,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                navigate("/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         } catch (error) {
             console.log(error);
         }
@@ -114,7 +106,6 @@ export default function Login({ setIsLogin }) {
     const handleSendMail = async () => {
         try {
             let res = await mailerApi({ email: emailForget });
-            console.log(res.id)
             notification.success({
                 message: res.message
             })
@@ -279,12 +270,12 @@ export default function Login({ setIsLogin }) {
                                     {/* <!-- Register link --> */}
                                     <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                                         Don't have an account?{" "}
-                                        <Link
+                                        <RouterLink
                                             to="/register"
                                             className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                                         >
                                             Register
-                                        </Link>
+                                        </RouterLink>
                                     </p>
                                 </div>
                             </form>
