@@ -1,10 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getAllProductsApi } from "../../apis/products";
 
 const initialState = {
     products: [],
     keyword: "",
     reLoad: false,
 }
+
+export const getAllProducts = createAsyncThunk(
+    "products",
+    async (query) => {
+        const res = await getAllProductsApi(query);
+        return res.data;
+    }
+)
+
 const productSlice = createSlice({
     name: 'product',
     initialState,
@@ -17,7 +27,10 @@ const productSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-
+        builder
+            .addCase(getAllProducts.fulfilled, (state, action) => {
+                state.products = [...action.payload]
+            })
     }
 })
 export const { setSearchKey, setReload } = productSlice.actions;

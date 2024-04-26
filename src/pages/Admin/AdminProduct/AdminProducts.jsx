@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 import { Image, Table, Modal, Form, Input, Select, message, Space, Button, Popconfirm, Upload } from 'antd';
 import publicAxios from "../../../config/publicAxios";
 
@@ -6,7 +7,9 @@ import { formatCurrency } from "../../../helper/formatMoney";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
 import { uploadImage } from "../../../common/upload"
+import { getAllProducts } from '../../../redux/reducer/productReducer';
 import { PlusOutlined } from '@ant-design/icons';
+import { updateProductApi, createProductApi, deleteProductApi, updateImgProductApi } from '../../../apis/products';
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'STT',
@@ -77,8 +80,9 @@ const onFinishFailed = (errorInfo) => {
 };
 
 export default function AdminProducts() {
+    const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [products, setProducts] = useState([])
+    const products = useSelector(state=>state.productReducer.products);
     const [productUpdate, setProductUpdate] = useState()
     const [categories, setCategories] = useState([]);
     const [fileImage, setFileImage] = useState()
@@ -88,22 +92,21 @@ export default function AdminProducts() {
     const [cateChange, setCateChange] = useState("")
     const [images, setImages] = useState(["", "", ""])
 
+    useEffect(() => {
+        dispatch(getAllProducts());
+    }, [flag])
 
-    // const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-    // console.log(productUpdate);
     const handleChangeImages = async (e, index) => {
         const url = await uploadImage(e.target.files[0])
 
         if (productUpdate?.product_id) {
             console.log("change images", { id: productUpdate.impds[index].id, url });
-            await publicAxios.put(`/api/v1/products/update-impds`, { id: productUpdate.impds[index].id, url })
+            await updateImgProductApi({ id: productUpdate.impds[index].id, url })
             const newImages = [...images]
             newImages[index] = url
             setImages(newImages)
             return
         }
-        console.log("add images");
         const newImages = [...images]
         newImages[index] = url
         setImages(newImages)
@@ -126,22 +129,13 @@ export default function AdminProducts() {
         setProductUpdate()
 
         setImages(["", "", ""])
-        await getAllProduct()
+        setFlag(!flag)
     };
-    const getAllProduct = async () => {
-        const res = await publicAxios.get("/api/v1/products/get-list")
-        console.log(res.data);
-        setProducts(res.data)
-
-    }
     const getCategories = async () => {
         const result = await publicAxios.get("/api/v1/category/get-list")
-        // console.log(result.data);
         setCategories(result.data)
     }
-    // console.log(products);
     useEffect(() => {
-        getAllProduct();
         getCategories();
     }, [flag]);
     const handleChangeImage = (e) => {
@@ -150,11 +144,9 @@ export default function AdminProducts() {
     const handleChangeCategory = (e) => {
 
     };
-    // console.log(cateChange);
+
     // hàm thêm hoặc sửa sp
     const onFinish = async (values) => {
-        // console.log(values);
-        console.log(values);
 
         // nếu có thông tin về sản phẩm cần sửa thì sẽ sửa
         if (productUpdate) {
@@ -195,12 +187,12 @@ export default function AdminProducts() {
                 }
             }
             // gửi dữ liệu lên db
-            const result = await publicAxios.patch(`/api/v1/products/update/${productUpdate.product_id}`, newProduct)
+            const result = await updateProductApi(productUpdate.product_id, newProduct)
             if (result.status == 200) {
                 message.success("Sửa thành công")
                 form.resetFields() // xoá thông tin nhập nơi form
                 setFileImage() // xoá thông tin về ảnh đã chọn
-                await getAllProduct() // lấy thông tin sản phẩm để vẽ lại
+                setFlag(!flag); // lấy thông tin sản phẩm để vẽ lại
             } else {
                 message.error('Sửa thất bại')
             }
@@ -227,16 +219,14 @@ export default function AdminProducts() {
                     default_image: url,
                     images
                 }
-                // console.log("===>>> :: ", newProduct);
                 // gửi thông tin lên db
-                const result = await publicAxios.post("/api/v1/products/create", newProduct)
-                // console.log(" === >>> :: result :::",result);
+                const result = await createProductApi(newProduct)
                 if (result.status == 201) {
                     message.success("Thêm mới thành công")
                     form.resetFields()
                     setFileImage()
                     setImages(["", "", ""])
-                    await getAllProduct()
+                    setFlag(!flag)
                 } else {
                     message.error('Thêm mới thất bại')
                 }
@@ -250,12 +240,10 @@ export default function AdminProducts() {
 
     // xoá sp
     const handleOkeDelete = async (id) => {
-        // console.log(id);
-        const result = await publicAxios.delete(`/api/v1/products/delete/${id}`)
-        // console.log(result);
+        const result = await deleteProductApi(id)
         if (result.status == 200) {
             message.success(result.data.message)
-            getAllProduct()
+            setFlag(!flag);
         } else {
             message.error(result.data.message)
         }
@@ -263,11 +251,6 @@ export default function AdminProducts() {
 
     // khi click nút edit
     const handleClickEdit = (product) => {
-        // let findProd = products.find(item => item.product_id == product.product_id)
-
-        // setCateChange(findProd.category_id.category_name)
-        // console.log(categories);
-        // Set field values using form.setFieldsValue()
         form.setFieldsValue({
             ...product
         });
@@ -281,13 +264,9 @@ export default function AdminProducts() {
 
 
     const handleClickSearch = async (value) => {
-        // console.log(value);
-        const result = await publicAxios.get(`api/v1/products/search?key=${value}`)
-        // console.log(result);
-        setProducts(result.data)
+        dispatch(getAllProducts(value));
     }
 
-    // console.log(cateChange);
     return (
         <div>
             {

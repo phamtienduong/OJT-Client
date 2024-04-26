@@ -17,10 +17,6 @@ import {
   FingerPrintIcon,
   SquaresPlusIcon,
   XMarkIcon,
-  UserIcon,
-  ArchiveBoxIcon,
-  StarIcon,
-  ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import "./Header.scss";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -30,12 +26,13 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import Translate from "./Translate.jsx";
-import ScrollTop from "./ScrollTop";
+// import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
 import { useDispatch, useSelector } from "react-redux";
-import { setReload, setSearchKey } from "../redux/reducer/productReducer.js"
+import { setReload, setSearchKey } from "../redux/reducer/productReducer.js";
 import { useTranslation } from "react-i18next";
 import { RouterLink } from "./custom/RouterLink.jsx";
+import { customNavigate } from "../app/hook.js";
 const products = [
   {
     name: "Analytics",
@@ -77,7 +74,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLanguage, language }) {
+export default function Header({
+  isLogin,
+  setIsLogin,
+  setIsLoad,
+  handleChangeLanguage,
+  language,
+}) {
   const path = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -85,8 +88,8 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
   const dispatch = useDispatch();
   const [keyword, setKeyword] = useState("");
   const cart = useSelector((state) => {
-    return state.cartReducer.cart
-  })
+    return state.cartReducer.cart;
+  });
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
   );
@@ -95,25 +98,27 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
     localStorage.clear();
     setUserLogin({});
     setIsLogin(false);
-    window.location.href = "/login";
+    navigate(`/${language}/login`);
   };
   const getCategories = async () => {
     const res = await publicAxios.get("/api/v1/category/get-list");
     setCategory(res.data);
-  }
+  };
   useEffect(() => {
     // dispatch(action("setUserLogin"));
     setUserLogin(JSON.parse(localStorage.getItem("user_login")));
     getCategories();
   }, [isLogin]);
 
-  const categories = category.map((item) => (
-    { name: item.category_name, href: "#", id: item.category_id }
-  ))
+  const categories = category.map((item) => ({
+    name: item.category_name,
+    href: "#",
+    id: item.category_id,
+  }));
   const handleClickCategory = (id) => {
     // localStorage.setItem("categoryId", JSON.stringify(id));
     setIsLoad((prev) => !prev);
-    navigate(`category/${id}`);
+    customNavigate(navigate, `category/${id}`);
   };
   const theLastName = (name) => {
     var arr = name.split("");
@@ -126,18 +131,22 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
 
   const handleChangeKeyword = (word) => {
     setKeyword(word);
-  }
+  };
 
   const handleSearch = () => {
-    if (path.pathname == "/products") {
+    if (path.pathname == `/${language}/products`) {
       dispatch(setReload(true));
     }
     dispatch(setSearchKey(keyword));
-    navigate(`/products`);
-  }
+    customNavigate(navigate, "/products");
+  };
+
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
-      <Translate handleChangeLanguage={handleChangeLanguage} language={language}></Translate>
+      <Translate
+        handleChangeLanguage={handleChangeLanguage}
+        language={language}
+      ></Translate>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -212,8 +221,8 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                         key={item.name}
                         className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-1 hover:bg-gray-50"
                       >
-
-                        <div className="flex-auto"
+                        <div
+                          className="flex-auto"
                           onClick={() => handleClickCategory(item.id)}
                         >
                           <a
@@ -240,7 +249,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
               type="text"
               placeholder="Search here"
               className="pl-8 pr-3 py-1 rounded-lg border border-gray-300 text-s focus:outline-none focus:border-blue-500"
-              onChange={e => handleChangeKeyword(e.target.value)}
+              onChange={(e) => handleChangeKeyword(e.target.value)}
               value={keyword}
             />
             <a
@@ -266,7 +275,9 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
             style={{ fontSize: "25px" }}
           >
             <div className="flex">
-              <div><AiOutlineShoppingCart /></div>
+              <div>
+                <AiOutlineShoppingCart />
+              </div>
               <div className="text-lg font-semibold leading-6 text-gray-900">
                 {cart?.length}
               </div>
@@ -287,14 +298,15 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                     </span>
                   </Menu.Button>
                 ) : (
-                  <span
-                    className="text-2xl 
+                  <RouterLink to="/login">
+                    <span
+                      className="text-2xl 
                   "
-                    style={{ backgroundColor: "white" }}
-                    onClick={() => handleLogout()}
-                  >
-                    <AiOutlineUser />
-                  </span>
+                      style={{ backgroundColor: "white" }}
+                    >
+                      <AiOutlineUser />
+                    </span>
+                  </RouterLink>
                 )}
               </div>
               <Transition
@@ -349,7 +361,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                   </Menu.Item>
                 </Menu.Items>
               </Transition>
-            </Menu>{" "}
+            </Menu>
           </RouterLink>
         </div>
         {/* <div className="hidden lg:flex lg:flex-1 lg:justify-end">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage/HomePage'
 import Error from './pages/Error/Error'
 import { Route, Routes, Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ import Checkout from './pages/Checkout/Checkout'
 import Contact from './pages/Contact/Contact'
 import About from './pages/About/About'
 import Cart from './pages/Cart/Cart'
-import Header from './Components/Header'
+import Header from './components/Header'
 import Footer from './Components/Footer'
 import Account from './pages/User/Account'
 import Detail from './pages/ProductDetail/Detail'
@@ -32,6 +32,7 @@ import AdminProductInfo from './pages/Admin/AdminProductInfo/AdminProductInfo.js
 
 import i18n from './i18n.js';
 import { languages } from './helper/language';
+import { customNavigate } from './app/hook.js'
 
 export default function App() {
     const navigate = useNavigate();
@@ -57,6 +58,9 @@ export default function App() {
         if (language in languages) {
             i18n.changeLanguage(language)
             setLanguage(language)
+        }
+        if (location.pathname == "/") {
+            customNavigate(navigate, "/home")
         }
     }, [location.pathname])
     return (
