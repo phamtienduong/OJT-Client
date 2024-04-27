@@ -81,18 +81,18 @@ export default function Header({
   handleChangeLanguage,
   language,
 }) {
-  const path = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const [category, setCategory] = useState([]);
-  const dispatch = useDispatch();
-  const [keyword, setKeyword] = useState("");
   const cart = useSelector((state) => {
     return state.cartReducer.cart;
   });
+  const dispatch = useDispatch();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [keyword, setKeyword] = useState("");
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
   );
+  const path = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const handleLogout = () => {
     localStorage.clear();

@@ -80,9 +80,9 @@ const onFinishFailed = (errorInfo) => {
 };
 
 export default function AdminProducts() {
+    const products = useSelector(state=>state.productReducer.products);
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const products = useSelector(state=>state.productReducer.products);
     const [productUpdate, setProductUpdate] = useState()
     const [categories, setCategories] = useState([]);
     const [fileImage, setFileImage] = useState()
@@ -187,16 +187,11 @@ export default function AdminProducts() {
                 }
             }
             // gửi dữ liệu lên db
-            const result = await updateProductApi(productUpdate.product_id, newProduct)
-            if (result.status == 200) {
-                message.success("Sửa thành công")
-                form.resetFields() // xoá thông tin nhập nơi form
-                setFileImage() // xoá thông tin về ảnh đã chọn
-                setFlag(!flag); // lấy thông tin sản phẩm để vẽ lại
-            } else {
-                message.error('Sửa thất bại')
-            }
-
+            await updateProductApi(productUpdate.product_id, newProduct)
+            message.success("Sửa thành công")
+            form.resetFields() // xoá thông tin nhập nơi form
+            setFileImage() // xoá thông tin về ảnh đã chọn
+            setFlag(!flag); // lấy thông tin sản phẩm để vẽ lại
             return
         }
 
@@ -240,12 +235,12 @@ export default function AdminProducts() {
 
     // xoá sp
     const handleOkeDelete = async (id) => {
-        const result = await deleteProductApi(id)
-        if (result.status == 200) {
+        try {
+            const result = await deleteProductApi(id)
             message.success(result.data.message)
             setFlag(!flag);
-        } else {
-            message.error(result.data.message)
+        } catch (err) {
+            console.log(err)
         }
     }
 
