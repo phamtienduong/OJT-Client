@@ -98,7 +98,7 @@ export default function Header({
     localStorage.clear();
     setUserLogin({});
     setIsLogin(false);
-    navigate(`/${language}/login`);
+    customNavigate(navigate, '/login');
   };
   const getCategories = async () => {
     const res = await publicAxios.get("/api/v1/category/get-list");

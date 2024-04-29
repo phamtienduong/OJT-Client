@@ -237,7 +237,7 @@ export default function HomePage() {
                         </div>
                         <div className="mt-7 flex justify-center content-center items-center">
                             <button
-                                onClick={() => navigate("/products")}
+                                onClick={() => customNavigate(navigate, "/products")}
                                 className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
                                 View All Products
                             </button>

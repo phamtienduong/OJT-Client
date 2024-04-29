@@ -4,6 +4,7 @@ import { notification } from "antd";
 import publicAxios from '../../config/publicAxios';
 import { useNavigate } from 'react-router-dom';
 import { resetPassword } from '../../apis/auth/auth';
+import { customNavigate } from '../../app/hook';
 
 export default function ResetPassword() {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function ResetPassword() {
     const [cfPassword, setCfPassword] = useState("");
     useEffect(() => {
         if (!id) {
-            navigate("/login")
+            customNavigate(navigate, "/login")
         }
     }, [])
     const handleClick = async () => {
@@ -29,7 +30,6 @@ export default function ResetPassword() {
         }
         try {
             let res = await resetPassword({ id, password })
-            console.log(res);
             notification.success({
                 message: res.message + ". Go back to login"
             })

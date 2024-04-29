@@ -98,16 +98,17 @@ export default function App() {
                     <Route path="reset_password" element={<ResetPassword />}></Route>
                     <Route path="category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
                     <Route path="product_detail/:id" element={<Detail />}></Route>
-                    {/* admin */}
-                    <Route path="auth/admin" element={<LoginAdmin />} />
-                    <Route
-                        path="admin"
-                        element={
-                            <LayoutAdmin>
-                                {" "}
-                                <Outlet />
-                            </LayoutAdmin>
-                        }
+                </Route>
+                {/* admin */}
+                <Route path="auth/admin" element={<LoginAdmin />} />
+                <Route
+                    path="admin"
+                    element={
+                        <LayoutAdmin>
+                            {" "}
+                            <Outlet />
+                        </LayoutAdmin>
+                    }
                     >
                         {/* <Route path="/" element={<PrivateRouter />}> */}
                         <Route index path="dashboard" element={<DashBoard />} />
@@ -128,7 +129,6 @@ export default function App() {
                         <Route path="ad_review" element={<AdminReview />} />
                         <Route path="ad_product_info" element={<AdminProductInfo />} />
                     </Route>
-                </Route>
             </Route>
         </Routes>
     );
