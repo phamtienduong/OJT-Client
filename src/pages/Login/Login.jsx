@@ -41,14 +41,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-
-
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                customNavigate(navigate, "/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         }
         catch (error) {
             notification.error(error.response.data)
@@ -72,12 +68,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                customNavigate(navigate, "/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         } catch (error) {
             console.log(error);
         }
@@ -99,12 +93,10 @@ export default function Login({ setIsLogin }) {
             notification.success({
                 message: res.message,
             });
-            if (res.data) {
-                localStorage.setItem("token", res.data.token)
-                localStorage.setItem('user_login', JSON.stringify(res.data.user));
-                setIsLogin(true)
-                customNavigate(navigate, "/home");
-            }
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem('user_login', JSON.stringify(res.data.user));
+            setIsLogin(true)
+            navigate("/home");
         } catch (error) {
             console.log(error);
         }
@@ -115,7 +107,6 @@ export default function Login({ setIsLogin }) {
     const handleSendMail = async () => {
         try {
             let res = await mailerApi({ email: emailForget });
-            console.log(res.id)
             notification.success({
                 message: res.message
             })
