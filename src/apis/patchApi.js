@@ -4,3 +4,5 @@ export const API_MAILER = "/api/v1/auth/send-mail";
 export const API_RESET_PASSWORD = "/api/v1/auth/reset-password";
 export const API_LOGIN_FACEBOOK = "/api/v1/auth/login-facebook";
 export const API_LOGIN_GOOGLE = "/api/v1/auth/login-google";
+
+export const API_PRODUCT = "/api/v1/products"

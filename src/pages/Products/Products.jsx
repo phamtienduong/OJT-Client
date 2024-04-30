@@ -16,6 +16,7 @@ import { formatCurrency } from "../../helper/formatMoney";
 import { Rate } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setReload } from "../../redux/reducer/productReducer";
+import { customNavigate } from "../../app/hook";
 
 const sortOptions = [
     { name: "Most Popular", current: true, },
@@ -187,13 +188,8 @@ export default function Products() {
     }
 
     const handleClickProduct = (id) => {
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate, `/product_detail/${id}`)
     }
-    const handleChange = () => {
-
-
-    }
-
     return (
         <>
             <div>

@@ -6,6 +6,7 @@ import { formatCurrency } from '../../helper/formatMoney';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getCart } from '../../redux/reducer/cartReducer';
+import { customNavigate } from '../../app/hook';
 
 export default function Cart() {
     const dispatch = useDispatch();
@@ -19,8 +20,6 @@ export default function Cart() {
         const totalPrice = discountedPrice * current.quantity;
         return total + totalPrice;
     }, 0);
-    const totalMoneyFormat = formatCurrency(totalMoney)
-    console.log(totalMoneyFormat);
     const getProductCart = async () => {
         try {
             const res = await publicAxios.get(`/api/v1/cart/list/${user.user_id}`)
@@ -31,7 +30,6 @@ export default function Cart() {
         }
     }
     const handleIncrease = async (item) => {
-        // console.log(parseInt(item.product_id.product_info.stock));
         console.log(item.product_id.product_info[0].stock);
         try {
             if (item.quantity >= item.product_id.product_info[0].stock) {
@@ -46,7 +44,6 @@ export default function Cart() {
         }
     };
     const handleDecrease = async (item) => {
-        console.log("=>>>", item);
         try {
             if (item.quantity <= 1) {
                 message.warning("Đã đạt số lượng tối thiểu")
@@ -62,13 +59,12 @@ export default function Cart() {
         }
 
     };
-    const handleCheckout = async () => {
-        navigate("/checkout");
+    const handleCheckout = () => {
+        customNavigate(navigate, "/checkout");
     };
 
 
     const confirm = async (e, id) => {
-        console.log(id);
         e.preventDefault();
         try {
             const res = await publicAxios.delete(`/api/v1/cart/${id}`)
@@ -83,15 +79,11 @@ export default function Cart() {
     }
 
     const handleByMore = () => {
-        navigate("/products");
+        customNavigate(navigate, "/products");
     };
     const handleClickProduct = (id) => {
-        console.log(id);
-        // localStorage.setItem("idProductDetail", id);
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate, `/product_detail/${id}`)
     };
-    const cancel = (e) => { };
-    console.log(cartList);
     useEffect(() => {
         // const user = JSON.parse(localStorage.getItem('user_login'))
         const userLogin = JSON.parse(localStorage.getItem("user_login"));
@@ -151,7 +143,7 @@ export default function Cart() {
                                                 title="Xoá sản phẩm"
                                                 description="Bạn có muốn xoá sản phẩm?"
                                                 onConfirm={(e) => confirm(e, item.cart_id)}
-                                                onCancel={cancel}
+                                                onCancel={()=> {}}
                                                 okText="Đồng ý"
                                                 cancelText="Không đồng ý"
                                             >

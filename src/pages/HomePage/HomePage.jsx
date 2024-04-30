@@ -1,62 +1,37 @@
-import { AiOutlineCamera } from "react-icons/ai";
-import {
-    AiOutlineStar,
-    AiFillEye,
-    AiOutlineHeart,
-    AiOutlineArrowRight,
-    AiOutlineArrowLeft,
-} from "react-icons/ai";
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
-
 import publicAxios from "../../config/publicAxios";
 import { formatCurrency } from "../../helper/formatMoney";
 import { useNavigate } from "react-router-dom";
 import { Card, Col, Rate, Row } from "antd";
+import { getAllProducts } from "../../redux/reducer/productReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { customNavigate } from "../../app/hook";
 // import "./HomePage.scss"
 export default function HomePage() {
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
     const [productSales, setProductSales] = useState([]);
-    const [avgStar, setAvgStar] = useState(1);
-
+    const products = useSelector(state => state.productReducer.products);
     const navigate = useNavigate();
-
-    const getAllProducts = async () => {
-        const res = await publicAxios.get("/api/v1/products/get-list");
-        // console.log(res.data);
-        const data = res.data;
-
-        const result = data.filter((item) => parseFloat(item.discount) > 0).slice(0, 6)
-        for (let i = 0; i < result.length; i++) {
-            const res = await publicAxios.get(`/api/v1/review/avg-start/${result[i].product_id}`)
-            const data = res.data.data['AVG(rating)']
-            result[i]['avgStar'] = Math.round(data);
-        }
-
-
-        setProducts(data);
-        setProductSales(result);
-    }
-    const getAvgStar = async () => {
-        const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
-        const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
-        setAvgStar(Math.round(data));
-    }
-    const handleClickProduct = (id) => {
-        // console.log(id);
-        // localStorage.setItem("idProductDetail", id)
-        navigate(`/product_detail/${id}`)
-    }
-
-    // console.log(bestSeller);
     useEffect(() => {
-        getAllProducts();
-        getAvgStar()
+        dispatch(getAllProducts());
     }, [])
-
-
-
+    const getAvgStar = (data) => {
+        if (data.length > 0) {
+            return Math.round(data.reduce((a,b) => a + b.rating,0) / data.length);
+        }
+        return 0;
+    } 
+    useEffect(() => {
+        const getProductsSale = async () => {
+            const result = await products.filter((item) => parseFloat(item.discount) > 0).slice(0, 6)
+            setProductSales(result);
+        }
+        getProductsSale();
+    }, [products])
+    const handleClickProduct = (id) => {
+        customNavigate(navigate, `/product_detail/${id}`)
+    }
     const settings = {
         dots: true,
         infinite: true,
@@ -66,8 +41,6 @@ export default function HomePage() {
         autoplay: true,
         autoplaySpeed: 3000,
     };
-    //
-
     return (
         <div className="w-full h-full bg-white overflow-hidden">
             <div className="mt-3 flex justify-around items-center">
@@ -134,11 +107,9 @@ export default function HomePage() {
                             {productSales.map((product, index) => (
                                 <Col onClick={() => handleClickProduct(product.product_id)} key={index} className='text-center m-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 '>
                                     <div className="relative z-10">
-                                        {product.discount == 0 ? <></> : (
-                                            <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
-                                                <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
-                                            </div>
-                                        )}
+                                        <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
+                                            <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
+                                        </div>
                                     </div>
                                     <Card
                                         hoverable
@@ -162,9 +133,9 @@ export default function HomePage() {
 
                                                         )
                                                     }
-                                                    <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                        <Rate disabled value={product.avgStar} className='text-sm' />
-
+                                                    <p className="mt-1 text-lg font-medium text-gray-900 text-center flex md:gap-4 gap-2">
+                                                        <Rate disabled value={getAvgStar(product.reviews)} className='text-sm' />
+                                                        <div>{getAvgStar(product.reviews)}/5</div>
                                                     </p>
                                                 </div>
 
@@ -182,11 +153,11 @@ export default function HomePage() {
                     </div>
                 </div>
                 <hr className="h-px my-8 bg-black"></hr>
-                <div class="image-container mx-auto">
+                <div className="image-container mx-auto">
                     <img
                         src="../../../src/assets/img/Frame 600.png"
                         alt="Product Image"
-                        class="max-w-[100%] w-auto h-auto md:h-[500px] mx-auto object-cover"
+                        className="max-w-[100%] w-auto h-auto md:h-[500px] mx-auto object-cover"
                     />
                 </div>
 
@@ -220,7 +191,7 @@ export default function HomePage() {
 
                         <div className="ml-6 mr-6 lg:col-span-3">
                             <Row className=' flex justify-center ' gutter={[20, 20]}>
-                                {products.splice(0, 8).map((product, index) => (
+                                {[...products].splice(0, 8).map((product, index) => (
                                     <Col onClick={() => handleClickProduct(product.product_id)} key={index} className='text-center m-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 '>
                                         <div className="relative z-10">
                                             {product.discount == 0 ? <></> : (
@@ -251,9 +222,9 @@ export default function HomePage() {
 
                                                             )
                                                         }
-                                                        <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                            <Rate disabled value={product.avgStar} className='text-sm' />
-
+                                                        <p className="mt-1 text-lg font-medium text-gray-900 text-center flex md:gap-4 gap-2">
+                                                            <Rate disabled allowHalf value={getAvgStar(product.reviews)} className='text-sm' />
+                                                            <div>{getAvgStar(product.reviews)}/5</div>
                                                         </p>
                                                     </div>
 
@@ -266,7 +237,7 @@ export default function HomePage() {
                         </div>
                         <div className="mt-7 flex justify-center content-center items-center">
                             <button
-                                onClick={() => navigate("/products")}
+                                onClick={() => customNavigate(navigate, "/products")}
                                 className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
                                 View All Products
                             </button>
@@ -277,12 +248,12 @@ export default function HomePage() {
                 </div>
                 <hr className="h-px my-8 bg-black"></hr>
 
-                <div class="border-b border-stroke pt-[60px] dark:border-dark-3 md:pt-0">
-                    <div class="container mx-auto">
-                        <div class="-mx-4 flex flex-wrap">
-                            <div class="w-full px-4 md:w-1/3">
-                                <div class="mb-[60px] text-center md:mt-[60px]">
-                                    <div class="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
+                <div className="border-b border-stroke pt-[60px] dark:border-dark-3 md:pt-0">
+                    <div className="container mx-auto">
+                        <div className="-mx-4 flex flex-wrap">
+                            <div className="w-full px-4 md:w-1/3">
+                                <div className="mb-[60px] text-center md:mt-[60px]">
+                                    <div className="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
                                         <img
                                             src="../../../src/assets/img/Services.png"
                                             alt="Product Image"
@@ -290,19 +261,19 @@ export default function HomePage() {
                                     </div>
 
                                     <div>
-                                        <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
+                                        <h3 className="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
                                             FREE AND FAST DELIVERY
                                         </h3>
-                                        <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
+                                        <p className="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
                                             Free delivery for all orders over
                                             $140
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-full px-4 md:w-1/3 md:border-x md:border-stroke md:dark:border-dark-3">
-                                <div class="mb-[60px] text-center md:mt-[60px]">
-                                    <div class="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
+                            <div className="w-full px-4 md:w-1/3 md:border-x md:border-stroke md:dark:border-dark-3">
+                                <div className="mb-[60px] text-center md:mt-[60px]">
+                                    <div className="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
                                         <img
                                             src="../../../src/assets/img/Services1.png"
                                             alt="Product Image"
@@ -310,18 +281,18 @@ export default function HomePage() {
                                     </div>
 
                                     <div>
-                                        <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
+                                        <h3 className="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
                                             24/7 CUSTOMER SERVICE
                                         </h3>
-                                        <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
+                                        <p className="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
                                             Friendly 24/7 customer support
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-full px-4 md:w-1/3">
-                                <div class="mb-[60px] text-center md:mt-[60px]">
-                                    <div class="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
+                            <div className="w-full px-4 md:w-1/3">
+                                <div className="mb-[60px] text-center md:mt-[60px]">
+                                    <div className="mx-auto mb-7 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-white shadow-1 dark:bg-dark-2 dark:shadow-none">
                                         <img
                                             src="../../../src/assets/img/Services.png"
                                             alt="Product Image"
@@ -331,10 +302,10 @@ export default function HomePage() {
 
 
                                     <div>
-                                        <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
+                                        <h3 className="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
                                             MONEY BACK GUARANTEE
                                         </h3>
-                                        <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
+                                        <p className="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
                                             We return money within 30 days
                                         </p>
                                     </div>

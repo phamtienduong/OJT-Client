@@ -1,17 +1,3 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -28,6 +14,8 @@ import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
 import { Rate, Select } from "antd";
+import { customNavigate } from "../../app/hook";
+import { getProductsByCategoryApi } from "../../apis/products";
 
 const sortOptions = [
     { label: "Best Rating", value: 1 },
@@ -149,27 +137,22 @@ export default function ProductCatergory({ isLoad }) {
         { name: item.category_name, href: `/category/${item.category_id}` }
     ))
 
-
+    const getAvgStar = (data) => {
+        if (data.length > 0) {
+            return Math.round(data.reduce((a,b) => a + b.rating,0) / data.length);
+        }
+        return 0;
+    } 
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
         const getProducts = async () => {
-            const res = await publicAxios.get(`/api/v1/products/category/${id}`)
-            // console.log(res.data);
+            const res = await getProductsByCategoryApi(id)
             const data = res.data
             if (end > data.length) {
                 end = data.length
             }
             const newProduct = data.slice(start, end)
-
-            for (let i = 0; i < newProduct.length; i++) {
-                const res = await publicAxios.get(`/api/v1/review/avg-start/${newProduct[i].product_id}`)
-                const data = res.data.data['AVG(rating)']
-                newProduct[i]['avgStar'] = Math.round(data);
-            }
-            console.log(newProduct);
-
-
             setProductTotal(Math.ceil(data.length / pageSize))
             setProducts(newProduct)
 
@@ -179,22 +162,12 @@ export default function ProductCatergory({ isLoad }) {
         getAvgStar();
 
     }, [currentPage, pageSize, isLoad])
-    const getAvgStar = async () => {
-        const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
-        const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
-        setAvgStar(Math.round(data));
-    }
-
 
     const handleClickProduct = (id) => {
-        // console.log(id);
-        // localStorage.setItem("idProductDetail", id)
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate,`/product_detail/${id}`)
     }
 
     const handleChangeSort = (value) => {
-        console.log(value);
         switch (value) {
             case 1:
                 const newProductsC = [...products.sort((a, b) => b.avgStar - a.avgStar)]
@@ -550,7 +523,7 @@ export default function ProductCatergory({ isLoad }) {
                                             </div>
 
                                             <p className="mt-1 text-lg font-medium text-gray-900 text-center">
-                                                <Rate disabled value={product.avgStar} className='text-sm' />
+                                                <Rate disabled value={getAvgStar(product.reviews)} className='text-sm' />
                                             </p>
                                         </a>
                                     ))}

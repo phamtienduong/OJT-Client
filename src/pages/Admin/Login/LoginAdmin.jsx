@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { message } from "antd"
 
 import publicAxios from '../../../config/publicAxios'
+import { customNavigate } from '../../../app/hook'
 
 function LoginAdmin() {
 
@@ -34,7 +35,7 @@ function LoginAdmin() {
                 localStorage.setItem('admin_token', JSON.stringify(response.data.data.token));
                 localStorage.setItem('user_login', JSON.stringify(response.data.data.user));
                 message.success(response.data.message);
-                navigate('/');
+                customNavigate(navigate, '/admin');
             } else {
                 message.error(response.data.message);
             }

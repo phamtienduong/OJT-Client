@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { TEInput } from "tw-elements-react";
 import { notification } from "antd";
-import publicAxios from '../../config/publicAxios';
 import { useNavigate } from 'react-router-dom';
 import { resetPassword } from '../../apis/auth/auth';
+import { customNavigate } from '../../app/hook';
 
 export default function ResetPassword() {
-    const navigate = useNavigate();
     const [id, setId] = useState(JSON.parse(localStorage.getItem("reset_id")));
     const [password, setPassword] = useState("");
     const [cfPassword, setCfPassword] = useState("");
+    const [flag, setFlag] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
         if (!id) {
-            navigate("/login")
+            customNavigate(navigate, "/login")
         }
-    }, [])
+    }, [flag])
     const handleClick = async () => {
-        if (!id) return notification.error({ message: 'Go back to login' })
         if (password == "" || cfPassword == "") {
             return notification.error({
                 message: "Chưa nhập đủ thông tin"
-            })
+            }) 
         }
         if (password != cfPassword) {
             return notification.error({
@@ -35,6 +35,8 @@ export default function ResetPassword() {
             setCfPassword("")
             setPassword("")
             localStorage.removeItem("reset_id")
+            setId(JSON.parse(localStorage.getItem("reset_id")));
+            setFlag(!flag);
         } catch (err) {
             console.log(err)
         }

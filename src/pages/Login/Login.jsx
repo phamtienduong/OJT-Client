@@ -8,6 +8,7 @@ import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
 import { RouterLink } from "../../components/custom/RouterLink";
 import { loginApi, loginFacebook, loginGoogle, mailerApi } from "../../apis/auth/auth";
+import { customNavigate } from "../../app/hook";
 
 export default function Login({ setIsLogin }) {
     const [showModal, setShowModal] = useState(false);

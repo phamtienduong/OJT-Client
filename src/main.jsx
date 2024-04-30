@@ -5,7 +5,7 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './redux/store.js'
-import AppRouters from './pages/Admin/AppRouter/AppRouters.jsx'
+// import AppRouters from './pages/Admin/AppRouter/AppRouters.jsx'
 import Loading from './components/Loading.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
