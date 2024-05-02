@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
-import { RouterLink } from "../../components/custom/RouterLink";
+import { RouterLink } from "../../Components/custom/RouterLink";
 import { loginApi, loginFacebook, loginGoogle, mailerApi } from "../../apis/auth/auth";
 
 export default function Login({ setIsLogin }) {

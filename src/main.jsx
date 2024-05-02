@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.Suspense fallback={<Loading />}>
       <Provider store={store}>
         <App />
-        {/* <AppRouters /> */}
+        <AppRouters />
       </Provider>
     </React.Suspense>
 

@@ -31,7 +31,7 @@ import AdminReview from './pages/Admin/AdminReview/AdminReview.jsx'
 import AdminProductInfo from './pages/Admin/AdminProductInfo/AdminProductInfo.jsx'
 
 import i18n from './i18n.js';
-import { languages } from './helper/language';
+import { languages } from './helper/language.js';
 
 export default function App() {
     const navigate = useNavigate();
@@ -40,17 +40,17 @@ export default function App() {
     const [isLoad, setIsLoad] = useState(false)
     const [language, setLanguage] = useState(i18n.language);
     const handleChangeLanguage = (value) => {
-        setLanguage(value)
-        const [language, ...path] = location.pathname.slice(1).split("/");
-        if (language in languages) {
-            navigate(
-                {
-                    ...location,
-                    pathname: `/${[value, ...path].join("/")}`
-                },
-                { replace: true }
-            )
-        }
+        // setLanguage(value)
+        // const [language, ...path] = location.pathname.slice(1).split("/");
+        // if (language in languages) {
+        //     navigate(
+        //         {
+        //             ...location,
+        //             pathname: `/${[value, ...path].join("/")}`
+        //         },
+        //         { replace: true }
+        //     )
+        // }
     }
     useEffect(() => {
         const language = location.pathname.slice(1).split("/")[0];
@@ -61,7 +61,7 @@ export default function App() {
     }, [location.pathname])
     return (
         <Routes>
-            <Route path=":language">
+            {/* <Route path=":language"> */}
                 <Route
                     element={
                         <>
@@ -70,7 +70,7 @@ export default function App() {
                                 isLogin={isLogin}
                                 setIsLogin={setIsLogin}
                                 handleChangeLanguage={handleChangeLanguage}
-                                language={language}
+                                // language={language}
                             />
                             <Outlet /> <Footer />
                             <ScrollTop />{" "}
@@ -95,37 +95,10 @@ export default function App() {
                     <Route path="category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
                     <Route path="product_detail/:id" element={<Detail />}></Route>
                     {/* admin */}
-                    <Route path="auth/admin" element={<LoginAdmin />} />
-                    <Route
-                        path="admin"
-                        element={
-                            <LayoutAdmin>
-                                {" "}
-                                <Outlet />
-                            </LayoutAdmin>
-                        }
-                    >
-                        {/* <Route path="/" element={<PrivateRouter />}> */}
-                        <Route index path="dashboard" element={<DashBoard />} />
-                        <Route
-                            index
-                            path="ad_users"
-                            element={<AdminUsers />}
-                        />
-                        <Route
-                            path="ad_products"
-                            element={<AdminProducts />}
-                        />
-                        <Route
-                            path="ad_category"
-                            element={<AdminCategory />}
-                        />
-                        <Route path="ad_bill" element={<AdminBill />} />
-                        <Route path="ad_review" element={<AdminReview />} />
-                        <Route path="ad_product_info" element={<AdminProductInfo />} />
-                    </Route>
+                    {/* {<Route path="auth/admin" element={<LoginAdmin />} />} */}
+                    
                 </Route>
-            </Route>
+            {/* </Route> */}
         </Routes>
     );
 }
