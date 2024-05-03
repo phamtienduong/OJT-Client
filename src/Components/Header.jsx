@@ -23,13 +23,13 @@ import {
   ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import "./Header.scss";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDownIcon,
   PhoneIcon,
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
-import Translate from "./Translate.jsx";
+// import Translate from "./Translate.jsx";
 import ScrollTop from "./ScrollTop";
 import publicAxios from "../config/publicAxios";
 import { useDispatch, useSelector } from "react-redux";
@@ -77,7 +77,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLanguage, language }) {
+export default function Header({ isLogin, setIsLogin, setIsLoad }) {
   const path = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -137,7 +137,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
   }
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
-      <Translate handleChangeLanguage={handleChangeLanguage} language={language}></Translate>
+      {/* <Translate handleChangeLanguage={handleChangeLanguage} language={language}></Translate> */}
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -145,7 +145,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
         <div className="flex items-center">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only"></span>
-            <RouterLink to="/home">
+            <Link to="/home">
               {" "}
               <img
                 className="h-15 w-auto"
@@ -153,7 +153,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 alt=""
                 style={{ width: 70, height: 50 }}
               />
-            </RouterLink>
+            </Link>
           </a>
         </div>
         <div className="flex lg:hidden">
@@ -167,29 +167,29 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center truncate">
-          <RouterLink
+          <Link
             to="/home"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("HOME")}
-          </RouterLink>
+          </Link>
 
-          <RouterLink
+          <Link
             to="/contact"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("CONTACT")}
-          </RouterLink>
-          <RouterLink
+          </Link>
+          <Link
             to="/about"
             className="text-m font-bold leading-6 text-black-800 mb-1"
           >
             {t("ABOUT")}
-          </RouterLink>
+          </Link>
           <Popover.Group className="hidden lg:flex lg:gap-x-12  items-center">
             <Popover className="relative">
               <Popover.Button className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1">
-                {t("PRODUCT")}
+                Product
                 <ChevronDownIcon
                   className="h-5 w-5 flex-none text-gray-400"
                   aria-hidden="true"
@@ -253,14 +253,14 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
         </Popover.Group>
 
         <div className="hidden lg:flex lg:gap-x-12 items-center ml-5">
-          <RouterLink
+          <Link
             to="/favor"
             className="flex font-normal leading-6 text-black-800 mb-1"
             style={{ fontSize: "25px" }}
           >
             <MdFavoriteBorder />
-          </RouterLink>
-          <RouterLink
+          </Link>
+          <Link
             to="/cart"
             className="flex font-normal leading-6 text-black-800 mb-1"
             style={{ fontSize: "25px" }}
@@ -271,8 +271,8 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 {cart?.length}
               </div>
             </div>
-          </RouterLink>
-          <RouterLink
+          </Link>
+          <Link
             href="#"
             className=" text-lg font-semibold leading-6 text-gray-900"
           >
@@ -309,7 +309,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
-                      <RouterLink
+                      <Link
                         to="/account"
                         className={classNames(
                           active ? "bg-gray-100" : "",
@@ -317,12 +317,12 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                         )}
                       >
                         Your Profile
-                      </RouterLink>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <RouterLink
+                      <Link
                         to="#"
                         className={classNames(
                           active ? "bg-gray-100" : "",
@@ -330,7 +330,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                         )}
                       >
                         Settings
-                      </RouterLink>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -350,7 +350,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
                 </Menu.Items>
               </Transition>
             </Menu>{" "}
-          </RouterLink>
+          </Link>
         </div>
         {/* <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     <a

@@ -2,6 +2,7 @@ import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 
 import { useEffect, useState } from 'react';
 import publicAxios from "../../../config/publicAxios";
+import { useNavigate } from 'react-router-dom';
 
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
@@ -43,7 +44,7 @@ export default function AdminCategory() {
     const showModal = () => {
         setIsModalOpen(true);
     };
-
+    const navigate = useNavigate()
     const handleOk = () => {
         setIsModalOpen(false);
     };
@@ -54,41 +55,48 @@ export default function AdminCategory() {
         setCategoryUpdate()
     };
     const onFinish = async (values) => {
-        
+
         const check = category.find(item => item.category_name === values.category_name)
         if (check) {
-          message.error('Product name already exists!')
+            message.error('Product name already exists!')
         } else {
-          if (categoryUpdate) {
-           const result = await publicAxios.patch(`/api/v1/category/update/${categoryUpdate.category_id}`, values)
-           if (result.status == 200) {
-            message.success(result.data.message)
-           }
-          } else {
-            const result = await publicAxios.post("/api/v1/category/create", values)
-            // console.log(result.data);
-            if (result.status == 201) {
-              message.success(result.data.message)
-             }
-          }
-          handleCancel()
-          await getCategories()
+            if (categoryUpdate) {
+                const result = await publicAxios.patch(`/api/v1/category/update/${categoryUpdate.category_id}`, values)
+                if (result.status == 200) {
+                    message.success(result.data.message)
+                }
+            } else {
+                const result = await publicAxios.post("/api/v1/category/create", values)
+                // console.log(result.data);
+                if (result.status == 201) {
+                    message.success(result.data.message)
+                }
+            }
+            handleCancel()
+            await getCategories()
         }
-      };
-    
-      const onFinishFailed = (errorInfo) => {
+    };
+
+    const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
-      };
+    };
 
     const getCategories = async () => {
         try {
-            const res = await publicAxios.get("/api/v1/category/get-list");
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            console.log(headers);
+            // console.log(headers);
+            const res = await publicAxios.get("/api/v1/category/get-list", { headers });
             // console.log(res.data);
             setCategory(res.data);
         } catch (error) {
-            console.log(error);
-            message.error('An error has occurred');
+            alert("Bạn ko có quyền")
+            navigate("/home")
         }
+
     }
 
     useEffect(() => {
@@ -98,20 +106,20 @@ export default function AdminCategory() {
         const result = await publicAxios.delete(`/api/v1/category/delete/${id}`)
         // console.log(result);
         if (result.status == 200) {
-          message.success(result.data.message)
-          getCategories()
+            message.success(result.data.message)
+            getCategories()
         } else {
-          message.error("Delete failed")
+            message.error("Delete failed")
         }
-      }
-      const handleClickEdit = (category) => {
+    }
+    const handleClickEdit = (category) => {
         // console.log(category);
         form.setFieldsValue({
-          ...category
+            ...category
         })
         setCategoryUpdate(category)
         setIsModalOpen(true)
-      }
+    }
     return (
         <div>
             <Modal

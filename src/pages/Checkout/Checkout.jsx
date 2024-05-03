@@ -96,15 +96,22 @@ export default function Checkout() {
 
     const handleGetCartUser = async () => {
         const res = await publicAxios.get(`/api/v1/cart/list/${user_id}`);
+        setCartUser(res.data);
+        console.log(cartUser);
+        console.log(res.data);
+    };
+    const totalPrice = () => {
         const result = cartUser.reduce((total, current) => {
             const discountedPrice = current.product_id.price * (1 - parseFloat(current.product_id.discount));
             const totalPrice = discountedPrice * current.quantity;
             return total + totalPrice;
         }, 0);
-        setCartUser(res.data);
         setFuncPrice(result);
-        console.log(res.data);
-    };
+
+    }
+    useEffect(() => {
+        totalPrice();
+    }, [cartUser]);
     useEffect(() => {
         getProvinces();
         handleGetCartUser();

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from '../../../helper/formatMoney';
+import { useNavigate } from 'react-router-dom';
 
 const columns = (handleChangeStatusBills) => [
     {
@@ -121,13 +122,25 @@ const OrderStatus = {
     CANCEL_USER: "cancel",
 };
 export default function AdminBill() {
-
+    const navigate = useNavigate();
     const [allBills, setAllBills] = useState([]);
 
     const getAllBill = async () => {
-        const res = await publicAxios.get("/api/v1/bill-detail");
-        console.log(res.data);
-        setAllBills(res.data);
+
+        try {
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            console.log(headers);
+            // console.log(headers);
+            const res = await publicAxios.get("/api/v1/bill-detail", { headers });
+            console.log(res.data);
+            setAllBills(res.data);
+        } catch (error) {
+            alert("Bạn ko có quyền")
+            navigate("/home")
+        }
     }
 
     const handleChangeStatusBills = async (bill_id, status) => {
