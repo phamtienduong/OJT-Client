@@ -106,6 +106,7 @@ export default function Login({ setIsLogin }) {
     const handleSendMail = async () => {
         try {
             let res = await mailerApi({ email: emailForget });
+            // console.log(res)
             notification.success({
                 message: res.message
             })
@@ -114,6 +115,9 @@ export default function Login({ setIsLogin }) {
             setEmailForget("");
         } catch (err) {
             console.log(err)
+            notification.error({
+                message: "Email không tồn tại trong hệ thống"
+            })
         }
     }
     return (

@@ -77,7 +77,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLanguage, language }) {
+export default function Header({ isLogin, setIsLogin, setIsLoad}) {
   const path = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -137,7 +137,7 @@ export default function Header({ isLogin, setIsLogin, setIsLoad, handleChangeLan
   }
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
-      <Translate handleChangeLanguage={handleChangeLanguage} language={language}></Translate>
+      {/* <Translate ></Translate> */}
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"

@@ -52,13 +52,13 @@ export default function App() {
         //     )
         // }
     }
-    useEffect(() => {
-        const language = location.pathname.slice(1).split("/")[0];
-        if (language in languages) {
-            i18n.changeLanguage(language)
-            setLanguage(language)
-        }
-    }, [location.pathname])
+    // useEffect(() => {
+    //     const language = location.pathname.slice(1).split("/")[0];
+    //     if (language in languages) {
+    //         i18n.changeLanguage(language)
+    //         setLanguage(language)
+    //     }
+    // }, [location.pathname])
     return (
         <Routes>
             {/* <Route path=":language"> */}

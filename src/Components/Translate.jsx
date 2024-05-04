@@ -3,7 +3,7 @@ import { Select } from "antd";
 import "./Translate.scss";
 import { useTranslation } from "react-i18next";
 
-export default function Translate({ handleChangeLanguage, language }) {
+export default function Translate() {
     const { i18n } = useTranslation(['home']);
     const handleChange = (lang) => {
         i18n.changeLanguage(lang);
