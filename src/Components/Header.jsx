@@ -33,6 +33,7 @@ import { setReload, setSearchKey } from "../redux/reducer/productReducer.js";
 import { useTranslation } from "react-i18next";
 import { RouterLink } from "./custom/RouterLink.jsx";
 import { customNavigate } from "../app/hook.js";
+import { usePopper } from "react-popper";
 const products = [
   {
     name: "Analytics",
@@ -94,11 +95,14 @@ export default function Header({
   const path = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  let [referenceElement, setReferenceElement] = useState();
+  let [popperElement, setPopperElement] = useState();
+  let { styles, attributes } = usePopper(referenceElement, popperElement);
   const handleLogout = () => {
     localStorage.clear();
     setUserLogin({});
     setIsLogin(false);
-    customNavigate(navigate, '/login');
+    customNavigate(navigate, "/login");
   };
   const getCategories = async () => {
     const res = await publicAxios.get("/api/v1/category/get-list");
@@ -110,15 +114,14 @@ export default function Header({
     getCategories();
   }, [isLogin]);
 
-  const categories = category.map((item) => ({
+  const categories = category?.map((item) => ({
     name: item.category_name,
     href: "#",
     id: item.category_id,
   }));
   const handleClickCategory = (id) => {
-    // localStorage.setItem("categoryId", JSON.stringify(id));
     setIsLoad((prev) => !prev);
-    customNavigate(navigate, `category/${id}`);
+    customNavigate(navigate, `/category/${id}`);
   };
   const theLastName = (name) => {
     var arr = name.split("");
@@ -195,55 +198,50 @@ export default function Header({
           >
             {t("ABOUT")}
           </RouterLink>
-          <Popover.Group className="hidden lg:flex lg:gap-x-12  items-center">
-            <Popover className="relative">
-              <Popover.Button className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1">
-                Product
-                <ChevronDownIcon
-                  className="h-5 w-5 flex-none text-gray-400"
-                  aria-hidden="true"
-                />
-              </Popover.Button>
-
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <Popover.Panel className="absolute -left-10 top-full z-10 mt-3  overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
-                  <div className="p-0">
-                    {categories.map((item) => (
-                      <div
-                        key={item.name}
-                        className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-1 hover:bg-gray-50"
-                      >
-                        <div
-                          className="flex-auto"
-                          onClick={() => handleClickCategory(item.id)}
-                        >
-                          <a
-                            href={item.href}
-                            className="block font-semibold text-gray-900"
-                          >
-                            {item.name}
-                            <span className="absolute inset-0" />
-                          </a>
-                          <p className="mt-1 text-gray-600">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+          <Popover>
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  ref={setReferenceElement}
+                  className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1 outline-none"
+                >
+                  Products
+                  <ChevronDownIcon
+                    className={`${
+                      open ? "transform rotate-180" : ""
+                    } h-5 w-5 flex-none text-gray-400`}
+                    aria-hidden="true"
+                  />
+                </Popover.Button>
+                <Popover.Panel
+                  ref={setPopperElement}
+                  style={styles.popper}
+                  {...attributes.popper}
+                  className="z-50"
+                >
+                  <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5 ">
+                    <div className="relative flex gap-6 bg-white p-7 lg:flex-col rounded">
+                      {categories.length > 0 &&
+                        categories.map((item) => (
+                          <div onClick={() => handleClickCategory(item.id)}>
+                            <a
+                              key={item.id}
+                              className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-red-200 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50"
+                            >
+                              <div className="ml-4">
+                                <p className="text-sm font-medium text-gray-900">
+                                  {item.name}
+                                </p>
+                              </div>
+                            </a>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </Popover.Panel>
-              </Transition>
-            </Popover>
-          </Popover.Group>
-
+              </>
+            )}
+          </Popover>
           <div className="relative">
             <input
               type="text"
@@ -329,7 +327,7 @@ export default function Header({
                         )}
                       >
                         Your Profile
-                      </RouterLink >
+                      </RouterLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -342,7 +340,7 @@ export default function Header({
                         )}
                       >
                         Settings
-                      </RouterLink >
+                      </RouterLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
