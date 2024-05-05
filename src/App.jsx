@@ -63,6 +63,11 @@ export default function App() {
             customNavigate(navigate, "/home")
         }
     }, [location.pathname])
+    useEffect(() => {
+        if (location.pathname == "/") {
+            customNavigate(navigate, "/home")
+        }
+    }, [])
     return (
         <Routes>
             <Route path=":language">

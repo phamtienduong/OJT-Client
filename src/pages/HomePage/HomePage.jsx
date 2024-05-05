@@ -1,11 +1,3 @@
-import { AiOutlineCamera } from "react-icons/ai";
-import {
-    AiOutlineStar,
-    AiFillEye,
-    AiOutlineHeart,
-    AiOutlineArrowRight,
-    AiOutlineArrowLeft,
-} from "react-icons/ai";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 
@@ -13,6 +5,7 @@ import publicAxios from "../../config/publicAxios";
 import { formatCurrency } from "../../helper/formatMoney";
 import { useNavigate } from "react-router-dom";
 import { Card, Col, Rate, Row } from "antd";
+import { customNavigate } from "../../app/hook";
 // import "./HomePage.scss"
 export default function HomePage() {
     const [products, setProducts] = useState([]);
@@ -46,7 +39,7 @@ export default function HomePage() {
     const handleClickProduct = (id) => {
         // console.log(id);
         // localStorage.setItem("idProductDetail", id)
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate,`/product_detail/${id}`)
     }
 
     // console.log(bestSeller);
@@ -266,7 +259,7 @@ export default function HomePage() {
                         </div>
                         <div className="mt-7 flex justify-center content-center items-center">
                             <button
-                                onClick={() => navigate("/products")}
+                                onClick={() => customNavigate(navigate, "/products")}
                                 className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
                                 View All Products
                             </button>

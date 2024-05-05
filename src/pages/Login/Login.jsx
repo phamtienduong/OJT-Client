@@ -50,7 +50,7 @@ export default function Login({ setIsLogin }) {
                     message: res.message,
                 })
                 setIsLogin(true)
-                navigate("/home")
+                customNavigate(navigate, "/home")
             }
         } catch (error) {
             console.log(error)
@@ -78,7 +78,7 @@ export default function Login({ setIsLogin }) {
             localStorage.setItem("token", res.data.token)
             localStorage.setItem('user_login', JSON.stringify(res.data.user));
             setIsLogin(true)
-            navigate("/home");
+            customNavigate(navigate, "/home");
         } catch (error) {
             console.log(error);
         }
@@ -103,7 +103,7 @@ export default function Login({ setIsLogin }) {
             localStorage.setItem("token", res.data.token)
             localStorage.setItem('user_login', JSON.stringify(res.data.user));
             setIsLogin(true)
-            navigate("/home");
+            customNavigate(navigate, "/home");
         } catch (error) {
             console.log(error);
         }

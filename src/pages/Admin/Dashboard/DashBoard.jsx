@@ -5,6 +5,7 @@ import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from '../../../helper/formatMoney';
 import { useNavigate } from 'react-router-dom';
+import { customNavigate } from '../../../app/hook';
 
 export default function DashBoard() {
     const navigate = useNavigate()
@@ -26,7 +27,7 @@ export default function DashBoard() {
             setOrders(res.data)
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate, "/home")
         }
     }
 

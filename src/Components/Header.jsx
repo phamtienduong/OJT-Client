@@ -154,7 +154,7 @@ export default function Header({
         <div className="flex items-center">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only"></span>
-            <Link to="/home">
+            <RouterLink to="/home">
               {" "}
               <img
                 className="h-15 w-auto"
@@ -162,7 +162,7 @@ export default function Header({
                 alt=""
                 style={{ width: 70, height: 50 }}
               />
-            </Link>
+            </RouterLink>
           </a>
         </div>
         <div className="flex lg:hidden">
