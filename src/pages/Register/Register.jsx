@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { notification } from "antd";
 import { registerApi } from "../../apis/auth/auth";
-import { RouterLink } from "../../Components/custom/RouterLink";
+import { RouterLink } from "../../components/custom/RouterLink";
+import { customNavigate } from "../../app/hook";
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -84,7 +85,7 @@ export default function Register() {
         notification.success({
           message: res.message,
         });
-        navigate("/login");
+        customNavigate(navigate, "/login");
       } catch (error) {
         notification.error({ message: "Đã xảy ra lỗi!" });
       }
