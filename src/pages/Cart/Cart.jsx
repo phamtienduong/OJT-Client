@@ -13,7 +13,8 @@ export default function Cart() {
     const [cartList, setCartList] = useState([])
     const [flag, setFlag] = useState(false)
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('user_login'))
+    const user = JSON.parse(localStorage.getItem('user_login'));
+    const token = localStorage.getItem('token');
 
     let totalMoney = cartList.reduce((total, current) => {
         const discountedPrice = current.product_id.price * (1 - parseFloat(current.product_id.discount));
@@ -21,22 +22,28 @@ export default function Cart() {
         return total + totalPrice;
     }, 0);
     const getProductCart = async () => {
+        if (!token) {
+            return notification.error({
+                message: "Please login to continue"
+            })
+        }
         try {
-            const res = await publicAxios.get(`/api/v1/cart/list/${user.user_id}`)
-            console.log(res.data);
+            const res = await publicAxios.get(`/api/v1/cart/list/${user.user_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             setCartList(res.data)
         } catch (error) {
             console.log(error);
         }
     }
     const handleIncrease = async (item) => {
-        console.log(item.product_id.product_info[0].stock);
         try {
             if (item.quantity >= item.product_id.product_info[0].stock) {
-                message.warning("Đã đạt số lượng tối đa")
+                message.warning("Maximum quantity reached")
                 return
             }
-            console.log("item:: ", item);
             await publicAxios.put("api/v1/cart/update/incre", item);
             setFlag(!flag)
         } catch (error) {
@@ -46,7 +53,7 @@ export default function Cart() {
     const handleDecrease = async (item) => {
         try {
             if (item.quantity <= 1) {
-                message.warning("Đã đạt số lượng tối thiểu")
+                message.warning("Minimum quantity has been reached")
                 return
             }
             else {
@@ -68,7 +75,6 @@ export default function Cart() {
         e.preventDefault();
         try {
             const res = await publicAxios.delete(`/api/v1/cart/${id}`)
-            console.log(res);
             setCartList(prevCartList => prevCartList.filter(item => item.cart_id !== id));
             setFlag(!flag)
             message.success(res.data.message);
@@ -143,7 +149,7 @@ export default function Cart() {
                                                 title="Xoá sản phẩm"
                                                 description="Bạn có muốn xoá sản phẩm?"
                                                 onConfirm={(e) => confirm(e, item.cart_id)}
-                                                onCancel={()=> {}}
+                                                onCancel={() => { }}
                                                 okText="Đồng ý"
                                                 cancelText="Không đồng ý"
                                             >
@@ -152,9 +158,6 @@ export default function Cart() {
                                         </td>
                                     </tr>
                                 ))}
-
-
-
                             </tbody>
                         </table>
                     </div>

@@ -17,7 +17,6 @@ export default function HomePage() {
     const { t } = useTranslation();
     const getAllProducts = async () => {
         const res = await publicAxios.get("/api/v1/products/get-list");
-        // console.log(res.data);
         const data = res.data;
 
         const result = data.filter((item) => parseFloat(item.discount) > 0).slice(0, 6)
@@ -26,24 +25,17 @@ export default function HomePage() {
             const data = res.data.data['AVG(rating)']
             result[i]['avgStar'] = Math.round(data);
         }
-
-
         setProducts(data);
         setProductSales(result);
     }
     const getAvgStar = async () => {
         const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
         const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
     const handleClickProduct = (id) => {
-        // console.log(id);
-        // localStorage.setItem("idProductDetail", id)
-        customNavigate(navigate,`/product_detail/${id}`)
+        customNavigate(navigate, `/product_detail/${id}`)
     }
-
-    // console.log(bestSeller);
     useEffect(() => {
         getAllProducts();
         getAvgStar()
@@ -73,7 +65,7 @@ export default function HomePage() {
                         <div>
                             <h3>
                                 <img
-                                    src="../../../src/assets/img/18s23fe-.webp"
+                                    src="../../../src/assets/img/20240222_GZYK4bAn.jpg"
                                     alt="Slider Image"
                                 />
                             </h3>
@@ -82,7 +74,7 @@ export default function HomePage() {
                         <div>
                             <h3>
                                 <img
-                                    src="../../../src/assets/img/12-3-4s24.webp"
+                                    src="../../../src/assets/img/20240412_TunwzErv.jpg"
                                     alt="Slider Image"
                                 />
                             </h3>
@@ -90,7 +82,7 @@ export default function HomePage() {
                         <div>
                             <h3>
                                 <img
-                                    src="../../../src/assets/img/12des-full-ipxsmax.webp"
+                                    src="../../../src/assets/img/20240419_gWy88Moc.jpg"
                                     alt="Slider Image"
                                 />
                             </h3>
@@ -110,13 +102,13 @@ export default function HomePage() {
                         <div className="flex items-center">
                             <div className="w-[10px] h-[24px] bg-red-600 rounded-sm"></div>
                             <span className="text-red-600 ml-2">
-                                {t("THIS_MONTH", {month: t("MONTH")})}
+                                {t("THIS_MONTH", { month: t("MONTH") })}
                             </span>
                         </div>
                         <div className="mt-3 flex items-center justify-between">
                             <div className="flex">
                                 <h1 className="text-[36px] font-bold">
-                                    {t("SALE.BEST_SALE", {product: t("PRODUCT")})}
+                                    {t("SALE.BEST_SALE", { product: t("PRODUCT") })}
                                 </h1>
                             </div>
 
@@ -171,14 +163,14 @@ export default function HomePage() {
                     </div>
                     <div className="mt-7 flex justify-center content-center items-center">
                         <button className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
-                            {[t("VIEW"),t("ALL"),t("PRODUCT")].join(" ")}
+                            {[t("VIEW"), t("ALL"), t("PRODUCT")].join(" ")}
                         </button>
                     </div>
                 </div>
                 <hr className="h-px my-8 bg-black"></hr>
                 <div class="image-container mx-auto">
                     <img
-                        src="../../../src/assets/img/Frame 600.png"
+                        src="../../../src/assets/img/home_banner_full_image.webp"
                         alt="Product Image"
                         class="max-w-[100%] w-auto h-auto md:h-[500px] mx-auto object-cover"
                     />
@@ -191,13 +183,13 @@ export default function HomePage() {
                             <div className="flex items-center">
                                 <div className="w-[10px] h-[24px] bg-red-600 rounded-sm"></div>
                                 <span className="text-red-600 ml-2">
-                                    {t("USER.OUR_PRODUCT", {product: t("PRODUCT")})}
+                                    {t("USER.OUR_PRODUCT", { product: t("PRODUCT") })}
                                 </span>
                             </div>
                             <div className="mt-3 flex items-center justify-between">
                                 <div className="flex">
                                     <h1 className="text-[36px] font-bold">
-                                        {[t("EXPLORE"),t("USER.OUR_PRODUCT", {product: t("PRODUCT")})].join(" ")}
+                                        {[t("EXPLORE"), t("USER.OUR_PRODUCT", { product: t("PRODUCT") })].join(" ")}
                                     </h1>
                                 </div>
                                 {/* <div className="ml-8 flex">
@@ -262,7 +254,7 @@ export default function HomePage() {
                             <button
                                 onClick={() => customNavigate(navigate, "/products")}
                                 className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
-                                {[t("VIEW"),t("ALL"),t("PRODUCT")].join(" ")}
+                                {[t("VIEW"), t("ALL"), t("PRODUCT")].join(" ")}
                             </button>
                         </div>
                     </div>

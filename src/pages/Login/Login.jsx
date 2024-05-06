@@ -26,13 +26,13 @@ export default function Login({ setIsLogin }) {
     const handleLogin = async (e) => {
         e.preventDefault()
         try {
-            const res = await loginApi(user)
             if (!user.email || !user.password) {
                 notification.error({
                     message: "Please enter complete information",
                 })
                 return;
             }
+            const res = await loginApi(user)
             if (res.data.user.role == "admin") {
                 // console.log("11111");
                 localStorage.setItem("token", res.data.token)
@@ -95,18 +95,15 @@ export default function Login({ setIsLogin }) {
             status: 0,
             phone: "0962989858"
         }
-        try {
-            const res = await loginFacebook(data)
-            notification.success({
-                message: res.message,
-            });
-            localStorage.setItem("token", res.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.user));
-            setIsLogin(true)
-            customNavigate(navigate, "/home");
-        } catch (error) {
-            console.log(error);
-        }
+
+        const res = await loginFacebook(data)
+        notification.success({
+            message: res.message,
+        });
+        localStorage.setItem("token", res.data.token)
+        localStorage.setItem('user_login', JSON.stringify(res.data.user));
+        setIsLogin(true)
+        customNavigate(navigate, "/home");
     }
     useEffect(() => {
         handleLogin()
@@ -131,7 +128,6 @@ export default function Login({ setIsLogin }) {
         }
 
         let res = await mailerApi({ email: emailForget });
-        console.log(res);
         notification.success({
             message: res.message
         })
@@ -293,12 +289,12 @@ export default function Login({ setIsLogin }) {
                                     {/* <!-- Register link --> */}
                                     <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                                         Don't have an account?{" "}
-                                        <Link
+                                        <RouterLink
                                             to="/register"
                                             className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                                         >
                                             Register
-                                        </Link>
+                                        </RouterLink>
                                     </p>
                                 </div>
                             </form>

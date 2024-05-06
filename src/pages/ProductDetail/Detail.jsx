@@ -23,13 +23,12 @@ export default function Detail() {
 
     const [allowCmt, setAllowCmt] = useState(true)
     const [mainImage, setMainImage] = useState("")
-    // console.log(user);
     const { id } = useParams()
     const userLogin = JSON.parse(localStorage.getItem("user_login"));
+    const token = localStorage.getItem('token');
     const user_id = userLogin && userLogin.user_id ? userLogin.user_id : "";
     const getProduct = async () => {
         const res = await publicAxios.get(`/api/v1/products/get-product/${id}`)
-        // console.log(res);
         setProductDetail(res.data)
         setMainImage(res.data.default_image)
     }
@@ -46,7 +45,6 @@ export default function Detail() {
                 user_id: user.user_id,
                 product_id: productDetail.product_id
             }
-            // console.log(data);
             try {
                 const res = await publicAxios.post('api/v1/review/create', data)
                 if (res.data.statusCode === 200) {
@@ -65,16 +63,13 @@ export default function Detail() {
     }
 
     const getAvgStar = async () => {
-        console.log(id);
         const result = await publicAxios.get(`/api/v1/review/avg-start/${id}`)
         const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
 
     const getListComment = async () => {
         const res = await publicAxios.get(`/api/v1/review/listReview/${id}`)
-        console.log(res.data);
         setListComment(res.data)
         const mappedArr = res.data.map((item) => {
             if (item.user_id.user_id == user_id) {
@@ -86,49 +81,49 @@ export default function Detail() {
     const getListCommentByUser = async () => {
 
     }
-    // console.log(user.user_id);
 
     useEffect(() => {
         getWishList()
         getProduct();
         getAvgStar()
         getListComment()
-        // handleWishlist()
     }, [flag]);
 
 
 
     const getWishList = async () => {
-        const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`);
+        const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         const wishlist1 = response.data;
-        // console.log(wishlist);
         setWishList(wishlist1)
-        // setFlag(!flag)
     }
     const handleWishlist = async () => {
-        if (!user.user_id) {
+        if (!user || !token) {
             return notification.error({
-                message: "Bạn phải đăng nhập trước khi thêm sản phẩm vào danh sách yêu thích",
+                message: "You must log in before adding a product to your favorites list",
             });
         }
-
         try {
             // Get the user's wishlist
-            const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`);
+            const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const wishlist = response.data;
-            // console.log(wishlist);
             setWishList(wishlist)
             // Check if the product is already in the wishlist
             const isProductInWishlist = wishlist.find(
                 (product) => product.product_id.product_id == productDetail.product_id
             );
-            // console.log(isProductInWishlist);
 
             if (isProductInWishlist) {
-
                 // Product is already in the wishlist, do nothing
                 return notification.error({
-                    message: "Sản phẩm đã có trong danh sách yêu thích",
+                    message: "Product is already in the favorites list",
                 });
             }
 
@@ -136,6 +131,10 @@ export default function Detail() {
             const addResponse = await publicAxios.post(`api/v1/favorite-products/add`, {
                 user_id: user.user_id,
                 product_id: productDetail.product_id,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
 
             if (addResponse.status === 201) {
@@ -144,7 +143,7 @@ export default function Detail() {
 
                 // Assuming 201 is the success code for creation
                 notification.success({
-                    message: 'Sản phẩm đã được thêm vào danh sách yêu thích',
+                    message: 'Product has been added to your favorites list',
                 });
 
             } else {
@@ -175,14 +174,12 @@ export default function Detail() {
         checkExistFav()
     }, [flag])
     const handleColorSelect = (color) => {
-        console.log(color.color);
         setSelectedColor(color.color);
         setMainImage(color.image)
     };
+    // console.log(user);
     const handleAddToCart = async (id) => {
-        // console.log(id);
-        console.log(user.user_id);
-        if (!user.user_id) {
+        if (!token || !userLogin) {
             return notification.error({
                 message: "Please log in before adding to cart",
             });
@@ -192,14 +189,15 @@ export default function Detail() {
                 user_id: user.user_id,
                 product_id: id
             }
-            // console.log(data);
-            const res = await publicAxios.post(`api/v1/cart/add`, data)
+            const res = await publicAxios.post(`api/v1/cart/add`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             dispatch(getCart(user.user_id));
             notification.success({
                 message: res.data.message
             })
-            // console.log(res);
-
         } catch (error) {
             console.log(error);
         }
@@ -222,11 +220,11 @@ export default function Detail() {
                         <div className="flex w-3/5 justify-between">
                             <div
                                 className="md:grid grid-cols-2 md:w-2/4 gap-y-2.5 hidden "
-                                // style={{ display: "flex" }}
+                            // style={{ display: "flex" }}
                             >
                                 {productDetail.default_image && (
                                     <div
-                                        className="flex justify-center items-center h-full border-2 rounded"
+                                        className="flex justify-center items-center h-full border-2 rounded cursor-pointer"
                                         style={{ width: 180 }}
                                         onClick={() =>
                                             setMainImage(
@@ -244,7 +242,7 @@ export default function Detail() {
                                     productDetail.impds.map((item) => (
                                         <div
                                             key={item.id}
-                                            className="border-2 rounded flex justify-center items-center h-full"
+                                            className="border-2 rounded flex justify-center items-center h-full cursor-pointer"
                                             onClick={() =>
                                                 setMainImage(item.url)
                                             }
@@ -294,8 +292,8 @@ export default function Detail() {
                                             <div className="text-lg sm:text-2xl text-red-500">
                                                 {formatCurrency(
                                                     productDetail.price *
-                                                        (1 -
-                                                            productDetail.discount)
+                                                    (1 -
+                                                        productDetail.discount)
                                                 )}
                                             </div>
                                             <div className="text-lg sm:text-2xl line-through">
@@ -332,15 +330,14 @@ export default function Detail() {
                                                         key={index + 1}
                                                         className="flex flex-col gap-y-4"
                                                     >
-                                                        <div className="flex gap-4">
+                                                        <div className="flex gap-4 cursor-pointer">
                                                             {item.color && (
                                                                 <div
-                                                                    className={`rounded-full border ${
-                                                                        selectedColor ===
+                                                                    className={`rounded-full border ${selectedColor ===
                                                                         item.color
-                                                                            ? "w-[30px] h-[30px] border-4"
-                                                                            : "w-[30px] h-[30px] border-0"
-                                                                    }`}
+                                                                        ? "w-[30px] h-[30px] border-4"
+                                                                        : "w-[30px] h-[30px] border-0"
+                                                                        }`}
                                                                     style={{
                                                                         backgroundColor:
                                                                             item.color,
@@ -380,13 +377,13 @@ export default function Detail() {
                                                 productDetail.product_id
                                             )
                                         }
-                                        className="bg-red-600 text-white py-2.5 px-8 text-sm rounded text-center w-1/2"
+                                        className="bg-red-600 text-white py-2.5 px-8 text-sm rounded text-center w-1/2 cursor-pointer"
                                     >
                                         Buy Now
                                     </div>
                                     <div
                                         onClick={handleWishlist}
-                                        className="border border-black flex items-center px-2.5 sm:w-max"
+                                        className="border border-black flex items-center px-2.5 sm:w-max cursor-pointer"
                                     >
                                         {/* <HeartOutlined /> */}
                                         {isWishList ? (

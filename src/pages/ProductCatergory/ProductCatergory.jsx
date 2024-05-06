@@ -105,7 +105,6 @@ export default function ProductCatergory({ isLoad }) {
         }
         return page
     }
-    console.log("=-=>", products);
     // đánh dấu trang hiện tại
     const handleUpDownPage = (status) => {
         // status quyết định lên trang hay lùi trang
@@ -130,7 +129,6 @@ export default function ProductCatergory({ isLoad }) {
     }
     const getCategories = async () => {
         const res = await publicAxios.get("/api/v1/category/get-list");
-        //   console.log(res.data);
         setCategory(res.data);
     }
     const subCategories = category.map((item) => (
@@ -174,7 +172,7 @@ export default function ProductCatergory({ isLoad }) {
         setAvgStar(Math.round(data));
     }
     const handleClickProduct = (id) => {
-        customNavigate(navigate,`/product_detail/${id}`)
+        customNavigate(navigate, `/product_detail/${id}`)
     }
 
     const handleChangeSort = (value) => {
@@ -193,8 +191,6 @@ export default function ProductCatergory({ isLoad }) {
                 break;
         }
     }
-
-
     return (
         <>
             <div>

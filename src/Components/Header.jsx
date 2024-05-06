@@ -34,6 +34,7 @@ import { useTranslation } from "react-i18next";
 import { RouterLink } from "./custom/RouterLink.jsx";
 import { customNavigate } from "../app/hook.js";
 import { usePopper } from "react-popper";
+import { notification } from "antd";
 const products = [
   {
     name: "Analytics",
@@ -89,14 +90,14 @@ export default function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [category, setCategory] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [referenceElement, setReferenceElement] = useState();
+  const [popperElement, setPopperElement] = useState();
   const [userLogin, setUserLogin] = useState(
     JSON.parse(localStorage.getItem("user_login")) || {}
   );
   const path = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  let [referenceElement, setReferenceElement] = useState();
-  let [popperElement, setPopperElement] = useState();
   let { styles, attributes } = usePopper(referenceElement, popperElement);
   const handleLogout = () => {
     localStorage.removeItem("user_login");
@@ -144,7 +145,12 @@ export default function Header({
     dispatch(setSearchKey(keyword));
     customNavigate(navigate, "/products");
   };
-
+  const gotoCart = () => {
+    if (!userLogin) return notification.error({
+      message: 'You must login to access cart'
+    })
+    return customNavigate(navigate, "/cart");
+  }
   return (
     <header className="bg-white backGroundCo sticky top-0 z-50">
       <Translate
@@ -208,9 +214,8 @@ export default function Header({
                 >
                   {t("PRODUCT")}
                   <ChevronDownIcon
-                    className={`${
-                      open ? "transform rotate-180" : ""
-                    } h-5 w-5 flex-none text-gray-400`}
+                    className={`${open ? "transform rotate-180" : ""
+                      } h-5 w-5 flex-none text-gray-400`}
                     aria-hidden="true"
                   />
                 </Popover.Button>
@@ -268,20 +273,14 @@ export default function Header({
           >
             <MdFavoriteBorder />
           </RouterLink>
-          <RouterLink
-            to="/cart"
-            className="flex font-normal leading-6 text-black-800 mb-1"
-            style={{ fontSize: "25px" }}
-          >
-            <div className="flex">
-              <div>
-                <AiOutlineShoppingCart />
-              </div>
-              <div className="text-lg font-semibold leading-6 text-gray-900" style={{display: cart.length > 0 ? "inline-block" : 'none'}}>
-                {cart?.length}
-              </div>
+          <div className="flex cursor-pointer text-2xl">
+            <div onClick={() => gotoCart()}>
+              <AiOutlineShoppingCart />
             </div>
-          </RouterLink>
+            <div className="text-lg font-semibold leading-6 text-gray-900" style={{ display: cart.length > 0 ? "inline-block" : 'none' }}>
+              {cart?.length}
+            </div>
+          </div>
           <div
             className=" text-lg font-semibold leading-6 text-gray-900 outline-none"
           >
@@ -324,7 +323,7 @@ export default function Header({
                           "block px-4 py-2 text-sm text-gray-700"
                         )}
                       >
-                        {t("USER.YOUR_PROFILE", {profile: t("PROFILE")})}
+                        {t("USER.YOUR_PROFILE", { profile: t("PROFILE") })}
                       </RouterLink>
                     )}
                   </Menu.Item>
@@ -337,7 +336,7 @@ export default function Header({
                           "block px-4 py-2 text-sm text-gray-700"
                         )}
                       >
-                        {t("USER.YOUR_BILL", {bill: t("BILL")})}
+                        {t("USER.YOUR_BILL", { bill: t("BILL") })}
                       </RouterLink>
                     )}
                   </Menu.Item>

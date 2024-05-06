@@ -35,27 +35,27 @@ export default function Register() {
     const errors = {};
 
     if (!regexName.test(formData.user_name.trim())) {
-      errors.errName = "Tên phải có ít nhất 6 ký tự";
+      errors.errName = "Name must have at least 6 characters";
       isValid = false;
     }
 
     if (!regexEmail.test(formData.email)) {
-      errors.errEmail = "Email không đúng định dạng";
+      errors.errEmail = "Invalid email";
       isValid = false;
     }
 
     if (!regexPhone.test(formData.phone)) {
-      errors.errPhone = "Số điện thoại không đúng định dạng";
+      errors.errPhone = "The phone number is not in the correct format";
       isValid = false;
     }
 
     if (!regexPass.test(formData.password)) {
-      errors.errPass = "Mật khẩu phải có ít nhất 6 ký tự và chứa cả chữ cái và số";
+      errors.errPass = "Password must be at least 6 characters and contain both letters and numbers";
       isValid = false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      errors.errConfirm = "Mật khẩu không khớp";
+      errors.errConfirm = "Password incorrect";
       isValid = false;
     }
 
@@ -72,7 +72,7 @@ export default function Register() {
     e.preventDefault();
     if (!formData.user_name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword) {
       notification.error({
-        message: "Vui lòng nhập đủ thông tin!",
+        message: "Please enter complete information!",
       });
       return;
     }
@@ -214,12 +214,12 @@ export default function Register() {
 
                 <p className="mb-0 mt-4 pt-1 text-sm font-semibold">
                   Have an account?{" "}
-                  <Link
+                  <RouterLink
                     to="/login"
                     className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                   >
                     Login
-                  </Link>
+                  </RouterLink>
                 </p>
               </div>
             </form>

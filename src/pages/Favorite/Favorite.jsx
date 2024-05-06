@@ -68,30 +68,13 @@ export default function Favorite() {
     const handleClickProduct = (id) => {
         customNavigate(navigate, `/product_detail/${id.product_id}`);
     }
-    const handleDelete = async (id) => {
-        try {
-            const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
-            console.log(res.data);
-            if (res.status == 200) {
-                notification.success({
-                    message: res.data.message
-                })
-                const newWishList = wishlist.filter(item => item._id != id)
-                setWishList(newWishList)
-                setFlag(!flag)
-            }
 
-        } catch (error) {
-            console.log(error);
-        }
-    }
     useEffect(() => {
         const start = (currentPage - 1) * pageSize
         let end = (start) + pageSize
 
         const getWishList = async () => {
             const res = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`)
-            // console.log(res.data);
             const result = res.data
             if (end > result.length) {
                 end = result.length
@@ -107,7 +90,6 @@ export default function Favorite() {
     }, [currentPage, pageSize, flag])
 
     const handleDelete = async (id) => {
-        console.log(id);
         try {
             const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
             console.log(res);
@@ -124,9 +106,6 @@ export default function Favorite() {
             console.log(error);
         }
     }
-
-
-    console.log(wishlist);
     return (
         <>
             <div className="bg-white">

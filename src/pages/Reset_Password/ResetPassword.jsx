@@ -15,11 +15,12 @@ export default function ResetPassword() {
             customNavigate(navigate, "/login")
         }
     }, [flag])
-    const handleClick = async () => {
+    const handleClick = async (e) => {
+        e.preventDefault();
         if (password == "" || cfPassword == "") {
             return notification.error({
-                message: "Chưa nhập đủ thông tin"
-            }) 
+                message: "Please enter complete information"
+            })
         }
         if (password !== cfPassword) {
             return notification.error({
