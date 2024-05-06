@@ -19,7 +19,6 @@ export default function Favorite() {
     const [flag, setFlag] = useState(false)
     const navigate = useNavigate()
     const user = JSON.parse(localStorage.getItem('user_login'))
-
     // vẽ danh sách các trang
     const renderPage = () => {
         // mảng lưu kết quả giao diện dùng để vẽ
@@ -47,7 +46,6 @@ export default function Favorite() {
     const handleUpDownPage = (status) => {
         // status quyết định lên trang hay lùi trang
         switch (status) {
-            // 0 là lùi
             case 0:
                 if (currentPage == 1) {
                     setCurrentPage(productTotal)
@@ -55,7 +53,6 @@ export default function Favorite() {
                     setCurrentPage(currentPage - 1)
                 }
                 break
-            // 1 là tăng
             case 1:
                 if (currentPage == productTotal) {
                     setCurrentPage(1)
@@ -71,7 +68,6 @@ export default function Favorite() {
     const handleDelete = async (id) => {
         try {
             const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
-            console.log(res.data);
             if (res.status == 200) {
                 notification.success({
                     message: res.data.message
@@ -91,42 +87,17 @@ export default function Favorite() {
 
         const getWishList = async () => {
             const res = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`)
-            // console.log(res.data);
             const result = res.data
             if (end > result.length) {
                 end = result.length
             }
             const newProduct = result.slice(start, end)
-
             setWishList(newProduct)
             setProductTotal(Math.ceil(result.length / pageSize))
-
         }
         getWishList()
 
     }, [currentPage, pageSize, flag])
-
-    const handleDelete = async (id) => {
-        console.log(id);
-        try {
-            const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
-            console.log(res);
-            if (res.status == 200) {
-                notification.success({
-                    message: res.data.message
-                })
-                const newWishList = wishlist.filter(item => item._id != id)
-                setWishList(newWishList)
-                setFlag(!flag)
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
-    console.log(wishlist);
     return (
         <>
             <div className="bg-white">
