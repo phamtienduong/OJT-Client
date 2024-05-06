@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../../components/Header";
-import Footer from "../../Components/Footer";
+import { Button, Card, Col, message, Popconfirm, Rate, Row } from 'antd'
 import publicAxios from "../../config/publicAxios";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { formatCurrency } from "../../helper/formatMoney";
@@ -44,7 +43,6 @@ export default function Favorite() {
         }
         return page
     }
-
     // đánh dấu trang hiện tại
     const handleUpDownPage = (status) => {
         // status quyết định lên trang hay lùi trang
@@ -69,7 +67,6 @@ export default function Favorite() {
     }
     const handleClickProduct = (id) => {
         customNavigate(navigate, `/product_detail/${id.product_id}`);
-
     }
     const handleDelete = async (id) => {
         try {
@@ -100,15 +97,36 @@ export default function Favorite() {
                 end = result.length
             }
             const newProduct = result.slice(start, end)
+
             setWishList(newProduct)
             setProductTotal(Math.ceil(result.length / pageSize))
+
         }
         getWishList()
 
     }, [currentPage, pageSize, flag])
 
+    const handleDelete = async (id) => {
+        console.log(id);
+        try {
+            const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
+            console.log(res);
+            if (res.status == 200) {
+                notification.success({
+                    message: res.data.message
+                })
+                const newWishList = wishlist.filter(item => item._id != id)
+                setWishList(newWishList)
+                setFlag(!flag)
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
+    console.log(wishlist);
     return (
         <>
             <div className="bg-white">
@@ -119,7 +137,68 @@ export default function Favorite() {
                         </h2>
 
                     </div>
-                    <div className=" mt-6 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+                    <div className="ml-6 mr-6 lg:col-span-3">
+                        <Row className=' flex justify-center ' gutter={[20, 20]}>
+                            {wishlist.map((product, index) => (
+                                <Col key={index} className='text-center m-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 '>
+                                    <div className="relative z-10">
+                                        {product.product_id.discount !== 0 ? <></> : (
+                                            <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
+                                                <span className="text-xs sm:text-sm md:text-base">SALE {product.product_id.discount * 100}%</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <Card
+                                        onClick={() => handleClickProduct(product.product_id)}
+                                        hoverable
+                                        className='border-3'
+                                        cover={<img alt={product.product_id.product_name} src={product.product_id.default_image} />}
+                                    >
+                                        <Card.Meta
+                                            title={product.product_id.product_name}
+                                            description={
+                                                <div>
+                                                    {
+                                                        product.product_id.discount > 0 ? (
+                                                            <div className='flex'>
+                                                                <p className="text-lg  font-medium text-gray-900 line-through ">{formatCurrency(+product.product_id.price)} </p>
+                                                                <p className="text-lg ml-2 font-medium text-red-600">
+                                                                    {formatCurrency((product.product_id.price * (1 - product.product_id.discount)))}
+                                                                </p>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-lg  font-medium text-gray-900 ">{formatCurrency(+product.price)} </p>
+
+                                                        )
+                                                    }
+                                                    <p className="mt-1 text-lg font-medium text-gray-900 text-center">
+                                                        <Rate disabled value={product.avgStar} className='text-sm' />
+
+                                                    </p>
+                                                </div>
+
+                                            }
+                                        />
+                                    </Card>
+                                    <div class="flex jusitfy-between flex-col lg:flex-row items-center mt-10 w-full space-y-4 lg:space-y-0 lg:space-x-4 xl:space-x-8">
+                                        <div class="w-full">
+                                            <Popconfirm
+                                                title="Are you sure?"
+                                                description="Do you want to remove this product from your wishlist?"
+                                                onConfirm={() => handleDelete(product.favorite_product_id)}
+                                                onCancel={() => { }}
+                                                okText="Yes"
+                                                cancelText="No"
+                                            >
+                                                <Button className="w-full h-[40px]" danger>Delete</Button>
+                                            </Popconfirm>
+                                        </div>
+                                    </div>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
+                    {/* <div className=" mt-6 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
                         {wishlist.map((product) => (
                             <div key={product.favorite_product_id} className="group relative">
                                 <a
@@ -164,22 +243,28 @@ export default function Favorite() {
                                 </a>
                                 <div class="flex jusitfy-between flex-col lg:flex-row items-center mt-10 w-full space-y-4 lg:space-y-0 lg:space-x-4 xl:space-x-8">
                                     <div class="w-full">
-                                        <button
-                                            onClick={() => handleDelete(product.favorite_product_id)}
-                                            class="focus:outline-none focus:ring-gray-800 focus:ring-offset-2 focus:ring-2 text-white w-full tracking-tight py-4 text-lg leading-4 hover:bg-black bg-gray-800 border border-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
-                                            Delete
-                                        </button>
+                                        <Popconfirm
+                                            title="Are you sure?"
+                                            description="Do you want to remove this product from your wishlist?"
+                                            onConfirm={() => handleDelete(product.favorite_product_id)}
+                                            onCancel={() => { }}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <Button className="w-full h-[40px]" danger>Delete</Button>
+                                        </Popconfirm>
                                     </div>
+
                                     <div class="w-full">
-                                        <button class="focus:outline-none focus:ring-gray-800 focus:ring-offset-2 focus:ring-2 text-white w-full tracking-tight py-4 text-lg leading-4 hover:bg-black bg-gray-800 border border-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+                                        <Button className="w-full h-[40px]">
                                             Add to cart
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
                         ))}
 
-                    </div>
+                    </div> */}
                     <div >
                         <div className="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
                             <div className="flex flex-1 justify-between sm:hidden">

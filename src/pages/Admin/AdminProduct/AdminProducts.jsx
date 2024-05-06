@@ -52,22 +52,24 @@ const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'Action',
         key: 'action',
-        render: (_, product) => (<>
-            <Button onClick={() => handleClickEdit(product)}>Edit</Button>
+        render: (_, product) => (<div className='flex'>
+            <div>
+                <Button onClick={() => handleClickEdit(product)}>Edit</Button>
 
-
-            <Popconfirm className='ml-2'
-                title="Delete product"
-                description="Are you sure to delete this task?"
-                onConfirm={() => handleOkeDelete(product.product_id)}
-                onCancel={() => { }}
-                okText="Yes"
-                cancelText="No"
-            >
-                <Button danger>Delete</Button>
-            </Popconfirm>
-
-        </>)
+            </div>
+            <div>
+                <Popconfirm className='ml-2'
+                    title="Delete product"
+                    description="Are you sure to delete this task?"
+                    onConfirm={() => handleOkeDelete(product.product_id)}
+                    onCancel={() => { }}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button danger>Delete</Button>
+                </Popconfirm>
+            </div>
+        </div>)
     },
 ];
 // lấy ra component search

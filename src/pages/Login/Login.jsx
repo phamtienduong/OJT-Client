@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TEInput, TERipple, TEModal, TEModalDialog, TEModalContent, TEModalHeader, TEModalBody, TEModalFooter } from "tw-elements-react";
 import "./Login.scss";
 import image from "../../Images/111.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import publicAxios from "../../config/publicAxios";
 import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
@@ -112,20 +112,32 @@ export default function Login({ setIsLogin }) {
         handleLogin()
     }, [])
     const handleSendMail = async () => {
-        try {
-            let res = await mailerApi({ email: emailForget });
-            notification.success({
-                message: res.message
-            })
-            localStorage.setItem("reset_id", res.id);
-            setShowModal(false);
-            setEmailForget("");
-        } catch (err) {
-            console.log(err)
-            notification.warning({
-                message: "Email does not exist in the system"
-            })
+
+        // Kiểm tra xem trường email có bị bỏ trống hay không
+        if (!emailForget.trim()) {
+            notification.error({
+                message: "Email cannot be empty."
+            });
+            return;
         }
+
+        // Kiểm tra định dạng email
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(emailForget)) {
+            notification.error({
+                message: "Please enter a valid email address."
+            });
+            return;
+        }
+
+        let res = await mailerApi({ email: emailForget });
+        console.log(res);
+        notification.success({
+            message: res.message
+        })
+        localStorage.setItem("reset_id", res.id);
+        setShowModal(false);
+        setEmailForget("");
     }
     return (
         <>
@@ -281,12 +293,12 @@ export default function Login({ setIsLogin }) {
                                     {/* <!-- Register link --> */}
                                     <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                                         Don't have an account?{" "}
-                                        <RouterLink
+                                        <Link
                                             to="/register"
                                             className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
                                         >
                                             Register
-                                        </RouterLink>
+                                        </Link>
                                     </p>
                                 </div>
                             </form>

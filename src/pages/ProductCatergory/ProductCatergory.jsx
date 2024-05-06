@@ -105,6 +105,7 @@ export default function ProductCatergory({ isLoad }) {
         }
         return page
     }
+    console.log("=-=>", products);
     // đánh dấu trang hiện tại
     const handleUpDownPage = (status) => {
         // status quyết định lên trang hay lùi trang
@@ -166,14 +167,12 @@ export default function ProductCatergory({ isLoad }) {
         getAvgStar();
 
     }, [currentPage, pageSize, isLoad])
+
     const getAvgStar = async () => {
         const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
         const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
-
-
     const handleClickProduct = (id) => {
         customNavigate(navigate,`/product_detail/${id}`)
     }

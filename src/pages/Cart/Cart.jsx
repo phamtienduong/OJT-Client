@@ -193,7 +193,7 @@ export default function Cart() {
                         </div>
                     </div>
                 </div>
-                <div className='flex gap-2 items-center'>
+                {/* <div className='flex gap-2 items-center'>
                     <div className='flex'>
                         <input
                             className="w-[302px] h-12 pl-4 pr-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -205,7 +205,7 @@ export default function Cart() {
                             Apply Coupon
                         </button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

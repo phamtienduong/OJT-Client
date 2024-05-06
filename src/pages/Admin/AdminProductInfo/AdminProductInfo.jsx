@@ -12,11 +12,6 @@ import {
     Popconfirm,
 } from "antd";
 import publicAxios from "../../../config/publicAxios";
-// import { uploadImage } from "../../../common/upload/index";
-import { formatCurrency } from "../../../helper/formatMoney";
-import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
-import { storage } from "../../../firebase/firebase";
-// import { uploadImage } from '../../../common/upload';
 import { uploadImage } from "../../../common/upload";
 import { useNavigate } from "react-router-dom";
 import { customNavigate } from "../../../app/hook";
@@ -54,7 +49,6 @@ const columns = (handleOkeDelete, handleClickEdit) => [
         title: "Ram",
         dataIndex: "ram",
         key: "ram",
-        // render: (price) => <>{formatCurrency(+price)} </>
     },
     {
         title: "Stock",

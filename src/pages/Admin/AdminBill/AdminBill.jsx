@@ -35,8 +35,9 @@ const columns = (handleChangeStatusBills) => [
         key: "date",
         render: (_, record) => {
             const date = new Date(record.bill_date);
-            const formattedDate = `${date.getDate()}/${date.getMonth() + 1
-                }/${date.getFullYear()}`;
+            const formattedDate = `${date.getDate()}/${
+                date.getMonth() + 1
+            }/${date.getFullYear()}`;
             return formattedDate;
         },
     },
@@ -84,30 +85,34 @@ const columns = (handleChangeStatusBills) => [
         render: (_, order) => (
             <>
                 {order.status === OrderStatus.DONE ||
-                    order.status === OrderStatus.CANCEL_USER ||
-                    order.status === OrderStatus.CANCEL_ADMIN ? null : (
+                order.status === OrderStatus.CANCEL_USER ||
+                order.status === OrderStatus.CANCEL_ADMIN ? null : (
                     <>
-                        <Button
-                            onClick={() =>
-                                handleChangeStatusBills(
-                                    order.bill_id,
-                                    OrderStatus.DONE
-                                )
-                            }
-                        >
-                            Accept
-                        </Button>
-                        <Button
-                            danger
-                            onClick={() =>
-                                handleChangeStatusBills(
-                                    order.bill_id,
-                                    OrderStatus.CANCEL_ADMIN
-                                )
-                            }
-                        >
-                            Deny
-                        </Button>
+                        {order.status === OrderStatus.UNPAID && (
+                            <Button
+                                danger
+                                onClick={() =>
+                                    handleChangeStatusBills(
+                                        order.bill_id,
+                                        OrderStatus.CANCEL_ADMIN
+                                    )
+                                }
+                            >
+                                Cancel
+                            </Button>
+                        )}
+                        {order.status === OrderStatus.PAID && (
+                            <Button
+                                onClick={() =>
+                                    handleChangeStatusBills(
+                                        order.bill_id,
+                                        OrderStatus.DONE
+                                    )
+                                }
+                            >
+                                Accept
+                            </Button>
+                        )}
                     </>
                 )}
             </>
@@ -121,6 +126,8 @@ const OrderStatus = {
     DONE: "accept",
     CANCEL_ADMIN: "admin_cancel",
     CANCEL_USER: "cancel",
+    PAID: "paid",
+    UNPAID: "unpaid",
 };
 export default function AdminBill() {
     const navigate = useNavigate();
