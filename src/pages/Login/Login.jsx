@@ -24,6 +24,7 @@ export default function Login({ setIsLogin }) {
     }
     const handleLogin = async (e) => {
         e.preventDefault()
+
         const res = await loginApi(user)
         console.log(res.data);
         if (!user.email || !user.password) {
@@ -51,7 +52,9 @@ export default function Login({ setIsLogin }) {
             })
             setIsLogin(true)
             navigate("/home")
+
         }
+
     }
     const OnButtonClick = async () => {
         const auth = await GoogleAuth()
@@ -108,6 +111,7 @@ export default function Login({ setIsLogin }) {
         handleLogin()
     }, [])
     const handleSendMail = async () => {
+
         // Kiểm tra xem trường email có bị bỏ trống hay không
         if (!emailForget.trim()) {
             notification.error({

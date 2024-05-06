@@ -47,6 +47,7 @@ export const loginFacebook = async (body) => {
   }
 }
 export const mailerApi = async (body) => {
+  console.log(body)
   try {
     const response = await publicAxios.post(API_MAILER, body);
     return response.data;

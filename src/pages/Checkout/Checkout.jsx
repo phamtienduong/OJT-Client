@@ -347,45 +347,9 @@ export default function Checkout() {
                                             </div>
                                         </div>
 
-                                        <div>
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex gap-2 items-center">
-                                                    <input type="radio" />
-                                                    <label htmlFor="">
-                                                        Bank
-                                                    </label>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <img
-                                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png"
-                                                        alt=""
-                                                        className="w-8 h-8"
-                                                    />
-                                                    <img
-                                                        src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
-                                                        alt=""
-                                                        className="w-8 h-8"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <input type="radio" />
-                                                <label htmlFor="">
-                                                    Cash on delivery
-                                                </label>
-                                            </div>
-                                        </div>
+                                       
                                     </div>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Coupon Code"
-                                            className="w-3/5 border border-black px-2"
-                                        />
-                                        <button className="bg-red-600 text-white py-2.5 px-8 text-sm rounded w-2/5">
-                                            Apply Coupon
-                                        </button>
-                                    </div>
+                                    
                                 </div>
                                 <button
                                     onClick={handleCheckout}

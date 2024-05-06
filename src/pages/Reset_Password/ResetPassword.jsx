@@ -15,7 +15,6 @@ export default function ResetPassword() {
             navigate("/login");
         }
     }, [id, navigate]);
-
     const handleClick = async (e) => {
         e.preventDefault()
         if (!id) return notification.error({ message: "Go back to login" });
