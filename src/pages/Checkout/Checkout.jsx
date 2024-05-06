@@ -6,6 +6,7 @@ import { formatCurrency } from "../../helper/formatMoney";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
+import { customNavigate } from "../../app/hook";
 const { Option } = Select;
 export default function Checkout() {
     const [provinces, setProvinces] = useState([]);
@@ -26,12 +27,12 @@ export default function Checkout() {
         wardCode: -1,
     });
     //
+    const navigate = useNavigate();
     const getProvinces = async () => {
         let result = await axios.get("https://vapi.vnappmob.com/api/province/");
         // console.log(result.data.results);
         setProvinces(result.data.results);
     };
-    const navigate = useNavigate();
     const handleSelectProvince = async (e) => {
         const selectedProvinceCode = e.target.value;
         const selectedProvince = provinces.find(
@@ -152,10 +153,9 @@ export default function Checkout() {
                 `api/v1/bills/check-out/${user_id}`,
                 data
             );
-            console.log(res)
             if (res.status === 201) {
                 message.success("Checkout successful");
-                navigate("/bills");
+                customNavigate(navigate, "/bills");
                 handleClearCart()
             } else {
                 message.error("Checkout failed");

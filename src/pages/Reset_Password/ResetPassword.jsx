@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { TEInput } from "tw-elements-react";
 import { notification } from "antd";
-import { useNavigate } from "react-router-dom";
-import { resetPassword } from "../../apis/auth/auth";
+import { useNavigate } from 'react-router-dom';
+import { resetPassword } from '../../apis/auth/auth';
+import { customNavigate } from '../../app/hook';
 
 export default function ResetPassword() {
-    const navigate = useNavigate();
     const [id, setId] = useState(JSON.parse(localStorage.getItem("reset_id")));
     const [password, setPassword] = useState("");
     const [cfPassword, setCfPassword] = useState("");
-
+    const [flag, setFlag] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
         if (!id) {
-            navigate("/login");
+            customNavigate(navigate, "/login")
         }
-    }, [id, navigate]);
-    const handleClick = async (e) => {
-        e.preventDefault()
-        if (!id) return notification.error({ message: "Go back to login" });
-        if (password === "" || cfPassword === "") {
+    }, [flag])
+    const handleClick = async () => {
+        if (password == "" || cfPassword == "") {
             return notification.error({
-                message: "Please fill in all fields.",
-            });
+                message: "Chưa nhập đủ thông tin"
+            }) 
         }
         if (password !== cfPassword) {
             return notification.error({
@@ -31,38 +29,19 @@ export default function ResetPassword() {
         try {
             let res = await resetPassword({ id, password });
             notification.success({
-                message: res.message + ". Go back to login.",
-            });
-            setPassword("");
-            setCfPassword("");
-            localStorage.removeItem("reset_id");
-            navigate("/login");
+                message: res.message + ". Go back to login"
+            })
+            setCfPassword("")
+            setPassword("")
+            localStorage.removeItem("reset_id")
+            setId(JSON.parse(localStorage.getItem("reset_id")));
+            setFlag(!flag);
         } catch (err) {
             console.log(err);
         }
     };
 
     return (
-        // <div className="flex justify-center items-center h-screen bg-gradient-to-r from-cyan-500 to-blue-500">
-        //     <div className="w-full max-w-md px-12 py-8 bg-white rounded-xl shadow-xl z-10">
-        //         <div className="mb-4">
-        //             <h3 className="font-medium text-2xl text-gray-900">Reset Your Password</h3>
-        //         </div>
-        //         <div className="space-y-5">
-        //             <TEInput label="New Password" type="password" onChange={(e) => setPassword(e.target.value)} value={password} className="w-full" />
-        //             <TEInput label="Confirm New Password" type="password" onChange={(e) => setCfPassword(e.target.value)} value={cfPassword} className="w-full" />
-        //         </div>
-        //         <div className="mt-6">
-        //             <button className='w-full flex justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transform transition-colors duration-200 ease-in-out'
-        //                 onClick={handleClick}>
-        //                 Confirm
-        //             </button>
-        //         </div>
-        //     </div>
-        // </div>
-
-
-
         <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
             <div className="relative py-3 sm:max-w-xl sm:mx-auto">
                 <div className="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10">

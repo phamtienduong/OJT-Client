@@ -1,6 +1,37 @@
 {
+    "ENG": "English",
+    "VIE": "Vietnamese",
+    "HELLO": "Hello",
     "HOME": "Home",
     "CONTACT": "Contact",
     "ABOUT": "About",
-    "PRODUCT": "Product"
+    "PRODUCT": "Product",
+    "SEARCH": "Search here",
+    "SALE": {
+        "SALE": "SALE",
+        "SALE_HEADER" : "Summer Sale For All {{product}} And Free Express Delivery - OFF 50%!",
+        "BEST_SALE": "Best Selling {{product}}s"
+    },
+    "PROFILE": "Profile",
+    "BILL": "Bill",
+    "SETTING": "Setting",
+    "SIGN_OUT": "Sign out",
+    "MONTH": "Month",
+    "THIS_MONTH": "This {{month}}",
+    "USER": {
+        "YOUR_PROFILE": "Your {{profile}}",
+        "YOUR_BILL": "Your {{bill}}",
+        "OUR_PRODUCT": "Our {{product}}s"
+    },
+    "VIEW": "View",
+    "ALL": "All",
+    "EXPLORE": "Explore",
+    "HOMEPAGE": {
+        "DELIVERY": "FREE AND FAST DELIVERY",
+        "DELIVERY_INFO": "Free delivery for all orders over $140",
+        "SERVICE": "24/7 CUSTOMER SERVICE",
+        "SERVICE_INFO": "Friendly 24/7 customer support",
+        "REFUND": "MONEY BACK GUARANTEE",
+        "REFUND_INFO": "We return money within 30 days"
+    }
 }

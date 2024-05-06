@@ -8,6 +8,7 @@ import { message, notification } from "antd";
 import { FacebookAuth, GoogleAuth } from "../../firebase/firebase";
 import { RouterLink } from "../../Components/custom/RouterLink";
 import { loginApi, loginFacebook, loginGoogle, mailerApi } from "../../apis/auth/auth";
+import { customNavigate } from "../../app/hook";
 
 export default function Login({ setIsLogin }) {
     const [showModal, setShowModal] = useState(false);
@@ -24,35 +25,35 @@ export default function Login({ setIsLogin }) {
     }
     const handleLogin = async (e) => {
         e.preventDefault()
-
-        const res = await loginApi(user)
-        console.log(res.data);
-        if (!user.email || !user.password) {
-            notification.error({
-                message: "Please enter complete information",
-            })
-            return;
-        }
-
-        if (res.data.user.role == "admin") {
-            // console.log("11111");
-            localStorage.setItem("token", res.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.user));
-            notification.success({
-                message: "Hello Admin",
-            })
-            setIsLogin(true)
-            navigate("/dashboard")
-        }
-        else if (res.data.user.role == "user") {
-            localStorage.setItem("token", res.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.user));
-            notification.success({
-                message: res.message
-            })
-            setIsLogin(true)
-            navigate("/home")
-
+        try {
+            const res = await loginApi(user)
+            if (!user.email || !user.password) {
+                notification.error({
+                    message: "Please enter complete information",
+                })
+                return;
+            }
+            if (res.data.user.role == "admin") {
+                // console.log("11111");
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
+                notification.success({
+                    message: "Hello Admin",
+                })
+                setIsLogin(true)
+                navigate("/dashboard")
+            }
+            else if (res.data.user.role == "user") {
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
+                notification.success({
+                    message: res.message,
+                })
+                setIsLogin(true)
+                customNavigate(navigate, "/home")
+            }
+        } catch (error) {
+            console.log(error)
         }
 
     }
@@ -77,7 +78,7 @@ export default function Login({ setIsLogin }) {
             localStorage.setItem("token", res.data.token)
             localStorage.setItem('user_login', JSON.stringify(res.data.user));
             setIsLogin(true)
-            navigate("/home");
+            customNavigate(navigate, "/home");
         } catch (error) {
             console.log(error);
         }
@@ -102,7 +103,7 @@ export default function Login({ setIsLogin }) {
             localStorage.setItem("token", res.data.token)
             localStorage.setItem('user_login', JSON.stringify(res.data.user));
             setIsLogin(true)
-            navigate("/home");
+            customNavigate(navigate, "/home");
         } catch (error) {
             console.log(error);
         }

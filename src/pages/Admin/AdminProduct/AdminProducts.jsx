@@ -8,6 +8,7 @@ import { storage } from "../../../firebase/firebase";
 import { uploadImage } from "../../../common/upload"
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { customNavigate } from '../../../app/hook';
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'STT',
@@ -146,7 +147,7 @@ export default function AdminProducts() {
             setProducts(res.data)
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate, "/home")
         }
 
     }

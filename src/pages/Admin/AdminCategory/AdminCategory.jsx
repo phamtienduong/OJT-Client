@@ -3,6 +3,7 @@ import { Button, Form, Input, Modal, Popconfirm, Table, message } from 'antd'
 import { useEffect, useState } from 'react';
 import publicAxios from "../../../config/publicAxios";
 import { useNavigate } from 'react-router-dom';
+import { customNavigate } from '../../../app/hook';
 
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
@@ -94,7 +95,7 @@ export default function AdminCategory() {
             setCategory(res.data);
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate,"/home");
         }
 
     }

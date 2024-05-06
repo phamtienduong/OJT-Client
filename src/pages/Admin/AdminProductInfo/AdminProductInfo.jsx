@@ -14,6 +14,7 @@ import {
 import publicAxios from "../../../config/publicAxios";
 import { uploadImage } from "../../../common/upload";
 import { useNavigate } from "react-router-dom";
+import { customNavigate } from "../../../app/hook";
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: "STT",
@@ -137,7 +138,7 @@ export default function AdminProductInfo() {
             setProducts(res.data);
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate, "/home")
         }
     };
     const getCategories = async () => {

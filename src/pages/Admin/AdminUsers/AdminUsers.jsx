@@ -2,6 +2,7 @@ import { Button, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react'
 import publicAxios from "../../../config/publicAxios";
 import { useNavigate } from 'react-router-dom';
+import { customNavigate } from '../../../app/hook';
 const columns = (handleChangeActive) => [
     {
         title: 'STT',
@@ -69,7 +70,7 @@ export default function AdminUsers() {
             setList(res.data.data)
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate,"/home")
         }
     }
     const handleChangeActive = async (user) => {

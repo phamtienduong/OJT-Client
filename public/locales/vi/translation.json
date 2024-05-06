@@ -1,6 +1,37 @@
 {
+    "ENG": "Tiếng Anh",
+    "VIE": "Tiếng Việt",
+    "HELLO": "Xin chào",
     "HOME": "Trang chủ",
     "CONTACT": "Liên hệ",
     "ABOUT": "Về chúng tôi",
-    "PRODUCT": "Sản phẩm"
+    "PRODUCT": "Sản phẩm",
+    "SEARCH": "Tìm kiếm",
+    "SALE": {
+        "SALE": "Giảm",
+        "SALE_HEADER": "Giảm Giá Mùa Hè Cho Tất Cả {{product}} Và Miễn Phí Ship - Lên tới 50%",
+        "BEST_SALE": "{{product}} bán chạy nhất"
+    },
+    "PROFILE": "Hồ sơ",
+    "BILL": "Đơn hàng",
+    "SETTING": "Thiết lập",
+    "SIGN_OUT": "Đăng xuất",
+    "MONTH": "Tháng",
+    "THIS_MONTH": "{{month}} này",
+    "USER": {
+        "YOUR_PROFILE": "{{profile}} của bạn",
+        "YOUR_BILL": "{{bill}} của bạn",
+        "OUR_PRODUCT": "{{product}} của chúng tôi"
+    },
+    "VIEW": "Xem",
+    "ALL": "Tất cả",
+    "EXPLORE": "Khám phá",
+    "HOMEPAGE": {
+        "DELIVERY": "Giao hàng nhanh và miễn phí",
+        "DELIVERY_INFO": "Miễn phí giao hàng cho đơn hàng trên 3 triệu",
+        "SERVICE": "Dịch vụ CSKH 24/7",
+        "SERVICE_INFO": "Dịch vụ CSKH hỗ trợ 24/7",
+        "REFUND": "Hoàn lại tiền thanh toán",
+        "REFUND_INFO": "Có thể hoàn trả đơn trong 30 ngày"
+    }
 }

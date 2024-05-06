@@ -1,4 +1,3 @@
-
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -15,6 +14,7 @@ import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
 import { Rate, Select } from "antd";
+import { customNavigate } from "../../app/hook";
 
 const sortOptions = [
     { label: "Best Rating", value: 1 },
@@ -174,11 +174,10 @@ export default function ProductCatergory({ isLoad }) {
         setAvgStar(Math.round(data));
     }
     const handleClickProduct = (id) => {
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate,`/product_detail/${id}`)
     }
 
     const handleChangeSort = (value) => {
-        console.log(value);
         switch (value) {
             case 1:
                 const newProductsC = [...products.sort((a, b) => b.avgStar - a.avgStar)]

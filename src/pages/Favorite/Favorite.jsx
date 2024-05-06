@@ -6,10 +6,9 @@ import { formatCurrency } from "../../helper/formatMoney";
 import { AiOutlineStar } from "react-icons/ai";
 import { notification } from "antd";
 import { useNavigate } from "react-router-dom";
+import { customNavigate } from "../../app/hook";
 
 export default function Favorite() {
-
-    const navigate = useNavigate()
     const [wishlist, setWishList] = useState([]);
     // số trang
     const [productTotal, setProductTotal] = useState(0)
@@ -17,16 +16,9 @@ export default function Favorite() {
     const [currentPage, setCurrentPage] = useState(1)
     // số sp trong một trang
     const [pageSize, setPageSize] = useState(6)
-
     const [flag, setFlag] = useState(false)
-
-    const [avgStar, setAvgStar] = useState(1);
-
-
-
-
+    const navigate = useNavigate()
     const user = JSON.parse(localStorage.getItem('user_login'))
-    // console.log(user);
 
     // vẽ danh sách các trang
     const renderPage = () => {
@@ -74,8 +66,24 @@ export default function Favorite() {
         }
     }
     const handleClickProduct = (id) => {
-        // console.log(id.product_id);
-        navigate(`/product_detail/${id.product_id}`)
+        customNavigate(navigate, `/product_detail/${id.product_id}`);
+    }
+    const handleDelete = async (id) => {
+        try {
+            const res = await publicAxios.delete(`api/v1/favorite-products/${id}`)
+            console.log(res.data);
+            if (res.status == 200) {
+                notification.success({
+                    message: res.data.message
+                })
+                const newWishList = wishlist.filter(item => item._id != id)
+                setWishList(newWishList)
+                setFlag(!flag)
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     }
     useEffect(() => {
         const start = (currentPage - 1) * pageSize

@@ -4,6 +4,7 @@ import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from '../../../helper/formatMoney';
 import { useNavigate } from 'react-router-dom';
+import { customNavigate } from '../../../app/hook';
 
 const columns = (handleChangeStatusBills) => [
     {
@@ -146,7 +147,7 @@ export default function AdminBill() {
             setAllBills(res.data);
         } catch (error) {
             alert("Bạn ko có quyền")
-            navigate("/home")
+            customNavigate(navigate, "/home")
         }
     }
 

@@ -1,11 +1,3 @@
-import { AiOutlineCamera } from "react-icons/ai";
-import {
-    AiOutlineStar,
-    AiFillEye,
-    AiOutlineHeart,
-    AiOutlineArrowRight,
-    AiOutlineArrowLeft,
-} from "react-icons/ai";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 
@@ -13,6 +5,8 @@ import publicAxios from "../../config/publicAxios";
 import { formatCurrency } from "../../helper/formatMoney";
 import { useNavigate } from "react-router-dom";
 import { Card, Col, Rate, Row } from "antd";
+import { customNavigate } from "../../app/hook";
+import { useTranslation } from "react-i18next";
 // import "./HomePage.scss"
 export default function HomePage() {
     const [products, setProducts] = useState([]);
@@ -20,7 +14,7 @@ export default function HomePage() {
     const [avgStar, setAvgStar] = useState(1);
 
     const navigate = useNavigate();
-
+    const { t } = useTranslation();
     const getAllProducts = async () => {
         const res = await publicAxios.get("/api/v1/products/get-list");
         // console.log(res.data);
@@ -46,7 +40,7 @@ export default function HomePage() {
     const handleClickProduct = (id) => {
         // console.log(id);
         // localStorage.setItem("idProductDetail", id)
-        navigate(`/product_detail/${id}`)
+        customNavigate(navigate,`/product_detail/${id}`)
     }
 
     // console.log(bestSeller);
@@ -116,13 +110,13 @@ export default function HomePage() {
                         <div className="flex items-center">
                             <div className="w-[10px] h-[24px] bg-red-600 rounded-sm"></div>
                             <span className="text-red-600 ml-2">
-                                This Month
+                                {t("THIS_MONTH", {month: t("MONTH")})}
                             </span>
                         </div>
                         <div className="mt-3 flex items-center justify-between">
                             <div className="flex">
                                 <h1 className="text-[36px] font-bold">
-                                    Best Selling Products
+                                    {t("SALE.BEST_SALE", {product: t("PRODUCT")})}
                                 </h1>
                             </div>
 
@@ -136,7 +130,7 @@ export default function HomePage() {
                                     <div className="relative z-10">
                                         {product.discount == 0 ? <></> : (
                                             <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
-                                                <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
+                                                <span className="text-xs sm:text-sm md:text-base">{t("SALE.SALE")} {product.discount * 100}%</span>
                                             </div>
                                         )}
                                     </div>
@@ -177,7 +171,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-7 flex justify-center content-center items-center">
                         <button className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
-                            View All Products
+                            {[t("VIEW"),t("ALL"),t("PRODUCT")].join(" ")}
                         </button>
                     </div>
                 </div>
@@ -197,13 +191,13 @@ export default function HomePage() {
                             <div className="flex items-center">
                                 <div className="w-[10px] h-[24px] bg-red-600 rounded-sm"></div>
                                 <span className="text-red-600 ml-2">
-                                    Our Products
+                                    {t("USER.OUR_PRODUCT", {product: t("PRODUCT")})}
                                 </span>
                             </div>
                             <div className="mt-3 flex items-center justify-between">
                                 <div className="flex">
                                     <h1 className="text-[36px] font-bold">
-                                        Explore Our Products
+                                        {[t("EXPLORE"),t("USER.OUR_PRODUCT", {product: t("PRODUCT")})].join(" ")}
                                     </h1>
                                 </div>
                                 {/* <div className="ml-8 flex">
@@ -225,7 +219,7 @@ export default function HomePage() {
                                         <div className="relative z-10">
                                             {product.discount == 0 ? <></> : (
                                                 <div className="absolute top-0 left-0 w-12 h-12 bg-red-500 text-white text-center font-bold animate-pulse flex items-center justify-center rounded-sm">
-                                                    <span className="text-xs sm:text-sm md:text-base">SALE {product.discount * 100}%</span>
+                                                    <span className="text-xs sm:text-sm md:text-base">{t("SALE.SALE")} {product.discount * 100}%</span>
                                                 </div>
                                             )}
                                         </div>
@@ -266,9 +260,9 @@ export default function HomePage() {
                         </div>
                         <div className="mt-7 flex justify-center content-center items-center">
                             <button
-                                onClick={() => navigate("/products")}
+                                onClick={() => customNavigate(navigate, "/products")}
                                 className="w-[234px] h-[56px] text-[16px] bg-red-600 text-white rounded-sm">
-                                View All Products
+                                {[t("VIEW"),t("ALL"),t("PRODUCT")].join(" ")}
                             </button>
                         </div>
                     </div>
@@ -291,11 +285,10 @@ export default function HomePage() {
 
                                     <div>
                                         <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
-                                            FREE AND FAST DELIVERY
+                                            {t("HOMEPAGE.DELIVERY")}
                                         </h3>
                                         <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
-                                            Free delivery for all orders over
-                                            $140
+                                            {t("HOMEPAGE.DELIVERY_INFO")}
                                         </p>
                                     </div>
                                 </div>
@@ -311,10 +304,10 @@ export default function HomePage() {
 
                                     <div>
                                         <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
-                                            24/7 CUSTOMER SERVICE
+                                            {t("HOMEPAGE.SERVICE")}
                                         </h3>
                                         <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
-                                            Friendly 24/7 customer support
+                                            {t("HOMEPAGE.SERVICE_INFO")}
                                         </p>
                                     </div>
                                 </div>
@@ -332,10 +325,10 @@ export default function HomePage() {
 
                                     <div>
                                         <h3 class="mb-[10px] text-xl font-semibold text-dark dark:text-white xl:text-2xl">
-                                            MONEY BACK GUARANTEE
+                                            {t("HOMEPAGE.REFUND")}
                                         </h3>
                                         <p class="mx-auto max-w-[275px] text-base text-body-color dark:text-dark-6">
-                                            We return money within 30 days
+                                            {t("HOMEPAGE.REFUND_INFO")}
                                         </p>
                                     </div>
                                 </div>

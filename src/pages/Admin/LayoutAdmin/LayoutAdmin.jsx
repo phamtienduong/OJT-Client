@@ -10,12 +10,8 @@ import {
 
 } from '@ant-design/icons';
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
-
 import { Layout, Menu, Button, theme, Image, Dropdown, Space, Avatar } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
-// import App from '../../App';
-import AppRouters from '../AppRouter/AppRouters';
-// import "./LayoutAdmin.scss"
 import {
     ArrowLeftOnRectangleIcon,
     PhoneIcon,
@@ -23,6 +19,7 @@ import {
     PhotoIcon,
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
+import { customNavigate } from "../../../app/hook";
 const { Header, Sider, Content } = Layout;
 export default function LayoutAdmin() {
   const [collapsed, setCollapsed] = useState(false);
@@ -40,7 +37,7 @@ export default function LayoutAdmin() {
        if(confirm1){
         localStorage.removeItem("user_login");
         localStorage.removeItem("admin_token");
-        navigate("/login");
+        customNavigate(navigate, "/login");
        }
    };
    const handleAvatar = () => {
@@ -54,15 +51,7 @@ export default function LayoutAdmin() {
             icon: ArrowLeftOnRectangleIcon,
         },
     ];
-  //
-  // console.log(user_login.user_name)
-  // const addTest = ()=>{
-  //   const user_login = {
-  //     user_name:"Thiên Lang"
-  //   }
-  //   localStorage.setItem("user_login", JSON.stringify(user_login))
-  // }
-  // addTest()
+
   return (
       <Layout style={{ minHeight: "100vh" }}>
           <Sider trigger={null} collapsible collapsed={collapsed}>
