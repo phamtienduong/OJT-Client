@@ -18,6 +18,7 @@ import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
 // import { uploadImage } from '../../../common/upload';
 import { uploadImage } from "../../../common/upload";
+import { useNavigate } from "react-router-dom";
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: "STT",
@@ -107,7 +108,7 @@ export default function AdminProductInfo() {
     const [product_info_id, setProduct_info_id] = useState();
     const [product_id, setProduct_id] = useState();
     const [linkedProduct, setLinkedProduct] = useState();
-
+    const navigate = useNavigate();
     // hien thi modal
     const showModal = () => {
         setIsModalOpen(true);
@@ -126,11 +127,24 @@ export default function AdminProductInfo() {
         setProductUpdate();
     };
     const getAllProduct = async () => {
-        const res = await publicAxios.get(
-            "api/v1/product-info/product-info-list"
-        );
-        console.log(res.data);
-        setProducts(res.data);
+
+
+        try {
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            console.log(headers);
+            // console.log(headers);
+            const res = await publicAxios.get(
+                "api/v1/product-info/product-info-list", { headers }
+            );
+            console.log(res.data);
+            setProducts(res.data);
+        } catch (error) {
+            alert("Bạn ko có quyền")
+            navigate("/home")
+        }
     };
     const getCategories = async () => {
         const result = await publicAxios.get("/api/v1/category/get-list");
@@ -146,12 +160,12 @@ export default function AdminProductInfo() {
     const [fileImages, setFileImages] = useState({});
 
 
-   
-      
-        const handleChangeImages = async (e) => {
-            const url = await uploadImage(e.target.files[0])
-            setFileImages(url)
-        }
+
+
+    const handleChangeImages = async (e) => {
+        const url = await uploadImage(e.target.files[0])
+        setFileImages(url)
+    }
     // console.log(setFileImages)
 
     // hàm thêm hoặc sửa sp
@@ -183,7 +197,7 @@ export default function AdminProductInfo() {
                     ram: values.ram,
                     stock: values.stock,
 
-                   image:fileImages
+                    image: fileImages
 
                 };
             }
@@ -299,7 +313,7 @@ export default function AdminProductInfo() {
     const takeImage = () => {
         const listImg = listRender?.map((item) => {
             item.impds.map((item2) => {
-                
+
                 return item2.url
             })
         })

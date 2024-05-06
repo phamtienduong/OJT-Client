@@ -1,7 +1,7 @@
 import { Button, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react'
 import publicAxios from "../../../config/publicAxios";
-
+import { useNavigate } from 'react-router-dom';
 const columns = (handleChangeActive) => [
     {
         title: 'STT',
@@ -54,10 +54,23 @@ const columns = (handleChangeActive) => [
 ];
 export default function AdminUsers() {
     const [listUser, setList] = useState([])
+    const navigate = useNavigate()
+
     const getAllUser = async () => {
-        const res = await publicAxios.get("/api/v1/users/list")
-        console.log(res.data.data);
-        setList(res.data.data)
+
+        try {
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            // console.log(headers);
+            const res = await publicAxios.get("/api/v1/users/list", { headers })
+            console.log(res.data.data);
+            setList(res.data.data)
+        } catch (error) {
+            alert("Bạn ko có quyền")
+            navigate("/home")
+        }
     }
     const handleChangeActive = async (user) => {
         await publicAxios.patch(`/api/v1/users/active/${user.user_id}`, { active: !parseInt(user.active) })

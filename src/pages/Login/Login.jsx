@@ -23,31 +23,38 @@ export default function Login({ setIsLogin }) {
         setUser({ ...user, [name]: value })
     }
     const handleLogin = async (e) => {
-        e.preventDefault();
-        if (!user.email || !user.password) {
-            notification.error({
-                message: "Vui lòng nhập đủ thông tin!",
-            })
-            return;
-        }
-        // xử lý đăng nhập
+        e.preventDefault()
         try {
-            let data = {
-                email: user.email,
-                password: user.password
+            const res = await loginApi(user)
+            if (!user.email || !user.password) {
+                notification.error({
+                    message: "Please enter complete information",
+                })
+                return;
             }
-            const res = await loginApi(data)
-            notification.success({
-                message: res.message,
-            });
-            localStorage.setItem("token", res.data.token)
-            localStorage.setItem('user_login', JSON.stringify(res.data.user));
-            setIsLogin(true)
-            navigate("/home");
+            if (res.data.user.role == "admin") {
+                // console.log("11111");
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
+                notification.success({
+                    message: "Hello Admin",
+                })
+                setIsLogin(true)
+                navigate("/dashboard")
+            }
+            else if (res.data.user.role == "user") {
+                localStorage.setItem("token", res.data.token)
+                localStorage.setItem('user_login', JSON.stringify(res.data.user));
+                notification.success({
+                    message: res.message,
+                })
+                setIsLogin(true)
+                navigate("/home")
+            }
+        } catch (error) {
+            console.log(error)
         }
-        catch (error) {
-            notification.error(error.response.data)
-        }
+
     }
     const OnButtonClick = async () => {
         const auth = await GoogleAuth()
@@ -115,8 +122,8 @@ export default function Login({ setIsLogin }) {
             setEmailForget("");
         } catch (err) {
             console.log(err)
-            notification.error({
-                message: "Email không tồn tại trong hệ thống"
+            notification.warning({
+                message: "Email does not exist in the system"
             })
         }
     }

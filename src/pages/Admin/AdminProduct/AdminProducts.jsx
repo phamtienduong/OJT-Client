@@ -7,6 +7,7 @@ import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../../firebase/firebase";
 import { uploadImage } from "../../../common/upload"
 import { PlusOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 const columns = (handleOkeDelete, handleClickEdit) => [
     {
         title: 'STT',
@@ -87,6 +88,7 @@ export default function AdminProducts() {
     const [search, setSearch] = useState("")
     const [cateChange, setCateChange] = useState("")
     const [images, setImages] = useState(["", "", ""])
+    const navigate = useNavigate()
 
 
     // const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -129,9 +131,21 @@ export default function AdminProducts() {
         await getAllProduct()
     };
     const getAllProduct = async () => {
-        const res = await publicAxios.get("/api/v1/products/get-list")
-        console.log(res.data);
-        setProducts(res.data)
+
+
+        try {
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            // console.log(headers);
+            const res = await publicAxios.get("/api/v1/products/get-list", { headers })
+            console.log(res.data);
+            setProducts(res.data)
+        } catch (error) {
+            alert("Bạn ko có quyền")
+            navigate("/home")
+        }
 
     }
     const getCategories = async () => {

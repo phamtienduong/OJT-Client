@@ -38,20 +38,20 @@ export default function App() {
     const location = useLocation();
     const [isLogin, setIsLogin] = useState(false)
     const [isLoad, setIsLoad] = useState(false)
-    const [language, setLanguage] = useState(i18n.language);
-    const handleChangeLanguage = (value) => {
-        // setLanguage(value)
-        // const [language, ...path] = location.pathname.slice(1).split("/");
-        // if (language in languages) {
-        //     navigate(
-        //         {
-        //             ...location,
-        //             pathname: `/${[value, ...path].join("/")}`
-        //         },
-        //         { replace: true }
-        //     )
-        // }
-    }
+    // const [language, setLanguage] = useState(i18n.language);
+    // const handleChangeLanguage = (value) => {
+    //     setLanguage(value)
+    //     const [language, ...path] = location.pathname.slice(1).split("/");
+    //     if (language in languages) {
+    //         navigate(
+    //             {
+    //                 ...location,
+    //                 pathname: `/${[value, ...path].join("/")}`
+    //             },
+    //             { replace: true }
+    //         )
+    //     }
+    // }
     // useEffect(() => {
     //     const language = location.pathname.slice(1).split("/")[0];
     //     if (language in languages) {
@@ -62,42 +62,42 @@ export default function App() {
     return (
         <Routes>
             {/* <Route path=":language"> */}
-                <Route
-                    element={
-                        <>
-                            <Header
-                                setIsLoad={setIsLoad}
-                                isLogin={isLogin}
-                                setIsLogin={setIsLogin}
-                                handleChangeLanguage={handleChangeLanguage}
-                                // language={language}
-                            />
-                            <Outlet /> <Footer />
-                            <ScrollTop />{" "}
-                        </>
-                    }
-                >
-                    {/* Add ScrollTop component here */}
-                    <Route path="home" element={<HomePage />}></Route>
-                    <Route path="error" element={<Error />}></Route>
-                    <Route path="login" element={<Login setIsLogin={setIsLogin} />}></Route>
-                    <Route path="register" element={<Register />}></Route>
-                    <Route path="favor" element={<Favorite />}></Route>
-                    <Route path="checkout" element={<Checkout />}></Route>
-                    <Route path="contact" element={<Contact />}></Route>
-                    <Route path="about" element={<About />}></Route>
-                    <Route path="products" element={<Products />}></Route>
-                    <Route path="cart" element={<Cart />}></Route>
-                    <Route path="account" element={<Account />}></Route>
-                    <Route path="payment" element={<Payment />}></Route>
-                    <Route path="bills" element={<Bills />}></Route>
-                    <Route path="reset_password" element={<ResetPassword />}></Route>
-                    <Route path="category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
-                    <Route path="product_detail/:id" element={<Detail />}></Route>
-                    {/* admin */}
-                    {/* {<Route path="auth/admin" element={<LoginAdmin />} />} */}
-                    
-                </Route>
+            <Route
+                element={
+                    <>
+                        <Header
+                            setIsLoad={setIsLoad}
+                            isLogin={isLogin}
+                            setIsLogin={setIsLogin}
+                        // handleChangeLanguage={handleChangeLanguage}
+                        // language={language}
+                        />
+                        <Outlet /> <Footer />
+                        <ScrollTop />{" "}
+                    </>
+                }
+            >
+                {/* Add ScrollTop component here */}
+                <Route path="home" element={<HomePage />}></Route>
+                <Route path="error" element={<Error />}></Route>
+                <Route path="login" element={<Login setIsLogin={setIsLogin} />}></Route>
+                <Route path="register" element={<Register />}></Route>
+                <Route path="favor" element={<Favorite />}></Route>
+                <Route path="checkout" element={<Checkout />}></Route>
+                <Route path="contact" element={<Contact />}></Route>
+                <Route path="about" element={<About />}></Route>
+                <Route path="products" element={<Products />}></Route>
+                <Route path="cart" element={<Cart />}></Route>
+                <Route path="account" element={<Account />}></Route>
+                <Route path="payment" element={<Payment />}></Route>
+                <Route path="bills" element={<Bills />}></Route>
+                <Route path="reset_password" element={<ResetPassword />}></Route>
+                <Route path="category/:id" element={<ProductCatergory isLoad={isLoad} />}></Route>
+                <Route path="product_detail/:id" element={<Detail />}></Route>
+                {/* admin */}
+                {/* {<Route path="auth/admin" element={<LoginAdmin />} />} */}
+
+            </Route>
             {/* </Route> */}
         </Routes>
     );

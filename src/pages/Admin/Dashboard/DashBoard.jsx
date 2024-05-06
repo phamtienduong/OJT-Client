@@ -4,19 +4,30 @@ import React, { useEffect, useMemo, useState } from 'react'
 import publicAxios from "../../../config/publicAxios";
 
 import { formatCurrency } from '../../../helper/formatMoney';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashBoard() {
-
+    const navigate = useNavigate()
     const [orders, setOrders] = useState([]);
     const [users, setUsers] = useState([])
 
     const getInfoDasboard = async () => {
-        const res = await publicAxios.get("/api/v1/bill-detail")
-        const ressult = await publicAxios.get("/api/v1/users/list")
-        console.log(ressult.data.data);
-        console.log(res.data);
-        setUsers(ressult.data.data)
-        setOrders(res.data)
+        try {
+            const token = localStorage.getItem("token") || "";
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            // console.log(headers);
+            const res = await publicAxios.get("/api/v1/bill-detail", { headers })
+            const ressult = await publicAxios.get("/api/v1/users/list")
+            console.log(ressult.data.data);
+
+            setUsers(ressult.data.data)
+            setOrders(res.data)
+        } catch (error) {
+            alert("Bạn ko có quyền")
+            navigate("/home")
+        }
     }
 
 
