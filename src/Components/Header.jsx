@@ -99,7 +99,8 @@ export default function Header({
   let [popperElement, setPopperElement] = useState();
   let { styles, attributes } = usePopper(referenceElement, popperElement);
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user_login");
+    localStorage.removeItem("token");
     setUserLogin({});
     setIsLogin(false);
     customNavigate(navigate, "/login");
@@ -205,7 +206,7 @@ export default function Header({
                   ref={setReferenceElement}
                   className="flex items-center gap-x-1 text-m font-bold leading-6 text-black-800 mb-1 outline-none"
                 >
-                  Products
+                  {t("PRODUCT")}
                   <ChevronDownIcon
                     className={`${
                       open ? "transform rotate-180" : ""
@@ -223,7 +224,7 @@ export default function Header({
                     <div className="relative flex gap-6 bg-white p-7 lg:flex-col rounded">
                       {categories.length > 0 &&
                         categories.map((item) => (
-                          <div onClick={() => handleClickCategory(item.id)}>
+                          <div onClick={() => handleClickCategory(item.id)} className="cursor-pointer">
                             <a
                               key={item.id}
                               className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-red-200 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50"
@@ -245,7 +246,7 @@ export default function Header({
           <div className="relative">
             <input
               type="text"
-              placeholder="Search here"
+              placeholder={t("SEARCH")}
               className="pl-8 pr-3 py-1 rounded-lg border border-gray-300 text-s focus:outline-none focus:border-blue-500"
               onChange={(e) => handleChangeKeyword(e.target.value)}
               value={keyword}
@@ -276,23 +277,20 @@ export default function Header({
               <div>
                 <AiOutlineShoppingCart />
               </div>
-              <div className="text-lg font-semibold leading-6 text-gray-900">
+              <div className="text-lg font-semibold leading-6 text-gray-900" style={{display: cart.length > 0 ? "inline-block" : 'none'}}>
                 {cart?.length}
               </div>
             </div>
           </RouterLink>
-          <RouterLink
-            href="#"
-            className=" text-lg font-semibold leading-6 text-gray-900"
+          <div
+            className=" text-lg font-semibold leading-6 text-gray-900 outline-none"
           >
             <Menu as="div" className=" ">
               <div>
                 {userLogin && userLogin.user_id ? (
                   <Menu.Button className="w-max relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
                     <span style={{ backgroundColor: "white" }}>
-                      Chào, {theLastName(userLogin.user_name)}
+                      {t("HELLO")}, {theLastName(userLogin.user_name)}
                     </span>
                   </Menu.Button>
                 ) : (
@@ -326,20 +324,33 @@ export default function Header({
                           "block px-4 py-2 text-sm text-gray-700"
                         )}
                       >
-                        Your Profile
+                        {t("USER.YOUR_PROFILE", {profile: t("PROFILE")})}
                       </RouterLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
                       <RouterLink
-                        to="#"
+                        to="/bills"
                         className={classNames(
                           active ? "bg-gray-100" : "",
                           "block px-4 py-2 text-sm text-gray-700"
                         )}
                       >
-                        Settings
+                        {t("USER.YOUR_BILL", {bill: t("BILL")})}
+                      </RouterLink>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <RouterLink
+                        to="/setting"
+                        className={classNames(
+                          active ? "bg-gray-100" : "",
+                          "block px-4 py-2 text-sm text-gray-700"
+                        )}
+                      >
+                        {t("SETTING")}
                       </RouterLink>
                     )}
                   </Menu.Item>
@@ -353,14 +364,14 @@ export default function Header({
                         )}
                         onClick={handleLogout}
                       >
-                        Sign out
+                        {t("SIGN_OUT")}
                       </span>
                     )}
                   </Menu.Item>
                 </Menu.Items>
               </Transition>
             </Menu>
-          </RouterLink>
+          </div>
         </div>
         {/* <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     <a
