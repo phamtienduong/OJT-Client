@@ -23,13 +23,11 @@ export default function Detail() {
 
     const [allowCmt, setAllowCmt] = useState(true)
     const [mainImage, setMainImage] = useState("")
-    // console.log(user);
     const { id } = useParams()
     const userLogin = JSON.parse(localStorage.getItem("user_login"));
     const user_id = userLogin && userLogin.user_id ? userLogin.user_id : "";
     const getProduct = async () => {
         const res = await publicAxios.get(`/api/v1/products/get-product/${id}`)
-        // console.log(res);
         setProductDetail(res.data)
         setMainImage(res.data.default_image)
     }
@@ -46,7 +44,6 @@ export default function Detail() {
                 user_id: user.user_id,
                 product_id: productDetail.product_id
             }
-            // console.log(data);
             try {
                 const res = await publicAxios.post('api/v1/review/create', data)
                 if (res.data.statusCode === 200) {
@@ -65,16 +62,13 @@ export default function Detail() {
     }
 
     const getAvgStar = async () => {
-        console.log(id);
         const result = await publicAxios.get(`/api/v1/review/avg-start/${id}`)
         const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
 
     const getListComment = async () => {
         const res = await publicAxios.get(`/api/v1/review/listReview/${id}`)
-        console.log(res.data);
         setListComment(res.data)
         const mappedArr = res.data.map((item) => {
             if (item.user_id.user_id == user_id) {
@@ -82,12 +76,9 @@ export default function Detail() {
             }
         })
     }
-    //
     const getListCommentByUser = async () => {
 
     }
-    // console.log(user.user_id);
-
     useEffect(() => {
         getWishList()
         getProduct();
@@ -95,13 +86,9 @@ export default function Detail() {
         getListComment()
         // handleWishlist()
     }, [flag]);
-
-
-
     const getWishList = async () => {
         const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`);
         const wishlist1 = response.data;
-        // console.log(wishlist);
         setWishList(wishlist1)
         // setFlag(!flag)
     }
@@ -116,22 +103,17 @@ export default function Detail() {
             // Get the user's wishlist
             const response = await publicAxios.get(`api/v1/favorite-products/${user.user_id}`);
             const wishlist = response.data;
-            // console.log(wishlist);
             setWishList(wishlist)
             // Check if the product is already in the wishlist
             const isProductInWishlist = wishlist.find(
                 (product) => product.product_id.product_id == productDetail.product_id
             );
-            // console.log(isProductInWishlist);
-
             if (isProductInWishlist) {
-
                 // Product is already in the wishlist, do nothing
                 return notification.error({
                     message: "Sản phẩm đã có trong danh sách yêu thích",
                 });
             }
-
             // User has no wishlist or product is not in the wishlist, add the product
             const addResponse = await publicAxios.post(`api/v1/favorite-products/add`, {
                 user_id: user.user_id,
@@ -139,19 +121,15 @@ export default function Detail() {
             });
 
             if (addResponse.status === 201) {
-
                 setIsWishList(true)
-
                 // Assuming 201 is the success code for creation
                 notification.success({
                     message: 'Sản phẩm đã được thêm vào danh sách yêu thích',
                 });
-
             } else {
                 throw new Error('Could not add product to wishlist');
             }
         } catch (error) {
-            // Handle errors related to API calls
             console.error(error);
             notification.error({
                 message: error.message || 'Đã xảy ra lỗi khi thêm vào danh sách yêu thích',
@@ -163,10 +141,8 @@ export default function Detail() {
         const check = wishlist.find((item) => {
             return item.product_id.product_id == id
         })
-
         if (check !== undefined) {
             setIsWishList(true)
-
         } else {
             setIsWishList(false)
         }
@@ -175,13 +151,10 @@ export default function Detail() {
         checkExistFav()
     }, [flag])
     const handleColorSelect = (color) => {
-        console.log(color.color);
         setSelectedColor(color.color);
         setMainImage(color.image)
     };
     const handleAddToCart = async (id) => {
-        // console.log(id);
-        console.log(user.user_id);
         if (!user.user_id) {
             return notification.error({
                 message: "Please log in before adding to cart",
@@ -192,19 +165,15 @@ export default function Detail() {
                 user_id: user.user_id,
                 product_id: id
             }
-            // console.log(data);
             const res = await publicAxios.post(`api/v1/cart/add`, data)
             dispatch(getCart(user.user_id));
             notification.success({
                 message: res.data.message
             })
-            // console.log(res);
-
         } catch (error) {
             console.log(error);
         }
     }
-
     return (
         <div>
             <div className="lg:px-28 lg:py-20 px-4 py-2">
@@ -212,9 +181,8 @@ export default function Detail() {
                     <div className="hidden md:inline-block">
                         <Breadcrumb
                             items={[
-                                { title: "Account" },
-                                { title: "Gaming" },
-                                { title: "Havic HV G-92 Gamepad" },
+                                { title: 'Product' },
+                                { title: productDetail.product_name },
                             ]}
                         />
                     </div>
@@ -359,17 +327,14 @@ export default function Detail() {
                                     </div>
                                     <div className="flex gap-x-5">
                                         <div>Ram:</div>
-                                        {productDetail.product_info &&
-                                            productDetail.product_info.map(
-                                                (item, index) => (
-                                                    <div className="flex gap-4">
-                                                        {/* Hiển thị dung lượng RAM */}
-                                                        <div className="px-2 py-1 border border-black rounded">
-                                                            {item.ram}
-                                                        </div>
-                                                    </div>
-                                                )
-                                            )}
+                                        {productDetail.product_info && productDetail.product_info.map((item, index) => (
+                                            <div className='flex gap-4'>
+                                                {/* Hiển thị dung lượng RAM */}
+                                                <div key={index} className='px-2 py-1 border border-black rounded'>
+                                                    {item.ram}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
