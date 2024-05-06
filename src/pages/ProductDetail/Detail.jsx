@@ -143,7 +143,7 @@ export default function Detail() {
 
                 // Assuming 201 is the success code for creation
                 notification.success({
-                    message: 'Product has been added to your favorites list',
+                    message: '  Product has been added to your favorites list',
                 });
 
             } else {
@@ -207,15 +207,6 @@ export default function Detail() {
         <div>
             <div className="lg:px-28 lg:py-20 px-4 py-2">
                 <div className="md:flex flex-col gap-y-20">
-                    <div className="hidden md:inline-block">
-                        <Breadcrumb
-                            items={[
-                                { title: "Account" },
-                                { title: "Gaming" },
-                                { title: "Havic HV G-92 Gamepad" },
-                            ]}
-                        />
-                    </div>
                     <div className="md:flex gap-20">
                         <div className="flex w-3/5 justify-between">
                             <div
@@ -355,7 +346,7 @@ export default function Detail() {
                                             )}
                                     </div>
                                     <div className="flex gap-x-5">
-                                        <div>Ram:</div>
+                                        <div>Size:</div>
                                         {productDetail.product_info &&
                                             productDetail.product_info.map(
                                                 (item, index) => (

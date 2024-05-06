@@ -46,7 +46,7 @@ const columns = (handleOkeDelete, handleClickEdit) => [
         dataIndex: "color",
     },
     {
-        title: "Ram",
+        title: "Size",
         dataIndex: "ram",
         key: "ram",
     },
@@ -381,12 +381,12 @@ export default function AdminProductInfo() {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="ram"
+                            label="size"
                             name="ram"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input product ram!",
+                                    message: "Please input product size!",
                                 },
                             ]}
                         >
