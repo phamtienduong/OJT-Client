@@ -1,17 +1,4 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -118,6 +105,7 @@ export default function ProductCatergory({ isLoad }) {
         }
         return page
     }
+    console.log("=-=>", products);
     // đánh dấu trang hiện tại
     const handleUpDownPage = (status) => {
         // status quyết định lên trang hay lùi trang
@@ -179,17 +167,13 @@ export default function ProductCatergory({ isLoad }) {
         getAvgStar();
 
     }, [currentPage, pageSize, isLoad])
+
     const getAvgStar = async () => {
         const result = await publicAxios.get(`/api/v1/review/avg-start/${products.product_id}`)
         const data = result.data.data['AVG(rating)']
-        // console.log("==> ::: ", Math.round(data));
         setAvgStar(Math.round(data));
     }
-
-
     const handleClickProduct = (id) => {
-        // console.log(id);
-        // localStorage.setItem("idProductDetail", id)
         navigate(`/product_detail/${id}`)
     }
 

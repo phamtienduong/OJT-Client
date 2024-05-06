@@ -17,16 +17,14 @@ import publicAxios from "../../config/publicAxios";
 import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatMoney";
-import { Rate } from "antd";
+import { Rate, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setReload } from "../../redux/reducer/productReducer";
 
 const sortOptions = [
-    { name: "Most Popular", current: true },
-    { name: "Best Rating", current: false },
-    { name: "Newest", current: false },
-    { name: "Price: Low to High", current: false },
-    { name: "Price: High to Low ", current: false },
+    { label: "Best Rating", value: 1 },
+    { label: "Price: Low to High", value: 2 },
+    { label: "Price: High to Low", value: 3 },
 ];
 const subCategories = [
     { name: "Totes", href: "#" },
@@ -95,6 +93,8 @@ export default function Products() {
     const [pageSize, setPageSize] = useState(6);
 
     const [avgStar, setAvgStar] = useState(1);
+    const [category, setCategory] = useState([]);
+
 
     const productId = products.map((product) => product.product_id);
 
@@ -143,6 +143,15 @@ export default function Products() {
                 break;
         }
     };
+    const getCategories = async () => {
+        const res = await publicAxios.get("/api/v1/category/get-list");
+        // console.log(res.data);
+        setCategory(res.data);
+    }
+    const subCategories = category.map((item) => (
+        { name: item.category_name, href: `/category/${item.category_id}` }
+    ))
+
 
     useEffect(() => {
         const start = (currentPage - 1) * pageSize;
@@ -168,22 +177,13 @@ export default function Products() {
 
             setProductTotal(Math.ceil(data.length / pageSize));
             setProducts(newProduct);
+            getCategories();
             dispatch(setReload(false));
         };
         getAllProducts();
         getAvgStar();
     }, [currentPage, pageSize, reLoad]);
 
-    // const sortPrice = (status) => {
-    //     switch (status) {
-    //         case 0:
-    //             setProducts(products.sort((a, b) => a.price - b.price))
-    //             break
-    //         case 1:
-    //             setProducts(products.sort((a, b) => b.price - a.price))
-    //             break
-    //     }
-    // }
 
     const getAvgStar = async () => {
         const result = await publicAxios.get(
@@ -197,8 +197,23 @@ export default function Products() {
     const handleClickProduct = (id) => {
         navigate(`/product_detail/${id}`);
     };
-    const handleChange = () => {};
-
+    const handleChangeSort = (value) => {
+        console.log(value);
+        switch (value) {
+            case 1:
+                const newProductsC = [...products.sort((a, b) => b.avgStar - a.avgStar)]
+                setProducts(newProductsC)
+                break;
+            case 2:
+                const newProductsA = [...products.sort((a, b) => +a.price - +b.price)]
+                setProducts(newProductsA)
+                break;
+            case 3:
+                const newProductsB = [...products.sort((a, b) => +b.price - +a.price)]
+                setProducts(newProductsB)
+                break;
+        }
+    }
     return (
         <>
             <div>
@@ -358,59 +373,18 @@ export default function Products() {
                         </h1>
 
                         <div className="flex items-center">
-                            <Menu
-                                as="div"
-                                className="relative inline-block text-left"
-                            >
-                                <div>
-                                    <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                                        Sort
-                                        <ChevronDownIcon
-                                            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                                            aria-hidden="true"
-                                        />
-                                    </Menu.Button>
-                                </div>
+                            <Select
+                                defaultValue={sortOptions[0].value}
+                                style={{
+                                    width: 120,
+                                }}
+                                onChange={handleChangeSort}
+                                options={sortOptions.map((item) => ({
+                                    label: item.label,
+                                    value: item.value,
+                                }))}
+                            />
 
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                    onClick={(e) => console.log(e.target.value)}
-                                >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="py-1">
-                                            {sortOptions.map((option) => (
-                                                <Menu.Item
-                                                    key={option.name}
-                                                    value={option.name}
-                                                >
-                                                    {({ active }) => (
-                                                        <a
-                                                            href={option.href}
-                                                            className={classNames(
-                                                                option.current
-                                                                    ? "font-medium text-gray-900"
-                                                                    : "text-gray-500",
-                                                                active
-                                                                    ? "bg-gray-100"
-                                                                    : "",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            {option.name}
-                                                        </a>
-                                                    )}
-                                                </Menu.Item>
-                                            ))}
-                                        </div>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
 
                             <button
                                 type="button"
@@ -582,8 +556,8 @@ export default function Products() {
                                                         <p className="text-lg ml-2 font-medium text-red-600">
                                                             {formatCurrency(
                                                                 product.price *
-                                                                    (1 -
-                                                                        product.discount)
+                                                                (1 -
+                                                                    product.discount)
                                                             )}
                                                         </p>
                                                     </>
